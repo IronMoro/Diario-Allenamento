@@ -1,0 +1,32 @@
+{
+ "name": "Diario di allenamento",
+ "short_name": "Diario",
+ "description": "Diario di allenamento con timer per la palestra e grafici dei progressi",
+ "lang": "it",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#E8EBE6",
+ "theme_color": "#1D2830",
+ "icons": [
+  {
+   "src": "icon-192-v2.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512-v2.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-maskable-512-v2.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

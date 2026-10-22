@@ -1,0 +1,23 @@
+DIARIO DI ALLENAMENTO - versione da far provare
+=================================================
+
+È l'app completa ma vuota: nessuna seduta, test o protocollo.
+Alla prima apertura mostra un benvenuto con «Come iniziare»; la scheda
+«Guida» spiega tutto passo per passo.
+
+COME PUBBLICARLA (5 minuti, una volta sola)
+1. Su github.com crea un nuovo repository pubblico, per esempio «allenamento».
+2. «Add file» → «Upload files»: trascina TUTTI i file di questo pacchetto
+   (index.html, sw.js, manifest.webmanifest, le tre icone) → «Commit changes».
+3. «Settings» → «Pages» → Source: «Deploy from a branch», Branch: «main», cartella «/ (root)» → «Save».
+4. Dopo un paio di minuti l'app è su:  https://TUONOME.github.io/allenamento/
+
+COSA MANDARE ALL'AMICO
+Solo il link. Lo apre con Chrome (o Safari su iPhone); se gli piace la può
+installare dal menu ⋮ → «Installa app» (iPhone: Condividi → «Aggiungi alla schermata Home»).
+
+DA SAPERE
+- I dati dell'amico restano solo sul suo dispositivo: tu non li vedi e lui non vede i tuoi.
+- Questa copia usa uno spazio dati separato: anche se la apri sul tuo tablet,
+  non vede e non tocca i dati della tua app «diario».
+- Se vuole tenere i dati o passarli a un altro dispositivo: Storico → «Esporta backup».
