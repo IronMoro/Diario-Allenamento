@@ -116,7 +116,7 @@ input[type=number]{font-family:var(--f-num);font-size:19px;font-weight:600}
 
 /* nuova seduta */
 .tpl{display:flex;flex-direction:column;gap:8px;margin:14px 0 22px}
-.tpl button{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;grid-template-columns:56px 1fr;gap:2px 12px;align-items:center}
+.tpl>button,.tplrow>button{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;grid-template-columns:56px 1fr;gap:2px 12px;align-items:center}
 .tpl .wo{grid-row:span 2;font-family:var(--f-num);font-size:34px;font-weight:700;text-align:center;line-height:1}
 .tpl .when{font-size:14px;color:var(--muted)}
 .tpl .what{font-weight:600}
@@ -190,7 +190,8 @@ input[type=number]{font-family:var(--f-num);font-size:19px;font-weight:600}
 
 /* foglio in basso */
 .sheet-bg{position:fixed;inset:0;background:rgba(10,15,18,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--surface);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+.sheet{background:var(--surface);width:100%;max-width:520px;border-radius:14px 14px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 12px);max-height:calc(100vh - 12px);overflow-y:auto;overscroll-behavior:contain}
+@supports (height:100dvh){.sheet{max-height:calc(100dvh - 12px)}}
 .sheet h3{margin-bottom:4px}
 .sheet .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .sheet .opts button{border:0;border-radius:8px;padding:14px 10px;font-weight:600;font-size:16px}
@@ -321,6 +322,13 @@ body.lock{overflow:hidden}
 .chart .pt{cursor:pointer}
 .chart .pt.sel .dot{r:8;stroke:var(--ink);stroke-width:2.5}
 .chart .tip{font-family:var(--f-num);font-size:18px;font-weight:600;margin:4px 0 0;min-height:24px}
+.tplrow{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tplrow>button{width:100%;border:0;border-radius:0;cursor:pointer}
+.tplact{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;padding:0 12px 12px}
+.dseg button{font-size:clamp(15px,4.2vw,20px);padding:8px 4px;line-height:1.1}
+.dseg button .small{display:inline-block}
+.tplact .btn{font-size:15px;width:100%;min-height:46px;justify-content:center;text-align:center;white-space:normal;line-height:1.15;border:1px solid var(--line);background:var(--raise);color:var(--ink);padding:6px 4px}
+.tplact .btn.danger{color:var(--ko)}
 .sesbox{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 16px}
 .sesbox .row b{font-family:var(--f-num);font-size:26px}
 .tempi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}
@@ -383,7 +391,7 @@ function load(k){try{const v=localStorage.getItem(K(k));return v?JSON.parse(v):n
 const newTf=()=>({d:todayIso(),n:'',tipo:'1rm',kg:'',bw:'',rep:'',rir:0,parts:['','',''],rif:'',rifTouched:false,from:todayIso(),fromTouched:false,note:'',editId:null});
 const newMf=()=>({d:todayIso(),vals:{},note:'',editId:null});
 const STANDALONE=!(window.claude&&typeof window.claude.use==='function');
-const S={progAgg:'sed',prof:{list:[{id:'main',nome:''}],sum:{},ask:true},devMem:null,devEx:'',teamSrc:'dev',team:{members:new Map(),meta:{},names:{},code:null,unsub:null,mem:null,ex:''},protos:new Map(),protosLoaded:false,pf:null,progM:'e1',prog:'6m',exView:'list',misure:new Map(),mf:null,testSub:'test',tests:new Map(),testsLoaded:false,exSel:'',exQ:'',tf:null,tab:'diario',mode:'loading',stor:new Map(),sed:new Map(),hist:[],cfg:{esercizi:{}},draft:null,
+const S={dSez:'corso',dList:false,progs:[],progAgg:'sed',prof:{list:[{id:'main',nome:''}],sum:{},ask:true},devMem:null,devEx:'',teamSrc:'dev',team:{members:new Map(),meta:{},names:{},code:null,unsub:null,mem:null,ex:''},protos:new Map(),protosLoaded:false,pf:null,progM:'e1',prog:'6m',exView:'list',misure:new Map(),mf:null,testSub:'test',tests:new Map(),testsLoaded:false,exSel:'',exQ:'',tf:null,tab:'diario',mode:'loading',stor:new Map(),sed:new Map(),hist:[],cfg:{esercizi:{}},draft:null,
   saveMsg:'',storEx:'',storWeeks:8,open:new Set(),progOpen:new Set(),newDate:todayIso(),downloads:null,
   tmode:'rec',tc:{amrap:{min:10,lead:10,frac:'none',minsLeft:'',col:['#0284C7','#F97316','#16A34A','#9333EA','#DC2626','#0D9488'],restCol:'#E2E8F0',ex:[{n:'',rep:10},{n:'',rep:10}],warnSec:10,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120,link:null},
   rt:{n:'',target:50,rep:'',rest:60,lead:10,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,link:null},
@@ -523,7 +531,8 @@ function merge(){
   const m=new Map(S.stor);
   for(const [id,s] of S.sed){if(s.deleted)m.delete(id);else m.set(id,s)}
   m.forEach(woNorm);if(S.draft)woNorm(S.draft);if(S.mode==='db')setTimeout(teamPublishSoon,0);setTimeout(profPublishSoon,0);
-  S.hist=[...m.values()].sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1));
+  const all=[...m.values()];S.progs=all.filter(x=>x.prog).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
+  S.hist=all.filter(x=>!x.prog).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1));
   const names=new Set();S.hist.forEach(s=>s.ex.forEach(e=>e.n&&names.add(e.n)));
   Object.entries((S.cfg&&S.cfg.esercizi)||{}).forEach(([n,c])=>{if(c&&c.creato&&!c.tolto)names.add(n)});
   S.names=[...names].sort((a,b)=>a.localeCompare(b,'it'));
@@ -722,13 +731,15 @@ function vFin(d){
 function persistDraft(){store('diario-bozza',S.draft)}
 function sessionObj(dr){
   const ex=dr.ex.map(e=>{const o={...e};delete o._why;delete o._w;return o});
-  return {...(dr.fin&&dr.ex.some(e=>e.fin)?{fin:dr.fin}:{}),...(dr.wo0!==undefined?{wo0:dr.wo0}:{}),woN:(S.cfg.woRen||[]).length,id:dr.id,d:dr.d,gg:ggOf(dr.d),wo:dr.wo,set:dr.set!=null&&dr.d===dr._d0?dr.set:weekOf(dr.d),note:dr.note||'',ex,...(dr.tempi?{tempi:dr.tempi}:{}),updated:Date.now()};
+  return {...(dr.fin&&dr.ex.some(e=>e.fin)?{fin:dr.fin}:{}),...(dr.wo0!==undefined?{wo0:dr.wo0}:{}),woN:(S.cfg.woRen||[]).length,...(dr.nome?{nome:dr.nome}:{}),...(dr.prog&&!dr.ex.some(e=>(e.s||[]).some(x=>x[1]))?{prog:true}:{}),id:dr.id,d:dr.d,gg:ggOf(dr.d),wo:dr.wo,set:dr.set!=null&&dr.d===dr._d0?dr.set:weekOf(dr.d),note:dr.note||'',ex,...(dr.tempi?{tempi:dr.tempi}:{}),updated:Date.now()};
 }
 let saveTimer=null,saveChain=Promise.resolve(),lastSaved='';
 function scheduleSave(){persistDraft();clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,1200);setSaveMsg('Modifiche da salvare')}
 function saveNow(){
   clearTimeout(saveTimer);const dr=S.draft;if(!dr||!dr.ex.length)return saveChain;
+  if(dr.prog&&isExec(dr)){dr.prog=false;if(dr.d!==todayIso()){dr.d=todayIso();const di=document.querySelector('[data-f="d:d"]');if(di)di.value=dr.d;const m=$('#sessMeta');if(m)m.textContent=`${ggOf(dr.d)}, settimana ${weekOf(dr.d)}`}persistDraft()}
   const obj=sessionObj(dr);const key=JSON.stringify({...obj,updated:0});
+  if(obj.wo&&!obj.prog&&(S.cfg.woState||{})[obj.wo]==='arch'&&dr.ex.some(e=>(e.s||[]).some(x=>x[1]))){S.cfg.woState={...S.cfg.woState,[obj.wo]:'corso'};saveCfg()}
   if(key===lastSaved){setSaveMsg('Salvata');return saveChain}
   saveChain=saveChain.then(async()=>{
     setSaveMsg('Salvataggio…');
@@ -873,14 +884,16 @@ function banner(){
 
 /* ----- diario ----- */
 function vDiario(){
-  if(!S.draft)return vNuova();
+  if(!S.draft||S.dList)return vNuova();
   const d=S.draft;
-  return `<div class="top"><h1>Seduta</h1>${profChip()}<span class="save" id="saveMsg">${esc(S.saveMsg)}</span></div>${banner()}
+  return `<div class="top"><button class="btn ghost" data-a="dList" style="padding-left:0;margin-right:6px" aria-label="Torna all’elenco delle sedute">← Sedute</button><h1>Seduta</h1>${profChip()}<span class="save" id="saveMsg">${esc(S.saveMsg)}</span></div>${banner()}
   ${d.ex.some(e=>(e.s||[]).length)?`<button class="btn primary big" data-a="planOpen" style="width:100%;margin:0 0 14px">${SES&&SES.start&&SES.phase!=='done'?'Torna alla seduta in corso':'Avvia la seduta'}</button>`:''}
   <div class="sess-head">
     <label class="f">Data<input type="date" value="${d.d}" data-f="d:d"></label>
     <label class="f">WO<input type="text" value="${esc(d.wo)}" data-f="d:wo" maxlength="6" autocapitalize="characters"></label>
   </div>
+  ${S.progs.filter(p=>p.id!==d.id).length?`<p class="small" style="margin:-8px 0 12px"><button class="btn ghost" data-a="progList" style="min-height:0;padding:2px 0">Sedute programmate (${S.progs.filter(p=>p.id!==d.id).length}) ▸</button></p>`:''}
+  <label class="f" style="margin:-6px 0 12px">Nome della seduta (facoltativo)<input type="text" value="${esc(d.nome||'')}" data-f="d:nome" maxlength="50" placeholder="es. Spinta pesante"></label>${d.prog&&!d.ex.some(e=>(e.s||[]).some(x=>x[1]))?'<p class="muted small" style="margin:-6px 0 12px">Seduta programmata: diventa una seduta dello storico quando segni la prima serie.</p>':''}
   <p class="sess-meta" id="sessMeta">${ggOf(d.d)}, settimana ${weekOf(d.d)}</p>${d.tempi?`<p class="muted small" style="margin:-10px 0 16px">Tempi: ${tempiTxt(d.tempi)}</p>`:''}
   ${d.ex.some(e=>!e.fin)?d.ex.map((e,i)=>e.fin?'':vCard(e,i)).join(''):`<p class="empty">Aggiungi il primo esercizio: se l’hai già fatto in passato riprendo carico e piano dall’ultima volta.</p>`}
   <div class="add">
@@ -892,22 +905,66 @@ function vDiario(){
   <label class="f">Note sulla seduta<textarea data-f="d:note" rows="2">${esc(d.note)}</textarea></label>
   <div class="row" style="margin-top:18px">
     <button class="btn primary" data-a="closeDraft">Chiudi seduta</button>
+    <button class="btn" data-a="progAsk">Salva per un prossimo allenamento</button>
     <span class="spacer"></span>
-    <button class="btn ghost danger" data-a="askDelDraft">Elimina seduta</button>
+    ${d.ex.some(e=>(e.s||[]).some(x=>x[1]))?'<span class="muted small">Una seduta eseguita non si elimina: si può modificare.</span>':'<button class="btn ghost danger" data-a="askDelDraft">Elimina seduta</button>'}
   </div>`;
 }
+const isExec=x=>x.ex.some(e=>(e.s||[]).some(y=>y[1]));
+function woLast(){const m=new Map();for(const x of S.hist){if(x.wo&&!m.has(x.wo))m.set(x.wo,x)}return m}
+function woState(wo,last){const st=(S.cfg.woState||{})[wo];if(st)return st;const lim=S.hist.length?isoMinus(S.hist[0].d,183):'';return last&&last.d>=lim?'corso':'arch'}
+function woCard(x,extra,act='fromTpl'){return `<div class="tplrow"><button data-a="${act}" data-id="${esc(x.id)}"><span class="wo">${esc(x.wo||'–')}</span>
+  <span class="what">${x.nome?`<b>${esc(x.nome)}</b>: `:''}${esc(x.ex.filter(e=>!e.fin).map(e=>e.n).join(', '))}${x.ex.some(e=>e.fin)?` <span class="muted small">+ finisher${x.fin&&x.fin.wo?' '+esc(x.fin.wo):''}</span>`:''}</span>
+  <span class="when">${x.prog?`Programmata per ${ggOf(x.d).toLowerCase()} ${fmtD(x.d)}`:`Ultima volta ${ggOf(x.d).toLowerCase()} ${fmtD(x.d)}`}</span></button>${extra?`<div class="tplact">${extra}</div>`:''}</div>`}
 function vNuova(){
-  const seen=new Map();
-  const lim=S.hist.length?isoMinus(S.hist[0].d,183):'';
-  for(const s of S.hist){if(s.d<lim)break;if(s.wo&&!seen.has(s.wo))seen.set(s.wo,s)}
-  const tpls=[...seen.values()].sort((a,b)=>a.wo.localeCompare(b.wo,'it'));
-  return `<div class="top" style="align-items:center;flex-wrap:wrap">${''}<svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" style="flex:none"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B3B46"/><stop offset="1" stop-color="#141B20"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lgbg)"/><g fill="none" stroke-width="5.4" stroke-linecap="round"><path d="M36.2 16.0A19.5 19.5 0 0 1 51.0 30.8" stroke="#92D050"/><path d="M51.0 39.2A19.5 19.5 0 0 1 36.2 54.0" stroke="#FFC000"/><path d="M27.8 54.0A19.5 19.5 0 0 1 13.0 39.2" stroke="#E3342F"/><path d="M13.0 30.8A19.5 19.5 0 0 1 27.8 16.0" stroke="#0070C0"/></g><rect x="27" y="5.5" width="10" height="4" rx="1.6" fill="#E6EBE8"/><rect x="30.4" y="8.5" width="3.2" height="5" fill="#E6EBE8"/><g fill="#fff"><rect x="22" y="33.4" width="20" height="3.2" rx="1.6"/><rect x="21.4" y="27.7" width="4.4" height="14.6" rx="1.6"/><rect x="38.2" y="27.7" width="4.4" height="14.6" rx="1.6"/><rect x="18.4" y="30.2" width="3.4" height="9.6" rx="1.3"/><rect x="42.2" y="30.2" width="3.4" height="9.6" rx="1.3"/></g></svg><h1>Nuova seduta</h1>${profChip()}</div>${banner()}${vBenvenuto()}
-  <label class="f" style="max-width:220px">Data<input type="date" value="${S.newDate}" data-f="new:date"></label>
-  ${tpls.length?`<p class="muted small" style="margin:16px 0 0">Riparti da un allenamento: copio gli esercizi dell’ultima volta e propongo il piano successivo.</p>
-  <div class="tpl">${tpls.map(s=>`<button data-a="fromTpl" data-id="${esc(s.id)}"><span class="wo">${esc(s.wo)}</span>
-    <span class="what">${esc(s.ex.filter(e=>!e.fin).map(e=>e.n).join(', '))}${s.ex.some(e=>e.fin)?` <span class="muted small">+ finisher${s.fin&&s.fin.wo?' '+esc(s.fin.wo):''}</span>`:''}</span><span class="when">Ultima volta ${ggOf(s.d).toLowerCase()} ${fmtD(s.d)}</span></button>`).join('')}</div>`:''}
-  <div class="row" style="margin-top:${tpls.length?0:16}px"><button class="btn" data-a="emptyDraft">Seduta vuota</button>${S.hist.length?'<button class="btn ghost" data-a="woPanel">Rinomina WO</button>':''}</div>`;
+  const last=woLast(),progWo=new Set(S.progs.map(x=>x.wo));
+  const corso=[...last.values()].filter(x=>woState(x.wo,x)==='corso').sort((a,b)=>a.wo.localeCompare(b.wo,'it',{numeric:true}));
+  const arch=[...last.values()].filter(x=>woState(x.wo,x)==='arch'&&!progWo.has(x.wo)).sort((a,b)=>a.wo.localeCompare(b.wo,'it',{numeric:true}));
+  const sez=S.dSez||'corso',d=S.draft;
+  const seg=`<div class="seg dseg" role="group" aria-label="Sezioni del diario" style="margin:6px 0 14px">${[['corso','In corso',corso.length],['prog','Programmate',S.progs.length],['arch','Archiviate',arch.length]].map(([k,l,n])=>`<button data-a="dSez" data-v="${k}" aria-pressed="${sez===k}">${l} <span class="small" style="opacity:.7">${n}</span></button>`).join('')}</div>`;
+  const aperta=d&&d.ex.length?`<section class="card" style="border-width:2px;border-color:var(--ink)"><div class="row"><div><div class="muted small">Seduta aperta</div><b style="font-size:20px">${esc(d.wo||'–')}${d.nome?` «${esc(d.nome)}»`:''}</b><div class="muted small">${ggOf(d.d)} ${fmtD(d.d)}, ${d.ex.length} esercizi${d.prog?', programmata':''}</div></div><span class="spacer"></span><button class="btn primary" data-a="dOpen">Riprendi</button></div></section>`:'';
+  let body='';
+  if(sez==='prog')body=`<p class="muted small" style="margin:0 0 8px">Sedute preparate e non ancora eseguite: si aprono così come le hai lasciate. Sono le sole che si possono eliminare.</p>
+    ${S.progs.length?`<div class="tpl">${S.progs.map(x=>woCard(x,`<button class="btn ghost danger" data-a="progDelAsk" data-id="${esc(x.id)}">Elimina</button>`,'progOpen')).join('')}</div>`:'<p class="empty">Nessuna seduta programmata.</p>'}
+    <button class="btn primary" data-a="newSess" data-v="prog">+ Nuova seduta programmata</button>`;
+  else if(sez==='arch')body=`<p class="muted small" style="margin:0 0 8px">WO eseguiti che ora non usi. Non si cancellano, per non perdere lo storico: puoi rimetterli in corso, programmarli di nuovo, oppure modificarne una copia, che viene salvata con un WO nuovo.</p>
+    ${arch.length?`<div class="tpl">${arch.map(x=>woCard(x,`<button class="btn" data-a="woCorso" data-wo="${esc(x.wo)}">Rimetti in corso</button><button class="btn" data-a="woToProg" data-id="${esc(x.id)}">Programma di nuovo</button><button class="btn ghost" data-a="woEditArch" data-id="${esc(x.id)}">Modifica una copia</button>`,'archInfo')).join('')}</div>`:'<p class="empty">Nessun WO archiviato.</p>'}`;
+  else body=`<label class="f" style="max-width:220px">Data della seduta<input type="date" value="${S.newDate}" data-f="new:date"></label>
+    ${corso.length?`<p class="muted small" style="margin:12px 0 0">Tocca un WO per allenarti: copio gli esercizi dell’ultima volta e propongo il piano successivo.</p>
+    <div class="tpl">${corso.map(x=>woCard(x,`<button class="btn ghost" data-a="woArch" data-wo="${esc(x.wo)}">Archivia</button>`)).join('')}</div>`:'<p class="empty">Nessun WO in corso: crea una seduta nuova, oppure rimettine in corso uno dagli archiviati.</p>'}
+    <div class="row" style="margin-top:6px"><button class="btn primary" data-a="newSess" data-v="corso">+ Nuova seduta</button>${S.hist.length?'<button class="btn ghost" data-a="woPanel">Rinomina WO</button>':''}</div>`;
+  return `<div class="top" style="align-items:center;flex-wrap:wrap"><svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" style="flex:none"><defs><linearGradient id="lgbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B3B46"/><stop offset="1" stop-color="#141B20"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lgbg)"/><g fill="none" stroke-width="5.4" stroke-linecap="round"><path d="M36.2 16.0A19.5 19.5 0 0 1 51.0 30.8" stroke="#92D050"/><path d="M51.0 39.2A19.5 19.5 0 0 1 36.2 54.0" stroke="#FFC000"/><path d="M27.8 54.0A19.5 19.5 0 0 1 13.0 39.2" stroke="#E3342F"/><path d="M13.0 30.8A19.5 19.5 0 0 1 27.8 16.0" stroke="#0070C0"/></g><rect x="27" y="5.5" width="10" height="4" rx="1.6" fill="#E6EBE8"/><rect x="30.4" y="8.5" width="3.2" height="5" fill="#E6EBE8"/><g fill="#fff"><rect x="22" y="33.4" width="20" height="3.2" rx="1.6"/><rect x="21.4" y="27.7" width="4.4" height="14.6" rx="1.6"/><rect x="38.2" y="27.7" width="4.4" height="14.6" rx="1.6"/><rect x="18.4" y="30.2" width="3.4" height="9.6" rx="1.3"/><rect x="42.2" y="30.2" width="3.4" height="9.6" rx="1.3"/></g></svg><h1>Diario</h1>${profChip()}</div>${banner()}${vBenvenuto()}${aperta}${seg}${body}`;
 }
+async function progFrom(src,wo,nome,dt){
+  const d={id:`${dt}_${Date.now().toString(36)}`,d:dt,wo,nome,ex:src.ex.filter(e=>e.n&&!e.fin).map(e=>exFromHistory(e.n,dt,null)),note:'',prog:true};
+  if(src.ex.some(e=>e.fin))loadFin(d,src);d.ex.forEach(e=>delete e._why);
+  const x=sessionObj(d);x.prog=true;await writeSession(x);if(S.mode==='db'){S.sed.set(x.id,x);merge()}return x;
+}
+function woUsed(){const u=new Set();[...S.hist,...S.progs].forEach(x=>{if(x.wo)u.add(String(x.wo).toUpperCase())});return u}
+function woFree(){const u=woUsed();for(let i=0;i<26;i++){const c=String.fromCharCode(65+i);if(!u.has(c))return c}for(let i=1;i<100;i++){if(!u.has('W'+i))return 'W'+i}return ''}
+function vProgAsk(){const d=S.draft,done=d.ex.some(e=>(e.s||[]).some(x=>x[1])),f=S.progNew||{nome:'',wo:woFree(),d:d.d};
+  return `<h3>Salva per un prossimo allenamento</h3>
+    <p class="muted">La ritrovi in Diario → Nuova seduta, tra le «Sedute programmate», pronta così come l’hai preparata. Non conta nello storico finché non segni la prima serie.</p>
+    <div class="card" style="margin:10px 0"><b>Aggiorna questa seduta</b><p class="muted small" style="margin:4px 0 8px">WO ${esc(d.wo||'–')}${d.nome?`, «${esc(d.nome)}»`:''}, ${fmtD(d.d)}.${done?' Ha già serie segnate: la salvo nello storico come seduta fatta.':''}</p>
+      <button class="btn primary" data-a="progUpd">Aggiorna questa seduta</button></div>
+    <div class="card" style="margin:10px 0"><b>Oppure salvala come nuova seduta</b>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:8px">
+        <label class="f">Nome<input type="text" id="pnNome" value="${esc(f.nome)}" maxlength="50" placeholder="es. Spinta pesante"></label>
+        <label class="f">WO (deve essere nuovo)<input type="text" id="pnWo" value="${esc(f.wo)}" maxlength="6" autocapitalize="characters" style="text-transform:uppercase"></label>
+        <label class="f">Data<input type="date" id="pnData" value="${esc(f.d)}"></label></div>
+      <p class="down small" id="pnErr" style="margin:6px 0 0"></p>
+      <p class="muted small" style="margin:4px 0 8px">WO già usati: ${[...woUsed()].sort().join(', ')||'nessuno'}.</p>
+      <button class="btn" data-a="progNew">Salva come nuova seduta</button></div>
+    <div class="row"><button class="btn" data-a="closeSheet">Annulla</button></div>`}
+async function progNewDo(){const d=S.draft;if(!d)return;const nome=($('#pnNome')||{}).value.trim(),wo=String(($('#pnWo')||{}).value||'').trim().toUpperCase(),dt=($('#pnData')||{}).value||d.d,err=$('#pnErr');
+    S.progNew={nome,wo,d:dt};
+    if(!wo){if(err){err.textContent='Indica un WO.';err.scrollIntoView({block:'center'})}return}
+    if(woUsed().has(wo)){if(err){err.textContent=`Il WO ${wo} esiste già: scegline un altro (libero, ad esempio ${woFree()}).`;err.scrollIntoView({block:'center'})}return}
+    const ex=clone(d.ex).map(e=>{e.s=(e.s||[]).map((x,j)=>[planned(e,j)??x[0]??'','']);delete e._why;return e});
+    const x=sessionObj({...d,id:`${dt}_${Date.now().toString(36)}`,d:dt,wo,nome,ex,prog:true,tempi:null,_d0:null,set:null});delete x.tempi;x.prog=true;
+    await writeSession(x);if(S.mode==='db'){S.sed.set(x.id,x);merge()}
+    if(!S.progs.some(p=>p.id===x.id))throw new Error('la seduta non risulta salvata');
+    closeSheet();render();sheet(`<h3>Nuova seduta programmata</h3><p class="muted">WO <b>${esc(wo)}</b>${nome?` «${esc(nome)}»`:''} per ${ggOf(dt).toLowerCase()} ${fmtD(dt)}. La trovi in Nuova seduta, tra le «Sedute programmate». La seduta aperta resta com’era.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="progOpen" data-id="${esc(x.id)}">Apri la nuova seduta</button><button class="btn" data-a="closeSheet">Resta su questa</button></div>`)}
 function woStats(){
   const st=new Map(),wk=new Map();
   for(const s of S.hist){if(!s.wo)continue;const o=st.get(s.wo)||{wo:s.wo,n:0,first:s.d,last:s.d,ex:new Map(),pos:[]};o.n++;if(s.d<o.first)o.first=s.d;if(s.d>o.last)o.last=s.d;
@@ -1335,6 +1392,17 @@ function vGuida(){
     <li><b>Da un protocollo</b> (Esercizi → Protocolli → «Usa in seduta»): scegli gli esercizi (uno, o più se il protocollo è di gruppo: E2MOM, superset, EDT, circuito, AMRAP…) e li trovi nella seduta già con quel protocollo; il pulsante del timer sulla scheda parte già impostato.</li>
     <li><b>Solo il timer</b> (scheda Timer): senza toccare il diario.</li></ul>
     <p><b>Registrare o no.</b> Una seduta composta resta nel diario finché non la elimini (Diario → «Elimina seduta»). I timer usati senza seduta, alla fine, chiedono «Inserisci nel diario» o «Non inserire»: così puoi provare un protocollo o fare un allenamento extra senza registrarlo.</p>`)}
+  ${sec('Il Diario: In corso, Programmate, Archiviate',`<ul>
+    <li><b>In corso</b>: i WO che stai usando. Toccane uno per allenarti: copio gli esercizi dell’ultima volta e propongo il piano successivo. «Archivia» lo sposta negli archiviati. «+ Nuova seduta» ne apre una vuota.</li>
+    <li><b>Programmate</b>: sedute preparate e mai eseguite, che si aprono così come le hai lasciate. «+ Nuova seduta programmata» ne crea una con nome, WO nuovo e data. Sono le uniche sedute che si possono eliminare.</li>
+    <li><b>Usare una programmata</b>: aprila da Programmate, controlla o cambia quello che vuoi, poi «Avvia la seduta» (oppure segna le serie a mano). Alla <b>prima serie registrata</b> diventa una seduta dello storico con la data di oggi e il suo WO passa in «In corso», anche se era archiviato. Se la apri o la avvii e ti fermi prima della prima serie, resta tra le programmate.</li>
+    <li><b>Archiviate</b>: WO eseguiti che ora non usi. Non si cancellano, per non perdere lo storico. «Rimetti in corso» li riporta in uso; «Programma di nuovo» ne prepara una seduta con il piano successivo; «Modifica una copia» crea una copia con un WO nuovo da cambiare liberamente.</li>
+    <li>All’inizio sono in corso i WO usati negli ultimi sei mesi e archiviati gli altri. Una seduta eseguita con un WO archiviato lo rimette in corso.</li>
+    <li>Con una seduta aperta, «← Sedute» torna all’elenco e «Riprendi» la riapre. Una seduta eseguita, anche solo in parte, non si elimina: si può modificare.</li></ul>`)}
+  ${sec('Preparare una seduta per un’altra volta',`<p>Puoi preparare una seduta senza farla subito: componi gli esercizi, i carichi, i protocolli, il finisher, poi tocca <b>«Salva per un prossimo allenamento»</b> in fondo alla seduta.</p>
+    <ul><li><b>Aggiorna questa seduta</b>: la salva così com’è e la chiude.</li>
+    <li><b>Salva come nuova seduta</b>: con un nome, un WO e una data. Il WO proposto è la prima lettera libera e si può cambiare, ma non può essere uno già usato. La seduta aperta resta com’era.</li></ul>
+    <p>Le sedute preparate compaiono in <b>Diario → Programmate</b> e si aprono così come le hai lasciate. Per usarne una: aprila, controllala, «Avvia la seduta». Finché non c’è la prima serie registrata non contano nello storico, nell’andamento né nella progressione; alla prima serie diventano sedute normali, con la data del giorno in cui le fai, e il WO passa in «In corso». Da lì in poi la ritrovi in «In corso»: toccandola riparte con il piano successivo.</p>`)}
   ${sec('Avviare tutta la seduta dal diario',`<p>Nella seduta tocca <b>«Avvia la seduta»</b>, il pulsante in alto. Si apre il piano:</p>
     <ul><li><b>Blocchi</b>, nell’ordine: ogni esercizio o gruppo (superset, E2MOM, EDT…) con il suo timer, già impostato dal protocollo, e il finisher alla fine. «Modifica» apre il timer del blocco: tempi, giri, preparazione, colori, avvisi. «Salva e torna al piano» vale solo per questa seduta.</li>
     <li><b>Tra un blocco e l’altro</b>: la pausa in secondi e se il blocco successivo parte da solo.</li>
@@ -1755,7 +1823,7 @@ function vSess(s){
     <p class="muted">${sessSumTxt(s,!!s.updated)}</p>
     ${s.tempi?`<p class="muted">Tempi: ${tempiTxt(s.tempi)}</p>`:''}
     ${s.note?`<p><b>Note:</b> ${esc(s.note)}</p>`:''}
-    <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span><button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button></div>
+    <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span>${s.ex.some(e=>(e.s||[]).some(x=>x[1]))?'':`<button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button>`}</div>
   </div>`:''}</article>`;
 }
 function vExHistory(name,noCharts){
@@ -2608,9 +2676,33 @@ function chipSheet(i,j){
 const A={
   tab(el){S.tab=el.dataset.tab;render();window.scrollTo(0,0)},
   closeSheet(el,ev){if(ev&&el.classList.contains('sheet-bg')&&ev.target!==el)return;closeSheet()},
-  emptyDraft(){newDraft(S.newDate,'',[]);S.saveMsg='';lastSaved='';render()},
+  emptyDraft(){newDraft(S.newDate,'',[]);S.dList=false;S.saveMsg='';lastSaved='';render()},
+  dSez(el){S.dSez=el.dataset.v;render()},
+  dList(){saveNow();S.dList=true;render();window.scrollTo(0,0)},
+  dOpen(){S.dList=false;render();window.scrollTo(0,0)},
+  archInfo(){sheet('<h3>WO archiviato</h3><p class="muted">Per allenarti con questo WO rimettilo in corso o mettilo in programmate; per cambiarlo usa «Modifica una copia».</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>')},
+  woArch(el){S.cfg.woState={...(S.cfg.woState||{}),[el.dataset.wo]:'arch'};saveCfg();render()},
+  woCorso(el){S.cfg.woState={...(S.cfg.woState||{}),[el.dataset.wo]:'corso'};saveCfg();S.dSez='corso';render()},
+  async woToProg(el){const src=S.hist.find(x=>x.id===el.dataset.id);if(!src)return;const x=await progFrom(src,src.wo,src.nome||'',S.newDate);S.dSez='prog';render();
+    sheet(`<h3>Messa in programmate</h3><p class="muted">WO ${esc(x.wo)} con il piano successivo. Quando la esegui torna in corso.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="progOpen" data-id="${esc(x.id)}">Aprila</button><button class="btn" data-a="closeSheet">Ok</button></div>`)},
+  async woEditArch(el){const src=S.hist.find(x=>x.id===el.dataset.id);if(!src)return;const wo=woFree();const x=await progFrom(src,wo,`${src.nome||src.wo} (copia)`,S.newDate);
+    S.dSez='prog';A.progOpen({dataset:{id:x.id}});sheet(`<h3>Copia da modificare</h3><p class="muted">Ho creato una copia di ${esc(src.wo)} con il WO nuovo <b>${esc(wo)}</b> (puoi cambiarlo nel campo WO, purché resti nuovo). L’originale resta negli archiviati con il suo storico.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
+  newSess(el){const v=el.dataset.v;if(v==='corso'){A.emptyDraft();return}
+    sheet(`<h3>Nuova seduta programmata</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:8px">
+      <label class="f">Nome<input type="text" id="nsNome" maxlength="50" placeholder="es. Spinta pesante"></label>
+      <label class="f">WO (deve essere nuovo)<input type="text" id="nsWo" value="${esc(woFree())}" maxlength="6" autocapitalize="characters" style="text-transform:uppercase"></label>
+      <label class="f">Data<input type="date" id="nsData" value="${esc(S.newDate)}"></label></div><p class="down small" id="nsErr" style="margin:6px 0 0"></p>
+      <p class="muted small" style="margin:4px 0 8px">WO già usati: ${[...woUsed()].sort().join(', ')||'nessuno'}.</p>
+      <div class="row"><button class="btn primary" data-a="newProgGo">Crea e apri</button><button class="btn" data-a="closeSheet">Annulla</button></div>`)},
+  async newProgGo(){const nome=($('#nsNome')||{}).value.trim(),wo=String(($('#nsWo')||{}).value||'').trim().toUpperCase(),dt=($('#nsData')||{}).value||S.newDate,err=$('#nsErr');
+    if(!wo){err.textContent='Indica un WO.';err.scrollIntoView({block:'center'});return}
+    if(woUsed().has(wo)){err.textContent=`Il WO ${wo} esiste già: scegline un altro (libero, ad esempio ${woFree()}).`;err.scrollIntoView({block:'center'});return}
+    if(S.draft&&S.draft.ex.length)await saveNow();closeSheet();
+    S.draft={id:`${dt}_${Date.now().toString(36)}`,d:dt,wo,nome,woN:(S.cfg.woRen||[]).length,note:'',ex:[],isNew:true,prog:true};persistDraft();lastSaved='';S.dList=false;S.saveMsg='';render();window.scrollTo(0,0)},
+  progDelAsk(el){const x=S.progs.find(p=>p.id===el.dataset.id);if(!x)return;confirmSheet(`Eliminare la seduta programmata ${esc(x.wo||'')}${x.nome?` «${esc(x.nome)}»`:''}?`,'Non è mai stata eseguita, quindi non tocca lo storico.','Elimina','progDel',`data-id="${esc(x.id)}"`)},
+  async progDel(el){closeSheet();const id=el.dataset.id;if(S.draft&&S.draft.id===id){clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null)}await delSession(id);render()},
   fromTpl(el){
-    const src=S.hist.find(s=>s.id===el.dataset.id);if(!src)return;
+    const src=S.hist.find(s=>s.id===el.dataset.id);if(!src)return;if(S.draft&&S.draft.ex.length)saveNow();S.dList=false;
     const iso=S.newDate;newDraft(iso,src.wo,src.ex.filter(e=>e.n&&!e.fin).map(e=>exFromHistory(e.n,iso,null)));
     S.saveMsg='';lastSaved='';render();
   },
@@ -2632,8 +2724,16 @@ const A={
     if(k===''){e.s[j]=[planned(e,j)??'','']}else e.s[j]=[rep,k];
     closeSheet();refreshCard(i);scheduleSave();
   },
-  closeDraft(){saveNow();S.draft=null;store('diario-bozza',null);S.saveMsg='';render()},
-  askDelDraft(){confirmSheet('Eliminare la seduta?','La seduta e i suoi esercizi vengono tolti dal diario.','Elimina','delDraft')},
+  progAsk(){if(!S.draft||!S.draft.ex.length){sheet('<h3>Niente da salvare</h3><p class="muted">Aggiungi almeno un esercizio.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>');return}S.progNew=null;sheet(vProgAsk())},
+  async progUpd(){const d=S.draft;if(!d)return;const done=d.ex.some(e=>(e.s||[]).some(x=>x[1]));if(!done)d.prog=true;closeSheet();await saveNow();S.draft=null;store('diario-bozza',null);S.saveMsg='';render();
+    sheet(`<h3>${done?'Seduta salvata':'Seduta programmata salvata'}</h3><p class="muted">${done?'È nello storico.':'La trovi in Nuova seduta, tra le «Sedute programmate».'}</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
+  async progNew(){try{await progNewDo()}catch(e){const err=$('#pnErr');if(err){err.textContent='Non sono riuscito a salvarla: '+(e&&e.message||'errore')+'. Riprova o esporta un backup.';err.scrollIntoView({block:'center'})}}},
+
+  progList(){const L=S.progs.filter(p=>!S.draft||p.id!==S.draft.id);sheet(`<h3>Sedute programmate</h3><div class="tpl" style="margin-top:8px">${L.map(x=>`<button data-a="progOpen" data-id="${esc(x.id)}"><span class="wo">${esc(x.wo||'–')}</span><span class="what">${x.nome?`<b>${esc(x.nome)}</b>: `:''}${esc(x.ex.filter(e=>!e.fin).map(e=>e.n).join(', '))}</span><span class="when">Programmata per ${ggOf(x.d).toLowerCase()} ${fmtD(x.d)}</span></button>`).join('')}</div><p class="muted small">Aprendone una, la seduta aperta resta salvata.</p><div class="row" style="margin-top:10px"><button class="btn" data-a="closeSheet">Chiudi</button></div>`)},
+  progOpen(el){closeSheet();S.dList=false;const x=S.progs.find(p=>p.id===el.dataset.id);if(!x)return;if(S.draft&&S.draft.ex.length)saveNow();
+    S.draft={...clone(x),isNew:false,_d0:x.d,prog:true};S.draft.ex.forEach(e=>{e.s=e.s||[];e.k=e.k||0});persistDraft();lastSaved=JSON.stringify({...sessionObj(S.draft),updated:0});S.saveMsg='';render();window.scrollTo(0,0)},
+  closeDraft(){saveNow();S.dList=false;S.draft=null;store('diario-bozza',null);S.saveMsg='';render()},
+  askDelDraft(){if(S.draft&&isExec(S.draft)){sheet('<h3>Non si può eliminare</h3><p class="muted">Questa seduta ha già serie eseguite: per tenere integro lo storico non si elimina. Puoi modificarla.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>');render();return}confirmSheet('Eliminare la seduta?','La seduta e i suoi esercizi vengono tolti dal diario.','Elimina','delDraft')},
   async delDraft(){const id=S.draft.id;closeSheet();clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null);await delSession(id);render()},
   toggleSess(el){const id=el.dataset.id;S.open.has(id)?S.open.delete(id):S.open.add(id);render()},
   moreWeeks(){S.storWeeks+=8;render()},
@@ -2643,7 +2743,7 @@ const A={
     S.draft={...clone(s),isNew:false,_d0:s.d};S.draft.ex.forEach(e=>{e.s=e.s||[];e.k=e.k||0});persistDraft();
     lastSaved=JSON.stringify({...sessionObj(S.draft),updated:0});S.saveMsg='';S.tab='diario';render();window.scrollTo(0,0);
   },
-  askDelSess(el){confirmSheet('Eliminare la seduta?','La seduta viene tolta dallo storico.','Elimina','delSess',`data-id="${esc(el.dataset.id)}"`)},
+  askDelSess(el){const x=S.hist.find(y=>y.id===el.dataset.id);if(x&&isExec(x))return;confirmSheet('Eliminare la seduta?','La seduta viene tolta dallo storico.','Elimina','delSess',`data-id="${esc(el.dataset.id)}"`)},
   async delSess(el){closeSheet();await delSession(el.dataset.id);render()},
   async exportCsv(){
     const rows=[['SET','GG','WO','Data','Esercizio','Protocollo','Tempo','Kg','Zavorra Kg','%Intensità','Rep previste','Serie a +1',...Array.from({length:20},(_,i)=>'S'+(i+1)),'Esiti','TotRep','Tonnellaggio','Volume','Serie fallite','Stato','Fatica','Note']];
@@ -2745,9 +2845,9 @@ const A={
     document.querySelectorAll('.woNew').forEach(inp=>{const o=inp.dataset.wo,n=String(inp.value||'').trim().toUpperCase();if(!n){err='Ogni WO deve avere un codice.';return}if(used.has(n))err=`Il codice ${n} è usato due volte.`;used.add(n);if(n!==o)map[o]=n});
     if(err){const p=document.querySelector('.sheet p.muted');if(p)p.innerHTML=`<b class="down">${esc(err)}</b>`;return}
     if(!Object.keys(map).length){closeSheet();return}
-    S.cfg.woRen=[...(S.cfg.woRen||[]),map];saveCfg();if(S.draft&&S.draft.wo&&map[S.draft.wo]){S.draft.wo0=S.draft.wo0??S.draft.wo;S.draft.wo=map[S.draft.wo];S.draft.woN=S.cfg.woRen.length;scheduleSave()}
+    S.cfg.woRen=[...(S.cfg.woRen||[]),map];if(S.cfg.woState){const ns={};Object.entries(S.cfg.woState).forEach(([k,v])=>ns[map[k]??k]=v);S.cfg.woState=ns}saveCfg();if(S.draft&&S.draft.wo&&map[S.draft.wo]){S.draft.wo0=S.draft.wo0??S.draft.wo;S.draft.wo=map[S.draft.wo];S.draft.woN=S.cfg.woRen.length;scheduleSave()}
     merge();closeSheet();render();sheet(`<h3>WO rinominati</h3><p class="muted">${Object.entries(map).map(([a,b])=>`${esc(a)} → ${esc(b)}`).join(', ')}</p><div class="row" style="margin-top:14px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
-  woUndo(){const R=S.cfg.woRen||[];if(!R.length)return;const last=R[R.length-1],inv={};Object.entries(last).forEach(([a,b])=>inv[b]=a);S.cfg.woRen=[...R,inv];saveCfg();
+  woUndo(){const R=S.cfg.woRen||[];if(!R.length)return;const last=R[R.length-1],inv={};Object.entries(last).forEach(([a,b])=>inv[b]=a);S.cfg.woRen=[...R,inv];if(S.cfg.woState){const ns={};Object.entries(S.cfg.woState).forEach(([k,v])=>ns[inv[k]??k]=v);S.cfg.woState=ns}saveCfg();
     if(S.draft&&S.draft.wo&&inv[S.draft.wo]){S.draft.wo=inv[S.draft.wo];S.draft.woN=S.cfg.woRen.length;scheduleSave()}merge();closeSheet();render()},
   async teamCreate(){const nm=($('#tmName')||{}).value||'';if(!nm.trim()){const f=$('#tmName');if(f)f.focus();return}
     try{let code=genCode();for(let i=0;i<5;i++){const d=await S.db.doc('squadre/'+code).get();if(!d.exists)break;code=genCode()}
