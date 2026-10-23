@@ -435,7 +435,12 @@ const EXRULES=[['frontlever',/front ?lever/i],['row',/australian|austalian|body 
 const EXCOL={trazioni:'#0284C7',row:'#0284C7',facepull:'#0284C7',frontlever:'#0284C7',curl:'#0284C7',parallele:'#F97316',verticale:'#F97316',panca:'#F97316',press:'#F97316',pushup:'#F97316',triceps:'#F97316',
  squat:'#16A34A',calf:'#16A34A',stacco:'#9333EA',core:'#475569',corsa:'#DC2626',stretch:'#0D9488',generico:'#64748B'};
 const exKindCache=new Map();
-function exKind(n){n=String(n||'');if(!exKindCache.has(n)){const r=EXRULES.find(([,re])=>re.test(n));exKindCache.set(n,r?r[0]:'generico')}return exKindCache.get(n)}
+function exKind(n){n=String(n||'');const ov=S.cfg&&S.cfg.esercizi&&S.cfg.esercizi[n]&&S.cfg.esercizi[n].icon;if(ov&&EXI[ov])return ov;if(!exKindCache.has(n)){const r=EXRULES.find(([,re])=>re.test(n));exKindCache.set(n,r?r[0]:'generico')}return exKindCache.get(n)}
+const EXNOMI={trazioni:'Trazioni',row:'Rematore',facepull:'Face pull / bande',frontlever:'Front lever',curl:'Curl',parallele:'Parallele / dip',verticale:'Verticale',panca:'Panca',press:'Lento / press',pushup:'Piegamenti',triceps:'Tricipiti',squat:'Squat / gambe',calf:'Polpacci',stacco:'Stacco',core:'Core / addome',corsa:'Corsa / cardio',stretch:'Mobilità / stretching',generico:'Generico'};
+function exIconK(k,size=32){return `<span class="exi" style="background:${EXCOL[k]};width:${size}px;height:${size}px" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">${EXI[k]}</svg></span>`}
+function vIconPick(cur,act,auto){return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:6px">
+  <button class="btn ${!cur?'primary':''}" data-a="${act}" data-v="" style="flex-direction:column;min-height:84px;gap:4px;padding:6px">${exIconK(auto,36)}<span class="small">Automatica</span></button>
+  ${Object.keys(EXI).map(k=>`<button class="btn ${cur===k?'primary':''}" data-a="${act}" data-v="${k}" aria-pressed="${cur===k}" style="flex-direction:column;min-height:84px;gap:4px;padding:6px">${exIconK(k,36)}<span class="small" style="line-height:1.1">${EXNOMI[k]}</span></button>`).join('')}</div>`}
 function exIcon(n,size=32){const k=exKind(n);
   return `<span class="exi" style="background:${EXCOL[k]};width:${size}px;height:${size}px" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">${EXI[k]}</svg></span>`}
 
@@ -520,6 +525,7 @@ function merge(){
   m.forEach(woNorm);if(S.draft)woNorm(S.draft);if(S.mode==='db')setTimeout(teamPublishSoon,0);setTimeout(profPublishSoon,0);
   S.hist=[...m.values()].sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1));
   const names=new Set();S.hist.forEach(s=>s.ex.forEach(e=>e.n&&names.add(e.n)));
+  Object.entries((S.cfg&&S.cfg.esercizi)||{}).forEach(([n,c])=>{if(c&&c.creato&&!c.tolto)names.add(n)});
   S.names=[...names].sort((a,b)=>a.localeCompare(b,'it'));
   $('#names').innerHTML=S.names.map(n=>`<option value="${esc(n)}">`).join('');
 }
@@ -589,6 +595,96 @@ function setupMax(idx,r){
   const d=S.draft,c=S.tc.rec;
   idx.forEach(j=>{const e=d.ex[j];e.b=null;e.k=0;const done=e.s[0]&&e.s[0][1];if(!done){const last=lastOf(e.n,d.d,d.id);const lr=last?Math.max(0,...last.e.s.map(x=>Number(x[0])||0)):'';e.s=[[lr||'','']]}else e.s=[e.s[0]]});
   c.links=idx;c.items=idx.map(j=>({n:d.ex[j].n,sets:1,rep:''}));c.mode='sep';c.between=r;c.sec=r;c.rest='fix';c.tr=0;c.over={restEnd:true,restEndSec:r,maxMode:true};S.tmode='rec';scheduleSave();
+}
+function setupTimer(i){
+    const tp=timerPlan(i),ex=S.draft.ex,e=ex[i];
+    S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;S.tc.amrap.link=null;S.tc.rt.link=null;S.tc.from={p:e.p||'',ok:!!tp.pp};
+    if(tp.proto){const P=tp.proto,idx=tp.idx;S.tc.from={p:pName(P),ok:true};
+      if(P.tipo==='emom'){const c=S.tc.emom;c.k=idx.length;c.link=idx;c.giri=Math.max(1,num(P.giri)||10);c.restOn=num(P.restGiro)>0;c.restSec=num(P.restGiro)||60;
+        idx.forEach((j,n)=>{const sl=emSlot(P,n);c.ex[n]={n:ex[j].n,rep:ex[j].b??(num(sl.rep)||''),sec:Math.max(5,num(sl.sec)||60)}})}
+      else if(P.tipo==='amrap'){const c=S.tc.amrap;c.link=idx;c.min=Math.max(1,num(P.min)||10);c.ex=idx.map(j=>({n:ex[j].n,rep:ex[j].b??(num(P.rep)||10)}))}
+      else if(P.tipo==='rt'){const c=S.tc.rt;c.link=[i];c.n=ex[i].n;c.target=Math.max(1,num(P.target)||50);c.rep=P.rep||'';c.rest=num(P.rest)||0}
+      else if(P.tipo==='edt'){const c=S.tc.edt;c.link=idx;c.min=Math.max(1,num(P.min)||15);c.min2=c.min;c.restZ=num(P.restZ)??5;c.zones=idx.length>2?2:1;idx.forEach((j,n)=>{c[EK[n]]={n:ex[j].n,rep:ex[j].b??(num(P.rep)||5)}})}
+      else if(P.tipo==='circ'){const c=S.tc.circ;c.links=idx;c.giri=Math.max(1,num(P.giri)||3);c.restEx=num(P.restEx)??15;c.restGiro=num(P.restGiroC)??60;
+        c.items=idx.map((j,n)=>{const st=circSt(P,n);return {n:ex[j].n,tipo:st.work==='rep'?'rep':'time',val:st.work==='rep'?(ex[j].b??num(st.val)):num(st.val)}})}
+      else if(P.tipo==='st'||P.tipo==='ladder'){const c=S.tc.rec;if(P.tipo==='ladder')idx.forEach(j=>{const x=ex[j];if(!x.s.some(y=>y[1])){x.lad=ladList(P);x.b=null;x.k=0;x.s=[];setN(x,x.lad.length)}});
+        c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:''}));c.mode=idx.length>1?'super':'sep';c.rest=P.tipo==='ladder'&&P.restMode==='mult'?'mult':P.tipo==='ladder'&&P.restMode==='free'?'free':num(P.rest)>0?'fix':'free';c.sec=num(P.rest)||60;c.mult=num(P.mult)||2;c.tr=0;c.between=c.sec;scheduleSave()}
+      else if(P.tipo==='max'){setupMax(idx,num(P.rest)||60)}
+      else{const c=S.tc.rec;c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=idx.length>1?'super':'sep';
+        c.rest=P.restMode==='mult'?'mult':'fix';c.sec=Math.max(5,num(P.rest)||90);c.mult=num(P.mult)||2;c.tr=num(P.tr)||0;c.between=c.sec}
+      S.tmode=tp.mode;return tp}
+    if(tp.mode==='emom'){const c=S.tc.emom;c.k=tp.idx.length;c.link=tp.idx;c.giri=tp.pp.giri||Math.max(...tp.idx.map(j=>ex[j].s.length));
+      tp.idx.forEach((j,n)=>{const q=parseProto(ex[j].p);c.ex[n]={n:ex[j].n,rep:q.rep??ex[j].b??'',sec:q.sec}});
+      const rr=tp.idx.map(j=>String(ex[j].p||'').match(/(?:Rest|Riposo|Pausa)\s*(\d+)/i)).find(Boolean);if(rr){c.restOn=true;c.restSec=+rr[1]}}
+    else if(tp.mode==='edt'){const c=S.tc.edt;c.link=tp.idx;c.min=tp.pp.min;c.zones=tp.idx.length>2?2:1;tp.idx.forEach((j,n)=>{const k=EK[n];c[k]={n:ex[j].n,rep:ex[j].b??c[k].rep}});
+      if(c.zones===2){const q=parseProto(ex[tp.idx[2]].p);if(q&&q.min)c.min2=q.min}}
+    else{const c=S.tc.rec;c.links=tp.idx;c.items=tp.idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=tp.idx.length>1?'super':'sep';if(tp.pp){c.rest='fix';c.sec=tp.pp.sec}}
+    S.tmode=tp.mode;return tp;
+}
+function planCfgSum(m,c){
+  const lead=num(c.lead)>0?`, preparazione ${c.lead}″`:'';
+  if(m==='emom'){const k=c.k||1;return `${emomName(k)} ${c.giri} giri: ${c.ex.slice(0,k).map(x=>`${x.sec}″${x.rep?` x ${x.rep}`:''}`).join(' / ')}${c.restOn?`, riposo ${c.restSec}″ a fine giro`:''}${lead}`}
+  if(m==='edt')return `EDT ${c.zones===2?`2 PR Zone: ${c.min}′ + ${c.min2}′, pausa ${c.restZ}′`:`${c.min}′`}${lead}`;
+  if(m==='circ')return `Circuito ${c.giri} giri, pausa ${c.restEx}″, riposo ${c.restGiro}″${lead}`;
+  if(m==='amrap')return `AMRAP ${c.min}′${lead}`;
+  if(m==='rt')return `RT ${c.target} ripetizioni, ${num(c.rest)>0?`recupero ${c.rest}″`:'recupero libero'}${lead}`;
+  const n=(c.items||[]).length,mx=c.over&&c.over.maxMode;
+  return `${mx?'Massime ripetizioni':n>1&&c.mode==='super'?grpName(n):'Set&Pause'}${mx?`, riposo ${c.over.restEndSec}″`:`, ${(c.items||[]).map(x=>x.sets).join('+')} serie, recupero ${c.rest==='fix'?`${c.sec}″`:c.rest==='mult'?`×${c.mult}`:'libero'}`}${lead}`;
+}
+function planBuild(){
+  const d=S.draft;if(!d)return null;const used=new Set(),blocks=[];
+  d.ex.forEach((e,i)=>{if(e.fin||used.has(i)||!(e.s||[]).length)return;S.tc.rec.over=null;const tp=setupTimer(i);const idx=tp.idx.filter(j=>!d.ex[j].fin);idx.forEach(j=>used.add(j));
+    blocks.push({kind:'ex',idx,mode:tp.mode,label:tp.label,cfg:clone(S.tc[tp.mode]),from:clone(S.tc.from||null)})});
+  if(d.ex.some(e=>e.fin)&&finSetup())blocks.push({kind:'fin',idx:finIdx(),mode:S.tmode,label:`Finisher${d.fin&&d.fin.wo?' '+d.fin.wo:''}`,cfg:clone(S.tc[S.tmode]),from:clone(S.tc.from||null)});
+  S.finNext=false;
+  return {blocks,cur:-1,run:false,pausa:(S.plan&&S.plan.pausa)??load('diario-pausa')??120,auto:(load('diario-pausaAuto')??true)};
+}
+function planApply(b){S.tmode=b.mode;S.tc[b.mode]=clone(b.cfg);S.tc.from=b.from?clone(b.from):null;S.finNext=b.kind==='fin'}
+function planStartCur(){const P=S.plan;if(!P)return;const b=P.blocks[P.cur];if(!b)return;P.wait=null;planApply(b);T=null;SES.mode=b.mode;startTrain();render()}
+function planNext(){
+  const P=S.plan,i=P.cur+1;
+  if(i<P.blocks.length){P.cur=i;planApply(P.blocks[i]);SES.mode=S.tmode;
+    const ps=Math.max(0,num(P.pausa)||0);if(P.auto&&ps===0){planStartCur();return}
+    SES.phase='between';P.wait=P.auto?Date.now()+ps*1000:null;P.lastS=null;sesSave();render();return}
+  P.run=false;P.finito=true;
+  if(SES.cfg.coolOn){if(SES.cfg.coolAuto){startCool(true);return}SES.phase='between';sesSave();render();return}
+  endSession();
+}
+function vPlanList(P){
+  return P.blocks.map((b,i)=>`<div class="trow"><div><b>${i+1}. ${esc(b.label)}</b>${b.kind==='fin'?' <span class="muted small">(alla fine)</span>':''}
+    <div>${b.idx.map(j=>S.draft.ex[j]?`${exIcon(S.draft.ex[j].n,20)} ${esc(S.draft.ex[j].n)}`:'').join(', ')}</div><div class="muted small">${esc(planCfgSum(b.mode,b.cfg))}</div></div>
+    <div class="acts">${P.run?(i===P.cur?'<b class="small">in corso</b>':i<P.cur?'<span class="muted small">fatto</span>':''):`<button class="btn" data-a="planEdit" data-i="${i}">Modifica</button>`}</div></div>`).join('');
+}
+function vPlan(){
+  const P=S.plan,d=S.draft;
+  if(!P.blocks.length)return `<div class="top"><h1>Avvia la seduta</h1></div><section class="card"><p>Nella seduta non ci sono esercizi con serie da fare.</p><button class="btn" data-a="planCancel">Torna al diario</button></section>`;
+  return `<div class="top"><h1>Avvia la seduta${d&&d.wo?` ${esc(d.wo)}`:''}</h1></div>
+  <p class="lead">Ecco come si svolge la seduta, nell’ordine. Puoi cambiare ogni timer (tempi, colori, avvisi), le fasi e la pausa tra un blocco e l’altro, oppure confermare tutto. Poi «Avvia la seduta».</p>
+  <section class="card"><h3>Blocchi</h3>${vPlanList(P)}</section>
+  <section class="card"><h3 style="margin-bottom:8px">Tra un blocco e l’altro</h3>
+    <div class="row" style="align-items:flex-end"><label class="f" style="width:180px">Pausa (secondi)<input type="number" inputmode="numeric" min="0" value="${esc(P.pausa)}" data-f="pn:pausa"></label>
+    <label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${P.auto?'checked':''} data-f="pn:auto" style="width:22px;height:22px"> Il blocco successivo parte da solo alla fine della pausa</label></div>
+    <p class="muted small" style="margin:6px 0 0">Durante la pausa vedi il blocco successivo e puoi farlo partire subito. Il riposo alla fine di ogni timer, se impostato, viene prima della pausa.</p></section>
+  <section class="card">${vSesCfg()}</section>
+  <div class="row" style="margin-top:6px"><button class="btn primary big" data-a="planGo">Avvia la seduta</button><button class="btn" data-a="planCancel">Annulla</button></div>`;
+}
+function vPlanBetween(){
+  const P=S.plan,b=P.blocks[P.cur],n=P.blocks.length;
+  const exs=b.idx.map(j=>S.draft&&S.draft.ex[j]?S.draft.ex[j].n:'').filter(Boolean);
+  const r=P.wait?Math.max(0,P.wait-Date.now()):null;
+  return `<div class="run full" id="runPanel" style="background:var(--surface);color:var(--ink);--pbg:var(--ink);--pfg:var(--surface)">${sesTop('Seduta')}
+    <div class="r-main"><p class="giro" aria-label="Blocco ${P.cur+1} di ${n}">${P.cur+1}/${n}</p><p class="ph">${b.kind==='fin'?'Ora il finisher':'Prossimo blocco'}</p>
+      <p class="ex-now">${esc(exs.join(' + ')||b.label)}</p>
+      <div class="clock" id="planCd" role="timer">${r!=null?mmss(r):'–'}</div>
+      <p class="sub">${esc(planCfgSum(b.mode,b.cfg))}${r==null?'. Parti quando sei pronto':''}</p></div>
+    <div class="r-side"><div class="ctl"><button class="btn primary big" data-a="planNow">${r!=null?'Avvia ora':'Avvia'}</button></div>
+      <div class="ctl ctl2"><button class="btn" data-a="planSkip">Salta questo blocco</button><button class="btn" data-a="toSession">Torna alla seduta</button><button class="btn" data-a="sesAskEnd">Termina seduta</button></div></div></div>`;
+}
+function vPlanEdit(){
+  const P=S.plan,b=P.blocks[S.planEdit];S.noSesCfg=true;
+  let h=cfgView(S.tmode);S.noSesCfg=false;
+  h=h.replace('<button class="btn primary big" data-a="tStart">Avvia</button>','<button class="btn primary big" data-a="planSaveEdit">Salva e torna al piano</button> <button class="btn" data-a="planBackEdit">Annulla</button>');
+  return `<div class="top"><h1>Blocco ${S.planEdit+1}: ${esc(b.label)}</h1></div><p class="muted" style="margin:0 0 10px">Cambia tempi, colori e avvisi di questo timer: valgono solo per questa seduta.</p><div class="tcfg">${h}</div>`;
 }
 function finIdx(){return S.draft?S.draft.ex.map((e,i)=>e.fin?i:-1).filter(i=>i>=0).slice(0,6):[]}
 function finSetup(){
@@ -668,6 +764,7 @@ async function init(){
   if(!S.prof.list.some(x=>x.id===PID)){PID='main';try{localStorage.setItem(NS+'diario-profilo','main')}catch(e){}S.draft=load('diario-bozza')}
   if(!db||!uid){
     S.mode='local';
+    try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(p=>p||navigator.storage.persist()).then(p=>{S.persist=p}).catch(()=>{})}catch(e){}
     const all=load('diario-sedute')||{};S.sed=new Map(Object.entries(all));
     (load('diario-storico')||[]).forEach(x=>x&&x.id&&S.stor.set(x.id,x));
     S.cfg=load('diario-config')||{esercizi:{}};loadPrefs();
@@ -779,6 +876,7 @@ function vDiario(){
   if(!S.draft)return vNuova();
   const d=S.draft;
   return `<div class="top"><h1>Seduta</h1>${profChip()}<span class="save" id="saveMsg">${esc(S.saveMsg)}</span></div>${banner()}
+  ${d.ex.some(e=>(e.s||[]).length)?`<button class="btn primary big" data-a="planOpen" style="width:100%;margin:0 0 14px">${SES&&SES.start&&SES.phase!=='done'?'Torna alla seduta in corso':'Avvia la seduta'}</button>`:''}
   <div class="sess-head">
     <label class="f">Data<input type="date" value="${d.d}" data-f="d:d"></label>
     <label class="f">WO<input type="text" value="${esc(d.wo)}" data-f="d:wo" maxlength="6" autocapitalize="characters"></label>
@@ -1075,9 +1173,22 @@ let profPubT=null;
 function profPublishSoon(){if(S.prof.list.length<2||!S.hist.length)return;clearTimeout(profPubT);profPubT=setTimeout(()=>{const sm=teamSummary(),key=JSON.stringify({...sm,upd:0});if(key===S.profLastKey)return;S.profLastKey=key;S.prof.sum={...S.prof.sum,[PID]:sm};saveProf()},6000)}
 function profSwitch(id){if(id===PID){closeSheet();return}if(T&&!T.done){confirmSheet('Cambiare profilo?','Il timer in corso verrà fermato.','Cambia','profGoNow',`data-id="${esc(id)}"`);return}profGo(id)}
 function profGo(id){try{if(S.draft)persistDraft()}catch(e){}try{localStorage.setItem(NS+'diario-profilo',id);sessionStorage.setItem(NS+'diario-chiesto','1')}catch(e){}location.reload()}
-function profAsk(){let asked=false;try{asked=sessionStorage.getItem(NS+'diario-chiesto')==='1';sessionStorage.removeItem(NS+'diario-chiesto')}catch(e){}if(asked||S.prof.list.length<2||S.prof.ask===false)return;sheet(vProfPick('Chi si allena?'))}
+function profAsk(){let asked=false;try{asked=sessionStorage.getItem(NS+'diario-chiesto')==='1';sessionStorage.removeItem(NS+'diario-chiesto')}catch(e){}if(!asked&&profCheck())return;if(asked||S.prof.list.length<2||S.prof.ask===false)return;sheet(vProfPick('Chi si allena?'))}
 function profChip(){return S.prof.list.length>1?`<button class="btn ghost" data-a="profPick" style="margin-left:auto;font-size:17px" aria-label="Profilo in uso: ${esc(profName(PID))}. Cambia profilo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:-4px;margin-right:4px"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>${esc(profName(PID))} ▾</button>`:''}
-function vProfPick(title){return `<h3>${title}</h3><div style="display:grid;gap:8px;margin-top:10px">${S.prof.list.map((x,i)=>`<button class="btn ${x.id===PID?'primary':''}" data-a="profUse" data-id="${esc(x.id)}" style="justify-content:flex-start;font-size:20px;min-height:56px"><span class="chipx" style="background:${TCOL[i%10]}"></span>${esc(profName(x.id))}${x.id===PID?' (in uso)':''}</button>`).join('')}</div>
+function devData(){const r={};if(S.mode==='db')return r;
+  try{for(const k of Object.keys(localStorage)){if(!k.startsWith(NS+'diario-storico')&&!k.startsWith(NS+'diario-sedute'))continue;const m=k.match(/@([^@]+)$/),id=m?m[1]:'main';
+    let n=0;try{const v=JSON.parse(localStorage.getItem(k)||'null');n=Array.isArray(v)?v.length:v?Object.values(v).filter(x=>x&&!x.deleted).length:0}catch(e){}r[id]=(r[id]||0)+n}}catch(e){}return r}
+function profCheck(){
+  if(S.mode!=='local'||S.hist.length)return false;
+  const d=devData(),altri=Object.entries(d).filter(([id,n])=>id!==PID&&n>0);if(!altri.length)return false;
+  const known=new Set(S.prof.list.map(x=>x.id));
+  sheet(`<h3>Questo profilo è vuoto</h3><p class="muted">Sei nel profilo «${esc(profName(PID))}», che non ha sedute. Su questo dispositivo ci sono sedute salvate in altri profili:</p>
+    <div style="display:grid;gap:8px;margin-top:10px">${altri.map(([id,n])=>known.has(id)?`<button class="btn primary" data-a="profUse" data-id="${esc(id)}" style="justify-content:flex-start;min-height:56px">Passa a «${esc(profName(id))}» (${n} sedute)</button>`
+      :`<button class="btn primary" data-a="profRecover" data-id="${esc(id)}" style="justify-content:flex-start;min-height:56px">Ripristina il profilo con ${n} sedute</button>`).join('')}</div>
+    ${altri.some(([id])=>!known.has(id))?'<p class="muted small" style="margin:10px 0 0">«Ripristina» rimette in elenco un profilo i cui dati sono ancora sul dispositivo ma che non compariva più.</p>':''}
+    <div class="row" style="margin-top:12px"><button class="btn" data-a="closeSheet">Resta qui</button></div>`);return true;
+}
+function vProfPick(title){return `<h3>${title}</h3><div style="display:grid;gap:8px;margin-top:10px">${S.prof.list.map((x,i)=>`<button class="btn ${x.id===PID?'primary':''}" data-a="profUse" data-id="${esc(x.id)}" style="justify-content:flex-start;font-size:20px;min-height:56px"><span class="chipx" style="background:${TCOL[i%10]}"></span>${esc(profName(x.id))}${(()=>{const n=x.id===PID&&S.mode==='local'?S.hist.length:devData()[x.id];return n!=null&&S.mode==='local'?` <span class="small" style="opacity:.75">&nbsp;${n} sedute</span>`:''})()}${x.id===PID?' (in uso)':''}</button>`).join('')}</div>
   <div class="row" style="margin-top:14px"><button class="btn" data-a="profManage">Gestisci profili</button><button class="btn" data-a="closeSheet">Chiudi</button></div>`}
 function vProfili(){
   const L=S.prof.list;
@@ -1224,6 +1335,11 @@ function vGuida(){
     <li><b>Da un protocollo</b> (Esercizi → Protocolli → «Usa in seduta»): scegli gli esercizi (uno, o più se il protocollo è di gruppo: E2MOM, superset, EDT, circuito, AMRAP…) e li trovi nella seduta già con quel protocollo; il pulsante del timer sulla scheda parte già impostato.</li>
     <li><b>Solo il timer</b> (scheda Timer): senza toccare il diario.</li></ul>
     <p><b>Registrare o no.</b> Una seduta composta resta nel diario finché non la elimini (Diario → «Elimina seduta»). I timer usati senza seduta, alla fine, chiedono «Inserisci nel diario» o «Non inserire»: così puoi provare un protocollo o fare un allenamento extra senza registrarlo.</p>`)}
+  ${sec('Avviare tutta la seduta dal diario',`<p>Nella seduta tocca <b>«Avvia la seduta»</b>, il pulsante in alto. Si apre il piano:</p>
+    <ul><li><b>Blocchi</b>, nell’ordine: ogni esercizio o gruppo (superset, E2MOM, EDT…) con il suo timer, già impostato dal protocollo, e il finisher alla fine. «Modifica» apre il timer del blocco: tempi, giri, preparazione, colori, avvisi. «Salva e torna al piano» vale solo per questa seduta.</li>
+    <li><b>Tra un blocco e l’altro</b>: la pausa in secondi e se il blocco successivo parte da solo.</li>
+    <li><b>Fasi della seduta</b>: riscaldamento e defaticamento (anche lo stretching a posizioni).</li></ul>
+    <p>Poi <b>«Avvia la seduta»</b>: riscaldamento → primo blocco → pausa (vedi il blocco successivo, con «Avvia ora» o «Salta questo blocco») → … → finisher → defaticamento → riepilogo con i tempi. Le serie si scrivono da sole nelle schede degli esercizi. Durante la seduta il pulsante del diario diventa «Torna alla seduta in corso».</p>`)}
   ${sec('Una seduta, passo per passo',`<ul>
     <li><b>Nuova seduta</b>: scegli il WO (X, F, Z, A…). Copio gli esercizi dell’ultima volta con il piano successivo già pronto; oppure parti da «Seduta vuota».</li>
     <li><b>Segna le serie</b>: un tocco su una serie = completata; un secondo tocco apre esito (a fatica, fallita con le ripetizioni vere, non eseguita) e − / +.</li>
@@ -1281,7 +1397,7 @@ function vGuida(){
     <li>Il <b>finisher</b> (1–6 esercizi, con il suo WO) si fa a tempo, in Set&amp;Pause o a massime ripetizioni; viene riproposto dall’ultima seduta con lo stesso WO. Se c’è un finisher da fare, lo stretching aspetta che tu lo finisca.</li>
     <li>Alla fine hai i tempi di riscaldamento, allenamento, defaticamento e totale, salvati nella seduta.</li></ul>`)}
   ${sec('Esercizi, Andamento, Test e Misure',`<ul>
-    <li><b>Esercizi</b>: massimale in uso, tabella carichi, progressione, test, andamento e sedute di ogni esercizio.</li>
+    <li><b>Esercizi</b>: «+ Nuovo esercizio» per crearne uno con il suo nome e la sua icona (o quella automatica, scelta dal nome); toccando l’icona nella scheda di un esercizio la cambi. Nella scheda: massimale in uso, tabella carichi, progressione, test, andamento e sedute.</li>
     <li><b>Andamento</b>: per periodo e per misura (forza stimata, tonnellaggio, volume, densità, PowerIndex) vedi quali esercizi migliorano; nella scheda dell’esercizio i grafici per seduta o per settimana (vedi «Andamento» qui sopra).</li>
     <li><b>Test</b>: 1RM, ripetizioni con carico, 5RM / corpo libero, massime ripetizioni a corpo libero, Test 30′ e 15′. I test sul massimale valgono dalla data «Applica da» e aggiornano la % delle sedute da quella data. I massimali di default vengono dalle ultime settimane dello storico.</li>
     <li><b>Dati biometrici</b>: profilo (nome, sesso, data di nascita ed età), peso corporeo e circonferenze, con l’età a ogni data e la differenza dalla volta prima.</li></ul>`)}
@@ -1456,8 +1572,19 @@ function vExList(){
   if(!list.length)return `<p class="empty">Nessun esercizio trovato.</p>`;
   return list.map(n=>{const o=info.get(n)||{n:0},t=maxFor(n,today);
     return `<button class="exrow-b" data-a="exOpen" data-n="${esc(n)}">${exIcon(n,44)}<b>${esc(n)}</b><span class="rm">${t?`${fmtN(t.rm,1)}<small>kg 1RM</small>`:''}</span>
-      <span class="when">${o.last?`Ultima volta ${fmtD(o.last)}, ${o.n} ${o.n===1?'seduta':'sedute'}`:'Solo test'}</span></button>`}).join('');
+      <span class="when">${o.last?`Ultima volta ${fmtD(o.last)}, ${o.n} ${o.n===1?'seduta':'sedute'}`:((S.cfg.esercizi[n]||{}).creato?'Nuovo, ancora nessuna seduta':'Solo test')}</span></button>`}).join('');
 }
+function autoKind(n){exKindCache.delete(String(n||''));const r=EXRULES.find(([,re])=>re.test(String(n||'')));return r?r[0]:'generico'}
+function vExNew(){const f=S.exNew,auto=autoKind(f.n);
+  return `<section class="card" style="border-width:2px;border-color:var(--ink)"><h3 style="margin-bottom:8px">Nuovo esercizio</h3>
+    <label class="f">Nome<input type="text" id="exNewName" value="${esc(f.n)}" data-f="xn:n" maxlength="60" placeholder="es. Trazioni presa larga"></label>
+    <div class="muted small" style="margin-top:10px">Icona${f.icon?'':` <span id="exNewAuto">(automatica dal nome: ${EXNOMI[auto]})</span>`}</div>${vIconPick(f.icon,'exNewIcon',auto)}
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:10px">
+      <label class="f">Tetto rep (facoltativo)<input type="number" inputmode="numeric" value="${esc(f.tetto)}" data-f="xn:tetto"></label>
+      <label class="f">Riparti da<input type="number" inputmode="numeric" value="${esc(f.rip)}" data-f="xn:rip"></label>
+      <label class="f">Kg in più<input type="number" inputmode="decimal" step="any" value="${esc(f.inc)}" data-f="xn:inc"></label></div>
+    <p class="muted small" style="margin:6px 0 0">Tetto, ripartenza e kg in più servono alla doppia progressione; puoi impostarli anche dopo.</p>
+    <div class="row" style="margin-top:12px"><button class="btn primary" data-a="exNewSave">Salva esercizio</button><button class="btn" data-a="exNewCancel">Annulla</button></div></section>`}
 function vEsercizi(){
   if(S.exSel)return vEsercizio(S.exSel);
   const seg=`<div class="seg" role="group" aria-label="Vista" style="max-width:520px">
@@ -1469,14 +1596,17 @@ function vEsercizi(){
   if(S.exView==='proto')return `<div class="top"><h1>Esercizi</h1></div>${banner()}${seg}${vProtocolli()}`;
   if(S.exView==='prog')return `<div class="top"><h1>Esercizi</h1></div>${banner()}${seg}${vProgList()}`;
   return `<div class="top"><h1>Esercizi</h1></div>${banner()}${seg}
-  <label class="f" style="margin-bottom:14px">Cerca<input type="text" value="${esc(S.exQ)}" data-f="ex:q" placeholder="Nome dell’esercizio"></label>
+  <div class="row" style="align-items:flex-end;margin-bottom:14px"><label class="f" style="flex:1;min-width:200px">Cerca<input type="text" value="${esc(S.exQ)}" data-f="ex:q" placeholder="Nome dell’esercizio"></label><button class="btn primary" data-a="exNew">+ Nuovo esercizio</button></div>
+  ${S.exNew?vExNew():''}
   <div id="exList">${vExList()}</div>`;
 }
 function vEsercizio(n){
   const today=todayIso(),t=maxFor(n,today),cfg=S.cfg.esercizi[n]||{};
   const tests=[...S.tests.values()].filter(x=>!x.deleted&&x.n===n).sort((a,b)=>(b.from||b.d)<(a.from||a.d)?-1:1);
   return `<div class="top"><button class="btn ghost" data-a="exBack" style="padding-left:0">← Tutti gli esercizi</button></div>
-  <h1 style="margin-bottom:14px;display:flex;align-items:center;gap:12px">${exIcon(n,56)}<span>${esc(n)}</span></h1>
+  <h1 style="margin-bottom:14px;display:flex;align-items:center;gap:12px"><button class="btn ghost" data-a="exIconOpen" aria-label="Cambia icona" style="padding:0;min-height:0">${exIcon(n,56)}</button><span>${esc(n)}</span></h1>
+  ${(S.cfg.esercizi[n]||{}).creato&&!S.hist.some(x=>x.ex.some(e=>e.n===n))?`<p class="muted small" style="margin:-6px 0 10px">Esercizio creato da te, ancora senza sedute. <button class="btn ghost danger" data-a="exDelNew" style="min-height:0;padding:2px 8px">Togli dall’elenco</button></p>`:''}
+  ${S.exIconOpen?`<section class="card"><h3>Icona di ${esc(n)}</h3>${vIconPick((S.cfg.esercizi[n]||{}).icon||'','exIconSet',autoKind(n))}<div class="row" style="margin-top:10px"><button class="btn" data-a="exIconClose">Chiudi</button></div></section>`:''}
   <section class="card"><div class="row"><div><div class="muted small">Massimale in uso oggi</div>
     ${t?`<div class="big-rm">${fmtN(t.rm,1)} kg</div><div class="muted small">${esc(testDesc(t))}${t.tipo==='default'?'':`, test del ${fmtD(t.d)}`}, applicato dal ${fmtD(t.from||t.d)}</div>`:'<p class="muted" style="margin:4px 0">Nessun massimale registrato.</p>'}</div>
     <span class="spacer"></span><button class="btn" data-a="exToSess" data-n="${esc(n)}">Aggiungi alla seduta</button><button class="btn" data-a="ladFromEx" data-n="${esc(n)}">Proponi ladder</button><button class="btn primary" data-a="newTest" data-n="${esc(n)}">Nuovo test</button></div></section>
@@ -1598,6 +1728,7 @@ function vStorico(){
     <label class="f" style="flex:1;min-width:200px">Esercizio<select data-f="st:ex"><option value="">Tutte le sedute</option>${(S.names||[]).map(n=>`<option ${n===ex?'selected':''}>${esc(n)}</option>`).join('')}</select></label>
   </div>
   <div class="row" style="margin:-6px 0 16px">${canSave()?`<button class="btn" data-a="exportCsv">Esporta CSV</button><button class="btn" data-a="exportBak">Esporta backup</button>`:''}<button class="btn" data-a="importBtn">Importa backup</button></div>`;
+  h+=`<p class="muted small" style="margin:-8px 0 14px">${S.mode==='db'?'Dati salvati nel tuo account Claude':'Dati salvati su questo dispositivo'}: ${S.hist.length} sedute${S.prof.list.length>1?`, profilo «${esc(profName(PID))}»`:''}${S.mode==='local'?(S.persist===true?'; memoria protetta: il browser non la cancella da solo.':S.persist===false?'; memoria non protetta: esporta un backup ogni tanto (installare l’app aiuta a proteggerla).':''):''}</p>`;
   if(!S.hist.length)return h+`<p class="empty">${S.mode==='loading'?'Carico lo storico…':'Nessuna seduta salvata. Le sedute che registri nel Diario compaiono qui.'}</p>`;
   if(ex)return h+vExHistory(ex);
   const weeks=new Map();
@@ -1661,7 +1792,10 @@ function chart(title,data,dec){
 }
 
 /* ----- timer: viste ----- */
+function cfgView(m){return m==='rec'?vCfgRec():m==='emom'?vCfgEmom():m==='circ'?vCfgCirc():m==='tst'?vCfgTst():m==='amrap'?vCfgAmrap():m==='rt'?vCfgRt():vCfgEdt()}
 function vTimer(){
+  if(S.plan&&S.plan.run&&SES&&SES.phase==='between'&&S.plan.blocks[S.plan.cur]&&!S.plan.finito)return vPlanBetween();
+  if(S.plan&&!S.plan.run&&!(T&&!T.done)&&!(SES&&SES.start&&SES.phase!=='done'))return S.planEdit!=null?vPlanEdit():vPlan();
   if(SES&&['pre','warm','cool'].includes(SES.phase))return vPhase();
   if(T&&!T.done)return `<div id="runBox">${vRun()}</div>`;
   const m=S.tmode;
@@ -2088,7 +2222,7 @@ function startCool(silent){sesBegin();SES.coolStart=Date.now();SES.phase='cool';
 function endSession(){
   const n=Date.now();if(!SES.start)SES.start=n;
   if(SES.phase==='warm')SES.warmEnd=n;if(SES.phase==='cool')SES.coolEnd=n;
-  SES.end=n;SES.phase='done';
+  SES.end=n;SES.phase='done';if(S.plan){S.plan=null;S.planEdit=null}
   const w=SES.warmStart?(SES.warmEnd||n)-SES.warmStart:0,cl=SES.coolStart?(SES.coolEnd||n)-SES.coolStart:0;
   const al=Math.max(0,(SES.coolStart||n)-(SES.warmEnd||SES.start));
   SES.tempi={risc:Math.round(w/1000),allen:Math.round(al/1000),defat:Math.round(cl/1000),tot:Math.round((n-SES.start)/1000)};
@@ -2102,6 +2236,7 @@ function endSession(){
 }
 function sesAfterTimer(){
   if(!SES||SES.phase!=='train')return;
+  if(S.plan&&S.plan.run){planNext();return}
   const finPend=S.draft&&!(T&&T.isFin)&&S.draft.ex.some(e=>e.fin)&&!S.draft.ex.filter(e=>e.fin).some(e=>(e.s||[]).some(x=>x[1]));
   if(SES.cfg.coolOn&&SES.cfg.coolAuto&&!finPend){startCool(true);return}
   SES.phase='between';sesSave();
@@ -2116,6 +2251,7 @@ function sesTick(){
   if(!SES||!SES.start)return;
   const n=Date.now();
   document.querySelectorAll('.sClock').forEach(e=>e.textContent=fmtDur((SES.end||n)-SES.start));
+  if(S.plan&&S.plan.run&&SES.phase==='between'&&S.plan.wait){const r=S.plan.wait-n,el=$('#planCd');if(el)el.textContent=mmss(r);const x=Math.ceil(r/1000);if(x!==S.plan.lastS){if(x<=3&&x>=1&&S.plan.lastS!=null)sound('tick',x);S.plan.lastS=x}if(r<=0){planStartCur();return}}
   if(SES.phase!=='warm'&&SES.phase!=='cool')return;
   if(isPos()){const q=posClock(n),el2=$('#pClock');if(el2)el2.textContent=mmss(q.rem);
     if(q.el>=q.total){endSession();return}
@@ -2162,6 +2298,7 @@ function vSesBox(){
     <p class="muted small" style="margin:8px 0 0">Per continuare la stessa seduta avvia un altro timer qui sotto.</p></section>`;
 }
 function vSesCfg(){
+  if(S.noSesCfg)return '';
   const c=S.tc.sess;
   const posUI=()=>`<div class="seg sm" role="group" aria-label="Tipo di defaticamento" style="max-width:440px;margin-top:6px">
       <button data-a="tset" data-f="sess.coolKind" data-v="time" aria-pressed="${c.coolKind!=='pos'}">Tempo unico</button>
@@ -2526,30 +2663,8 @@ const A={
     if(m==='emom'||m==='circ'){if(m==='circ')savePrefs();render()}},
   unlink(el){const m=el.dataset.m||'rec';if(m==='rec'||m==='circ')S.tc[m].links=null;else S.tc[m].link=null;if(m==='amrap'||m==='rt')render();S.tc.from=null;render()},
   linkTimer(el){
-    const i=+el.dataset.i;if(T&&!T.done){S.tab='timer';render();return}T=null;S.finNext=false;S.tc.rec.over=null;
-    const tp=timerPlan(i),ex=S.draft.ex,e=ex[i];
-    S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;S.tc.amrap.link=null;S.tc.rt.link=null;S.tc.from={p:e.p||'',ok:!!tp.pp};
-    if(tp.proto){const P=tp.proto,idx=tp.idx;S.tc.from={p:pName(P),ok:true};
-      if(P.tipo==='emom'){const c=S.tc.emom;c.k=idx.length;c.link=idx;c.giri=Math.max(1,num(P.giri)||10);c.restOn=num(P.restGiro)>0;c.restSec=num(P.restGiro)||60;
-        idx.forEach((j,n)=>{const sl=emSlot(P,n);c.ex[n]={n:ex[j].n,rep:ex[j].b??(num(sl.rep)||''),sec:Math.max(5,num(sl.sec)||60)}})}
-      else if(P.tipo==='amrap'){const c=S.tc.amrap;c.link=idx;c.min=Math.max(1,num(P.min)||10);c.ex=idx.map(j=>({n:ex[j].n,rep:ex[j].b??(num(P.rep)||10)}))}
-      else if(P.tipo==='rt'){const c=S.tc.rt;c.link=[i];c.n=ex[i].n;c.target=Math.max(1,num(P.target)||50);c.rep=P.rep||'';c.rest=num(P.rest)||0}
-      else if(P.tipo==='edt'){const c=S.tc.edt;c.link=idx;c.min=Math.max(1,num(P.min)||15);c.min2=c.min;c.restZ=num(P.restZ)??5;c.zones=idx.length>2?2:1;idx.forEach((j,n)=>{c[EK[n]]={n:ex[j].n,rep:ex[j].b??(num(P.rep)||5)}})}
-      else if(P.tipo==='circ'){const c=S.tc.circ;c.links=idx;c.giri=Math.max(1,num(P.giri)||3);c.restEx=num(P.restEx)??15;c.restGiro=num(P.restGiroC)??60;
-        c.items=idx.map((j,n)=>{const st=circSt(P,n);return {n:ex[j].n,tipo:st.work==='rep'?'rep':'time',val:st.work==='rep'?(ex[j].b??num(st.val)):num(st.val)}})}
-      else if(P.tipo==='st'||P.tipo==='ladder'){const c=S.tc.rec;if(P.tipo==='ladder')idx.forEach(j=>{const x=ex[j];if(!x.s.some(y=>y[1])){x.lad=ladList(P);x.b=null;x.k=0;x.s=[];setN(x,x.lad.length)}});
-        c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:''}));c.mode=idx.length>1?'super':'sep';c.rest=P.tipo==='ladder'&&P.restMode==='mult'?'mult':P.tipo==='ladder'&&P.restMode==='free'?'free':num(P.rest)>0?'fix':'free';c.sec=num(P.rest)||60;c.mult=num(P.mult)||2;c.tr=0;c.between=c.sec;scheduleSave()}
-      else if(P.tipo==='max'){setupMax(idx,num(P.rest)||60)}
-      else{const c=S.tc.rec;c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=idx.length>1?'super':'sep';
-        c.rest=P.restMode==='mult'?'mult':'fix';c.sec=Math.max(5,num(P.rest)||90);c.mult=num(P.mult)||2;c.tr=num(P.tr)||0;c.between=c.sec}
-      S.tmode=tp.mode;S.tab='timer';render();window.scrollTo(0,0);return}
-    if(tp.mode==='emom'){const c=S.tc.emom;c.k=tp.idx.length;c.link=tp.idx;c.giri=tp.pp.giri||Math.max(...tp.idx.map(j=>ex[j].s.length));
-      tp.idx.forEach((j,n)=>{const q=parseProto(ex[j].p);c.ex[n]={n:ex[j].n,rep:q.rep??ex[j].b??'',sec:q.sec}});
-      const rr=tp.idx.map(j=>String(ex[j].p||'').match(/(?:Rest|Riposo|Pausa)\s*(\d+)/i)).find(Boolean);if(rr){c.restOn=true;c.restSec=+rr[1]}}
-    else if(tp.mode==='edt'){const c=S.tc.edt;c.link=tp.idx;c.min=tp.pp.min;c.zones=tp.idx.length>2?2:1;tp.idx.forEach((j,n)=>{const k=EK[n];c[k]={n:ex[j].n,rep:ex[j].b??c[k].rep}});
-      if(c.zones===2){const q=parseProto(ex[tp.idx[2]].p);if(q&&q.min)c.min2=q.min}}
-    else{const c=S.tc.rec;c.links=tp.idx;c.items=tp.idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=tp.idx.length>1?'super':'sep';if(tp.pp){c.rest='fix';c.sec=tp.pp.sec}}
-    S.tmode=tp.mode;S.tab='timer';render();window.scrollTo(0,0);
+    const i=+el.dataset.i;if(T&&!T.done){S.tab='timer';render();return}T=null;S.finNext=false;S.tc.rec.over=null;S.plan=null;
+    setupTimer(i);S.tab='timer';render();window.scrollTo(0,0);
   },
   tStart(){
     enterFs();
@@ -2648,6 +2763,7 @@ const A={
   async teamLeaveNow(el){closeSheet();const c=el.dataset.c;S.cfg.team={codes:teamCodes().filter(x=>x!==c),share:teamShare()};saveCfg();await teamPublish(true);teamWatch(teamCodes()[0]||null);render()},
   boardMem(el){if(el.dataset.k==='dev')S.devMem=el.dataset.id||null;else S.team.mem=el.dataset.id||null;render();window.scrollTo(0,0)},
   teamSrc(el){S.teamSrc=el.dataset.v;render()},
+  profRecover(el){const id=el.dataset.id;if(!S.prof.list.some(x=>x.id===id)){S.prof.list=[...S.prof.list,{id,nome:id==='main'?'':'Profilo recuperato'}];saveProf()}closeSheet();profGo(id)},
   profPick(){sheet(vProfPick('Cambia profilo'))},
   profUse(el){profSwitch(el.dataset.id)},
   profGoNow(el){closeSheet();if(T){try{tStop()}catch(e){}}profGo(el.dataset.id)},
@@ -2660,6 +2776,16 @@ const A={
     if(S.mode!=='db'){try{Object.keys(localStorage).filter(k=>k.startsWith(NS+'diario-')&&k.endsWith('@'+id)).forEach(k=>localStorage.removeItem(k))}catch(e){}}saveProf();render()},
   benvGuida(){S.guideOpen='Iniziare da zero';S.tab='guida';render();window.scrollTo(0,0)},
   benvNo(){store('diario-benvenuto',false);render()},
+  planOpen(){if(T&&!T.done){S.tab='timer';render();return}if(SES&&SES.start&&SES.phase!=='done'){S.tab='timer';render();return}T=null;S.plan=planBuild();S.planEdit=null;S.tab='timer';render();window.scrollTo(0,0)},
+  planEdit(el){const i=+el.dataset.i;S.planEdit=i;planApply(S.plan.blocks[i]);S.finNext=false;render();window.scrollTo(0,0)},
+  planSaveEdit(){const b=S.plan.blocks[S.planEdit];b.cfg=clone(S.tc[b.mode]);S.planEdit=null;render();window.scrollTo(0,0)},
+  planBackEdit(){S.planEdit=null;render();window.scrollTo(0,0)},
+  planCancel(){S.plan=null;S.planEdit=null;S.tab='diario';render()},
+  planGo(){const P=S.plan;if(!P||!P.blocks.length)return;enterFs();P.run=true;P.cur=0;P.finito=false;planApply(P.blocks[0]);T=null;
+    if(!sesActive())sesNew();SES.cfg=clone(S.tc.sess);SES.mode=S.tmode;const c=SES.cfg;
+    if(c.warmOn&&c.warmAuto)return startWarm();if(c.warmOn){SES.phase='pre';sesSave();render();return}startTrain();render()},
+  planNow(){planStartCur()},
+  planSkip(){const P=S.plan;if(!P)return;P.wait=null;planNext()},
   exToSess(el){const d=ensureDraft(),x=exFromHistory(el.dataset.n,d.d,d.id);const i=addToDraft(x);scheduleSave();S.exSel='';goCard(i)},
   pUse(el){const P=S.protos.get(el.dataset.id);if(!P)return;const n=protoSlots(P);
     sheet(`<h3>${esc(pName(P))}</h3><p class="muted">Scegli ${n>1?`fino a ${n} esercizi, nell’ordine in cui li fai`:'l’esercizio'}: li aggiungo alla seduta di oggi${S.draft?' aperta':' (ne apro una nuova)'} con questo protocollo.</p>
@@ -2689,11 +2815,22 @@ const A={
   pfAskDel(el){confirmSheet('Eliminare il protocollo?','Le sedute già registrate mantengono il testo del protocollo.','Elimina','pfDel',`data-id="${esc(el.dataset.id)}"`)},
   async pfDel(el){closeSheet();const P=S.protos.get(el.dataset.id);if(!P)return;const x={...P,deleted:true,updated:Date.now()};S.protos.set(x.id,x);await saveProtoDoc(x);render()},
   pfRebuild(){const n=ensureProtos(true);render();sheet(`<h3>Fatto</h3><p class="muted">${n?`${n} protocolli aggiunti dalle sedute recenti.`:'Nessun protocollo nuovo da aggiungere.'}</p><div class="row" style="margin-top:14px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
+  exNew(){S.exNew={n:S.exQ||'',icon:'',tetto:'',rip:'',inc:''};render();setTimeout(()=>{const f=$('#exNewName');if(f)f.focus()},50)},
+  exNewCancel(){S.exNew=null;render()},
+  exNewIcon(el){S.exNew.icon=el.dataset.v;render()},
+  exNewSave(){const f=S.exNew,n=String(f.n||'').trim();if(!n){const i=$('#exNewName');if(i)i.focus();return}
+    const ex=S.cfg.esercizi[n]||{};
+    S.cfg.esercizi[n]={...ex,creato:ex.creato||Date.now(),tolto:false,...(f.icon?{icon:f.icon}:{}),...(num(f.tetto)?{tetto:num(f.tetto)}:{}),...(num(f.rip)?{rip:num(f.rip)}:{}),...(num(f.inc)?{inc:num(f.inc)}:{})};
+    if(!f.icon)delete S.cfg.esercizi[n].icon;exKindCache.delete(n);saveCfg();merge();S.exNew=null;S.exQ='';S.exSel=n;render();window.scrollTo(0,0)},
+  exDelNew(){const n=S.exSel;const c=S.cfg.esercizi[n];if(c){c.tolto=true}saveCfg();merge();S.exSel='';render()},
+  exIconOpen(){S.exIconOpen=!S.exIconOpen;render()},
+  exIconClose(){S.exIconOpen=false;render()},
+  exIconSet(el){const n=S.exSel;if(!n)return;const c=S.cfg.esercizi[n]=S.cfg.esercizi[n]||{};if(el.dataset.v)c.icon=el.dataset.v;else delete c.icon;exKindCache.delete(n);saveCfg();S.exIconOpen=false;render()},
   exView(el){S.exView=el.dataset.v;render()},
   setProg(el){S.prog=el.dataset.v;render()},
   setProgM(el){S.progM=el.dataset.v;render()},
   setAgg(el){S.progAgg=el.dataset.v;render()},
-  exBack(){S.exSel='';render();window.scrollTo(0,0)},
+  exBack(){S.exIconOpen=false;S.exSel='';render();window.scrollTo(0,0)},
   newTest(el){S.tf=newTf();S.tf.n=el.dataset.n;S.tab='massimali';render();window.scrollTo(0,0)},
   tfTipo(el){const f=S.tf;f.tipo=el.dataset.v;
     if((f.tipo==='brz'||f.tipo==='maxrep')&&!num(f.bw)){const b=lastBW(f.n);if(b)f.bw=b}
@@ -2788,7 +2925,7 @@ async function importBackup(obj){
   }
   if(S.mode==='db'){for(const x of [...base,...upd])await S.base.collection('sedute').doc(x.id).set(x)}
   else{
-    const st=new Map(S.stor);base.forEach(x=>st.set(x.id,x));
+    const st=new Map(S.stor);base.forEach(x=>st.set(x.id,x));/* riscrive sempre tutto, anche se non c’è nulla di nuovo */
     const sd=new Map(S.sed);upd.forEach(x=>sd.set(x.id,x));const m={};sd.forEach((v,k)=>m[k]=v);
     if(!store('diario-storico',[...st.values()])||!store('diario-sedute',m))throw new Error('spazio');
     S.stor=st;S.sed=sd;
@@ -2835,11 +2972,13 @@ function onField(el,isChange){
   const [kind,a,b]=f.split(':');
   if(kind==='new'){S.newDate=v||todayIso();return}
   if(kind==='st'){S.storEx=v;render();return}
+  if(kind==='xn'){S.exNew[a]=v;if(a==='n'){const k=autoKind(v),b=document.querySelector('[data-a=exNewIcon][data-v=""]');if(b)b.innerHTML=`${exIconK(k,36)}<span class="small">Automatica</span>`;const c=$('#exNewAuto');if(c)c.textContent=`(automatica dal nome: ${EXNOMI[k]})`}return}
   if(kind==='ex'){S.exQ=v;const l=$('#exList');if(l)l.innerHTML=vExList();return}
   if(kind==='cx'){if(!S.exSel)return;const c=S.cfg.esercizi[S.exSel]=S.cfg.esercizi[S.exSel]||{};c[a]=num(v);saveCfg();return}
   if(kind==='pf'){const f=S.pf;if(el.type==='checkbox'){f[a]=el.checked?el.dataset.on:(a==='group'?'single':'');render();return}
     if(a.includes('.')){const [arr,i,k]=a.split('.');f[arr][+i][k]=v}else f[a]=v;
     if(['da','a','passo','volte','lung','sposta','loDa','loA','hiDa','hiA','seq'].includes(a)){const lp=$('#ladPrev');if(lp)lp.textContent=ladPrev(f)}const nm=$('#pfName');if(nm)nm.textContent=pName(f);return}
+  if(kind==='pn'){const P=S.plan;if(!P)return;if(a==='auto'){P.auto=el.checked;store('diario-pausaAuto',P.auto)}else{P.pausa=Math.max(0,num(v)||0);store('diario-pausa',P.pausa)}return}
   if(kind==='bx'){if(a==='dev')S.devEx=v;else S.team.ex=v;render();return}
   if(kind==='pl'){if(a==='__ask'){S.prof.ask=el.checked;saveProf();return}const x=S.prof.list.find(p=>p.id===a);if(x){x.nome=v.slice(0,30);clearTimeout(S.plT);S.plT=setTimeout(saveProf,800)}return}
   if(kind==='tm'){if(a==='ex'){S.team.ex=v;render();return}if(a==='sel'){teamWatch(v);render();return}
@@ -2892,7 +3031,7 @@ $('#fileImp').addEventListener('change',async ev=>{
   const done=(t,m)=>sheet(`<h3>${t}</h3><p class="muted">${m}</p><div class="row" style="margin-top:14px"><button class="btn primary" data-a="closeSheet">Chiudi</button></div>`);
   sheet('<h3>Importo il backup…</h3>');
   try{const r=await importBackup(JSON.parse(await f.text()));
-    done('Backup importato',(r.n?`${r.n} sedute nuove o aggiornate.`:'Nessuna seduta nuova: era già tutto presente.')+(r.nt?` ${r.nt} test e massimali importati.`:'')+(r.nm?` ${r.nm} misurazioni importate.`:'')+(r.cfg?' Ho ripreso anche le impostazioni dei timer e della progressione.':''));render()}
+    done('Backup importato',(S.prof.list.length>1?`Nel profilo «${esc(profName(PID))}»: `:'')+(r.n?`${r.n} sedute nuove o aggiornate.`:`nessuna seduta nuova: ${S.hist.length} sedute erano già presenti${S.mode==='local'?' e le ho salvate di nuovo nella memoria del dispositivo':''}.`)+(r.nt?` ${r.nt} test e massimali importati.`:'')+(r.nm?` ${r.nm} misurazioni importate.`:'')+(r.cfg?' Ho ripreso anche le impostazioni dei timer e della progressione.':''));render()}
   catch(e){done('Backup non importato',e&&e.message==='spazio'?'Lo spazio del browser per questa app è pieno.':'Il file non è un backup del diario: scegli il file diario-backup….json esportato dall’app.')}
 });
 if(STANDALONE&&'serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
