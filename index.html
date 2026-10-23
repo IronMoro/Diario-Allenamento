@@ -8,7 +8,6 @@
 <meta name="theme-color" content="#1D2830">
 <link rel="icon" href="icon-192-v2.png">
 <link rel="apple-touch-icon" href="icon-192-v2.png">
-<script>window.DIARIO_NS='prova'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
@@ -356,7 +355,7 @@ body.lock{overflow:hidden}
 <script>
 "use strict";
 /* ---------- costanti ---------- */
-const APP_VER='45';
+const APP_VER='47';
 const GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
 const FATICA=['Facile','Facile/Liscia','Liscia','Liscia/Difficile','Difficile','Difficile/Dura','Dura','Dura/Fallito','Fallito'];
 const RPE={'Facile':6.5,'Facile/Liscia':7.5,'Liscia':8,'Liscia/Difficile':8.5,'Difficile':9,'Difficile/Dura':9.5,'Dura':10,'Dura/Fallito':10.5,'Fallito':11};
@@ -392,7 +391,7 @@ function load(k){try{const v=localStorage.getItem(K(k));return v?JSON.parse(v):n
 const newTf=()=>({d:todayIso(),n:'',tipo:'1rm',kg:'',bw:'',rep:'',rir:0,parts:['','',''],rif:'',rifTouched:false,from:todayIso(),fromTouched:false,note:'',editId:null});
 const newMf=()=>({d:todayIso(),vals:{},note:'',editId:null});
 const STANDALONE=!(window.claude&&typeof window.claude.use==='function');
-const S={dSez:'corso',dList:false,progs:[],progAgg:'sed',prof:{list:[{id:'main',nome:''}],sum:{},ask:true},devMem:null,devEx:'',teamSrc:'dev',team:{members:new Map(),meta:{},names:{},code:null,unsub:null,mem:null,ex:''},protos:new Map(),protosLoaded:false,pf:null,progM:'e1',prog:'6m',exView:'list',misure:new Map(),mf:null,testSub:'test',tests:new Map(),testsLoaded:false,exSel:'',exQ:'',tf:null,tab:'diario',mode:'loading',stor:new Map(),sed:new Map(),hist:[],cfg:{esercizi:{}},draft:null,
+const S={tLib:(()=>{try{return localStorage.getItem('diario-timerLibero')==='1'}catch(e){return false}})(),delIds:new Set(),dSez:'corso',dList:false,progs:[],progAgg:'sed',prof:{list:[{id:'main',nome:''}],sum:{},ask:true},devMem:null,devEx:'',teamSrc:'dev',team:{members:new Map(),meta:{},names:{},code:null,unsub:null,mem:null,ex:''},protos:new Map(),protosLoaded:false,pf:null,progM:'e1',prog:'6m',exView:'list',misure:new Map(),mf:null,testSub:'test',tests:new Map(),testsLoaded:false,exSel:'',exQ:'',tf:null,tab:'diario',mode:'loading',stor:new Map(),sed:new Map(),hist:[],cfg:{esercizi:{}},draft:null,
   saveMsg:'',storEx:'',storWeeks:8,open:new Set(),progOpen:new Set(),newDate:todayIso(),downloads:null,
   tmode:'rec',tc:{amrap:{min:10,lead:10,frac:'none',minsLeft:'',col:['#0284C7','#F97316','#16A34A','#9333EA','#DC2626','#0D9488'],restCol:'#E2E8F0',ex:[{n:'',rep:10},{n:'',rep:10}],warnSec:10,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120,link:null},
   rt:{n:'',target:50,rep:'',rest:60,lead:10,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,link:null},
@@ -531,6 +530,7 @@ function woNorm(s){const R=S.cfg&&S.cfg.woRen||[],v=s.woN||0;if(v>=R.length||!s.
 function merge(){
   const m=new Map(S.stor);
   for(const [id,s] of S.sed){if(s.deleted)m.delete(id);else m.set(id,s)}
+  S.delIds.forEach(id=>m.delete(id));
   m.forEach(woNorm);if(S.draft)woNorm(S.draft);if(S.mode==='db')setTimeout(teamPublishSoon,0);setTimeout(profPublishSoon,0);
   const all=[...m.values()];S.progs=all.filter(x=>x.prog).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
   S.hist=all.filter(x=>!x.prog).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1));
@@ -737,7 +737,7 @@ function sessionObj(dr){
 let saveTimer=null,saveChain=Promise.resolve(),lastSaved='';
 function scheduleSave(){persistDraft();clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,1200);setSaveMsg('Modifiche da salvare')}
 function saveNow(){
-  clearTimeout(saveTimer);const dr=S.draft;if(!dr||!dr.ex.length)return saveChain;
+  clearTimeout(saveTimer);const dr=S.draft;if(!dr||!dr.ex.length||S.delIds.has(dr.id))return saveChain;
   if(dr.prog&&isExec(dr)){dr.prog=false;if(dr.d!==todayIso()){dr.d=todayIso();const di=document.querySelector('[data-f="d:d"]');if(di)di.value=dr.d;const m=$('#sessMeta');if(m)m.textContent=`${ggOf(dr.d)}, settimana ${weekOf(dr.d)}`}persistDraft()}
   const obj=sessionObj(dr);const key=JSON.stringify({...obj,updated:0});
   if(obj.wo&&!obj.prog&&(S.cfg.woState||{})[obj.wo]==='arch'&&dr.ex.some(e=>(e.s||[]).some(x=>x[1]))){S.cfg.woState={...S.cfg.woState,[obj.wo]:'corso'};saveCfg()}
@@ -745,6 +745,7 @@ function saveNow(){
   saveChain=saveChain.then(async()=>{
     setSaveMsg('Salvataggio…');
     try{
+      if(S.delIds.has(obj.id))return;
       if(S.mode==='db')await S.base.collection('sedute').doc(obj.id).set(obj);
       else{const all=load('diario-sedute')||{};all[obj.id]=obj;store('diario-sedute',all);S.sed.set(obj.id,obj);merge()}
       lastSaved=key;setSaveMsg('Salvata');
@@ -1407,7 +1408,7 @@ function vGuida(){
     <li><b>Usare una programmata</b>: aprila da Programmate, controlla o cambia quello che vuoi, poi «Avvia la seduta» (oppure segna le serie a mano). Alla <b>prima serie registrata</b> diventa una seduta dello storico con la data di oggi e il suo WO passa in «In corso», anche se era archiviato. Se la apri o la avvii e ti fermi prima della prima serie, resta tra le programmate.</li>
     <li><b>Archiviate</b>: WO eseguiti che ora non usi. Non si cancellano, per non perdere lo storico. «Rimetti in corso» li riporta in uso; «Programma di nuovo» ne prepara una seduta con il piano successivo; «Modifica una copia» crea una copia con un WO nuovo da cambiare liberamente.</li>
     <li>All’inizio sono in corso i WO usati negli ultimi sei mesi e archiviati gli altri. Una seduta eseguita con un WO archiviato lo rimette in corso.</li>
-    <li>Con una seduta aperta, «← Sedute» torna all’elenco e «Riprendi» la riapre. Una singola seduta si può eliminare dallo Storico o dalla seduta stessa: se contiene dati (serie fatte, note) l’app chiede conferma e mostra cosa si perde; se è stata solo avviata e terminata senza nulla di fatto, la elimina subito. I WO eseguiti invece non si cancellano: si archiviano.</li></ul>`)}
+    <li>Con una seduta aperta, «← Sedute» torna all’elenco e «Riprendi» la riapre. Una singola seduta si può eliminare dallo Storico o dalla seduta stessa: se contiene dati (serie fatte, note) l’app chiede conferma e mostra cosa si perde; se è stata solo avviata e terminata senza nulla di fatto, la elimina subito. I WO eseguiti invece non si cancellano: si archiviano. Se chiudi una seduta in cui non hai fatto nessuna serie, l’app ti chiede se tenerla per un prossimo allenamento o scartarla, così lo storico non si riempie di sedute vuote.</li></ul>`)}
   ${sec('Preparare una seduta per un’altra volta',`<p>Puoi preparare una seduta senza farla subito: componi gli esercizi, i carichi, i protocolli, il finisher, poi tocca <b>«Salva per un prossimo allenamento»</b> in fondo alla seduta.</p>
     <ul><li><b>Aggiorna questa seduta</b>: la salva così com’è e la chiude.</li>
     <li><b>Salva come nuova seduta</b>: con un nome, un WO e una data. Il WO proposto è la prima lettera libera e si può cambiare, ma non può essere uno già usato. La seduta aperta resta com’era.</li></ul>
@@ -1435,6 +1436,7 @@ function vGuida(){
     <li><b>RT</b>: un totale di ripetizioni da raggiungere; dopo ogni serie segni quante ne hai fatte e vedi quante ne mancano.</li>
     <li><b>Circuito</b>: stazioni a tempo o a ripetizioni, pausa tra le stazioni e riposo tra i giri.</li>
     <li><b>Test</b>: Test 30′ / 15′ con +1 a ogni ripetizione, divise nei tre blocchi.</li></ul>
+    <p><b>Timer libero</b>: in alto nella scheda Timer scegli «Timer libero» per usare un timer da solo, senza seduta, senza fasi e senza scrivere nel diario; alla fine puoi ripeterlo o sceglierne un altro. «Con la seduta» torna al funzionamento collegato al diario.</p>
     <p>Per tutti: preparazione, colori, avviso prima della fine, avviso a metà, suoni (anche a voce), schermo intero, riposo alla fine. «Torna alla seduta» lascia il timer acceso. I timer avviati dalla seduta scrivono serie e tempo nel diario; gli altri a fine timer chiedono se inserirli.</p>`)}
   ${sec('Andamento: capire se e quanto migliori',`<p>Lo trovi in <b>Esercizi → Andamento</b> (tutti gli esercizi) e nella scheda di ogni esercizio (il dettaglio).</p>
     <h3 style="margin:10px 0 4px">Le cinque misure</h3><ul>
@@ -1870,13 +1872,27 @@ function chart(title,data,dec){
 
 /* ----- timer: viste ----- */
 function cfgView(m){return m==='rec'?vCfgRec():m==='emom'?vCfgEmom():m==='circ'?vCfgCirc():m==='tst'?vCfgTst():m==='amrap'?vCfgAmrap():m==='rt'?vCfgRt():vCfgEdt()}
+function vLibSwitch(){return `<div class="seg sm" role="group" aria-label="Come usare il timer" style="max-width:520px;margin:0 0 12px">
+  <button data-a="tLib" data-v="0" aria-pressed="${!S.tLib}">Con la seduta</button><button data-a="tLib" data-v="1" aria-pressed="${S.tLib}">Timer libero</button></div>`}
+function vTimerLib(){
+  if(T&&!T.done)return `<div id="runBox">${vRun()}</div>`;
+  const m=S.tmode;
+  let h=`<div class="top"><h1>Timer</h1></div>${vLibSwitch()}
+  <p class="muted small" style="margin:-4px 0 12px">Timer libero: parte da solo, senza seduta, senza riscaldamento o defaticamento e senza scrivere nel diario.</p>
+  ${T&&T.done?`<div id="runBox" style="margin-bottom:18px">${vRun()}</div>`:''}
+  <div class="seg" role="group" aria-label="Tipo di timer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr))">
+    ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div>
+  <div class="tcfg">${cfgView(m)}</div>`;
+  return h;
+}
 function vTimer(){
+  if(S.tLib&&!(SES&&SES.start&&SES.phase!=='done')){S.noSesCfg=true;try{return vTimerLib()}finally{S.noSesCfg=false}}
   if(S.plan&&S.plan.run&&SES&&SES.phase==='between'&&S.plan.blocks[S.plan.cur]&&!S.plan.finito)return vPlanBetween();
   if(S.plan&&!S.plan.run&&!(T&&!T.done)&&!(SES&&SES.start&&SES.phase!=='done'))return S.planEdit!=null?vPlanEdit():vPlan();
   if(SES&&['pre','warm','cool'].includes(SES.phase))return vPhase();
   if(T&&!T.done)return `<div id="runBox">${vRun()}</div>`;
   const m=S.tmode;
-  return `<div class="top"><h1>Timer</h1></div>${vSesBox()}${T&&T.done?`<div id="runBox" style="margin-bottom:18px">${vRun()}</div>`:''}
+  return `<div class="top"><h1>Timer</h1></div>${vLibSwitch()}${vSesBox()}${T&&T.done?`<div id="runBox" style="margin-bottom:18px">${vRun()}</div>`:''}
   <div class="seg" role="group" aria-label="Tipo di timer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr))">
     ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}
   </div>
@@ -2601,7 +2617,7 @@ function vRun(){
     <div class="r-main">${giro}${ph||T.paused?`<p class="ph">${ph}${T.paused?' (in pausa)':''}</p>`:''}${ex?`<p class="ex-now">${ex}</p>`:''}
     <div class="clock" id="tClock" role="timer">${clockText()}</div>${sub?`<p class="sub">${sub}</p>`:''}</div>
     <div class="r-side">${main?`<div class="ctl">${main}</div>`:''}${extra}
-    <div class="ctl ctl2">${pauseBtn}${stopBtn}<button class="btn" data-a="toSession">${S.draft?'Torna alla seduta':'Vai al diario'}</button></div></div></div>`;
+    <div class="ctl ctl2">${pauseBtn}${stopBtn}<button class="btn" data-a="toSession">${T&&T.free?'Diario':S.draft?'Torna alla seduta':'Vai al diario'}</button></div></div></div>`;
 }
 function vDone(){
   const t=T.endClock;let body='',act='';
@@ -2630,7 +2646,8 @@ function vDone(){
   }
   if(T.applied){act='';body+=`<p class="sub">Già salvato nella seduta.</p>`}
   const back=S.draft&&!act.includes('emomBack')?`<button class="btn" data-a="toSession">Torna alla seduta</button>`:'';
-  return `<div class="run done" id="runPanel"><p class="ph">Finito</p>${body}<div class="ctl">${act}${back}${act.includes('Non inserire')||act.includes('Non salvare')?'':'<button class="btn" data-a="tReset">Nuovo timer</button>'}</div></div>`;
+  const fr=!!T.free;
+  return `<div class="run done" id="runPanel"><p class="ph">Finito</p>${body}<div class="ctl">${fr?'<button class="btn primary" data-a="tRepeat">Ripeti</button>':act}${fr?'':back}${!fr&&(act.includes('Non inserire')||act.includes('Non salvare'))?'':'<button class="btn" data-a="tReset">Nuovo timer</button>'}</div></div>`;
 }
 function autoOk(e,j){const x=e&&e.s[j];if(x&&x[1]===''){x[1]='ok';if((x[0]===''||x[0]==null)&&planned(e,j)!=null)x[0]=planned(e,j);scheduleSave();if(S.tab==='diario'&&S.draft){const i=S.draft.ex.indexOf(e);if(i>=0)refreshCard(i)}}}
 function emomEx(i){return T&&T.cfg.link&&S.draft?S.draft.ex[T.cfg.link[i]]||null:null}
@@ -2741,7 +2758,11 @@ const A={
   progList(){const L=S.progs.filter(p=>!S.draft||p.id!==S.draft.id);sheet(`<h3>Sedute programmate</h3><div class="tpl" style="margin-top:8px">${L.map(x=>`<button data-a="progOpen" data-id="${esc(x.id)}"><span class="wo">${esc(x.wo||'–')}</span><span class="what">${x.nome?`<b>${esc(x.nome)}</b>: `:''}${esc(x.ex.filter(e=>!e.fin).map(e=>e.n).join(', '))}</span><span class="when">Programmata per ${ggOf(x.d).toLowerCase()} ${fmtD(x.d)}</span></button>`).join('')}</div><p class="muted small">Aprendone una, la seduta aperta resta salvata.</p><div class="row" style="margin-top:10px"><button class="btn" data-a="closeSheet">Chiudi</button></div>`)},
   progOpen(el){closeSheet();S.dList=false;const x=S.progs.find(p=>p.id===el.dataset.id);if(!x)return;if(S.draft&&S.draft.ex.length)saveNow();
     S.draft={...clone(x),isNew:false,_d0:x.d,prog:true};S.draft.ex.forEach(e=>{e.s=e.s||[];e.k=e.k||0});persistDraft();lastSaved=JSON.stringify({...sessionObj(S.draft),updated:0});S.saveMsg='';render();window.scrollTo(0,0)},
-  closeDraft(){saveNow();S.dList=false;S.draft=null;store('diario-bozza',null);S.saveMsg='';render()},
+  closeDraft(el){const d=S.draft;if(d&&d.ex.length&&!d.prog&&!isExec(d)&&!(el&&el.dataset&&el.dataset.ok)){
+      sheet(`<h3>Non hai fatto nessuna serie</h3><p class="muted">Questa seduta è ancora vuota. Vuoi tenerla per un’altra volta oppure scartarla?</p>
+        <div class="row" style="margin-top:14px"><button class="btn primary" data-a="progAsk">Salva per un prossimo allenamento</button><button class="btn" data-a="discardDraft">Scarta</button><button class="btn" data-a="closeSheet">Torna alla seduta</button></div>`);return}
+    closeSheet();saveNow();S.dList=false;S.draft=null;store('diario-bozza',null);S.saveMsg='';render()},
+  async discardDraft(){closeSheet();const d=S.draft;if(!d)return;const id=d.id;S.dList=false;await delSession(id);S.saveMsg='';render()},
   askDelDraft(){if(!S.draft)return;delAsk(S.draft,'delDraft','')},
   async delDraft(){const id=S.draft.id;closeSheet();clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null);await delSession(id);render()},
   toggleSess(el){const id=el.dataset.id;S.open.has(id)?S.open.delete(id):S.open.add(id);render()},
@@ -2777,6 +2798,7 @@ const A={
   },
   tStart(){
     enterFs();
+    if(S.tLib&&!sesActive()){T=null;S.finNext=false;S.tc.from=null;S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;S.tc.amrap.link=null;S.tc.rt.link=null;tStart();if(T)T.free=true;render();return}
     if(!sesActive()){sesNew();const c=SES.cfg;
       if(c.warmOn&&c.warmAuto)return startWarm();
       if(c.warmOn){SES.phase='pre';sesSave();render();return}
@@ -2796,6 +2818,8 @@ const A={
   tAskStop(){confirmSheet('Terminare il timer?','Il conteggio si ferma e vedi il riepilogo.','Termina','tStopNow')},
   tStopNow(){closeSheet();tStop();render()},
   tReset(){tReset()},
+  tRepeat(){tReset();A.tStart()},
+  tLib(el){S.tLib=el.dataset.v==='1';try{localStorage.setItem('diario-timerLibero',S.tLib?'1':'0')}catch(e){}if(S.tLib){S.tc.from=null;S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;S.tc.amrap.link=null;S.tc.rt.link=null}render()},
   tGo(){const t=clk();if(!T.durs.length&&T.k===0)T.blk=t;T.phase='work';T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;beepLong();updateRun()},
   tEndSet(){if(spEndSet(clk())==='stop'){render();return}updateRun()},
   mkMove(el){if(T.mk==null)return;const b=spBlockStart(T.mk),n=T.mk+Number(el.dataset.d);if(n<b||n>T.done_k)return;T.mk=n;T.marked='';updateRun()},
@@ -3062,6 +3086,8 @@ async function importBackup(obj){
   merge();if(!nt)ensureDefaults();return {n:base.length+upd.length,cfg,nt,nm};
 }
 async function delSession(id){
+  S.delIds.add(id);if(S.draft&&S.draft.id===id){clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null)}
+  try{await saveChain}catch(e){}
   try{
     if(S.mode==='db'){S.sed.set(id,{id,deleted:true});merge();await S.base.collection('sedute').doc(id).set({id,deleted:true,updated:Date.now()})}
     else{const all=load('diario-sedute')||{};all[id]={id,deleted:true};store('diario-sedute',all);S.sed.set(id,{id,deleted:true});merge()}

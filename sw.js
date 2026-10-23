@@ -1,6 +1,6 @@
 // Diario di allenamento: funzionamento offline
-const CACHE='prova-v11';
-const PRE='prova-';
+const CACHE='diario-v47';
+const PRE='diario-';
 const SHELL=['./','index.html','manifest.webmanifest','icon-192-v2.png','icon-512-v2.png','icon-maskable-512-v2.png'];
 // all'installazione scarica i file aggirando la cache del browser
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(SHELL.map(u=>fetch(new Request(u,{cache:'reload'})).then(r=>{if(r.ok)return c.put(u,r)})))).then(()=>self.skipWaiting()))});
