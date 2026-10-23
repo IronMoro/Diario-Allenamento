@@ -907,10 +907,18 @@ function vDiario(){
     <button class="btn primary" data-a="closeDraft">Chiudi seduta</button>
     <button class="btn" data-a="progAsk">Salva per un prossimo allenamento</button>
     <span class="spacer"></span>
-    ${d.ex.some(e=>(e.s||[]).some(x=>x[1]))?'<span class="muted small">Una seduta eseguita non si elimina: si può modificare.</span>':'<button class="btn ghost danger" data-a="askDelDraft">Elimina seduta</button>'}
+    <button class="btn ghost danger" data-a="askDelDraft">Elimina seduta</button>
   </div>`;
 }
 const isExec=x=>x.ex.some(e=>(e.s||[]).some(y=>y[1]));
+function sessData(x){let set=0,rep=0,ex=0,note=!!String(x.note||'').trim();
+  x.ex.forEach(e=>{const f=(e.s||[]).filter(y=>y[1]&&y[1]!=='skip');if(f.length){ex++;set+=f.length;rep+=f.reduce((a,y)=>a+(Number(y[0])||0),0)}if(String(e.note||'').trim())note=true});
+  const parts=[];if(set)parts.push(`${set} ${set===1?'serie fatta':'serie fatte'} su ${ex} ${ex===1?'esercizio':'esercizi'} (${rep} ripetizioni)`);if(note)parts.push('note');
+  return {has:set>0||note,txt:parts.join(', ')}}
+function delAsk(x,act,attrs){const d=sessData(x);
+  if(!d.has){A[act]({dataset:Object.fromEntries((attrs.match(/data-(\w+)="([^"]*)"/g)||[]).map(m=>{const [,k,v]=m.match(/data-(\w+)="([^"]*)"/);return [k,v]}))});return}
+  sheet(`<h3>Eliminare questa seduta?</h3><p>${esc(x.wo||'')} ${x.nome?`«${esc(x.nome)}» `:''}del ${fmtD(x.d)} contiene dati: <b>${d.txt}</b>.</p><p class="muted">Eliminandola li togli dallo storico e dagli andamenti, e non si possono recuperare (se non da un backup).</p>
+    <div class="row" style="margin-top:14px"><button class="btn danger" data-a="${act}" ${attrs} style="border:1px solid var(--ko)">Elimina comunque</button><button class="btn primary" data-a="closeSheet">Annulla</button></div>`)}
 function woLast(){const m=new Map();for(const x of S.hist){if(x.wo&&!m.has(x.wo))m.set(x.wo,x)}return m}
 function woState(wo,last){const st=(S.cfg.woState||{})[wo];if(st)return st;const lim=S.hist.length?isoMinus(S.hist[0].d,183):'';return last&&last.d>=lim?'corso':'arch'}
 function woCard(x,extra,act='fromTpl'){return `<div class="tplrow"><button data-a="${act}" data-id="${esc(x.id)}"><span class="wo">${esc(x.wo||'–')}</span>
@@ -1398,7 +1406,7 @@ function vGuida(){
     <li><b>Usare una programmata</b>: aprila da Programmate, controlla o cambia quello che vuoi, poi «Avvia la seduta» (oppure segna le serie a mano). Alla <b>prima serie registrata</b> diventa una seduta dello storico con la data di oggi e il suo WO passa in «In corso», anche se era archiviato. Se la apri o la avvii e ti fermi prima della prima serie, resta tra le programmate.</li>
     <li><b>Archiviate</b>: WO eseguiti che ora non usi. Non si cancellano, per non perdere lo storico. «Rimetti in corso» li riporta in uso; «Programma di nuovo» ne prepara una seduta con il piano successivo; «Modifica una copia» crea una copia con un WO nuovo da cambiare liberamente.</li>
     <li>All’inizio sono in corso i WO usati negli ultimi sei mesi e archiviati gli altri. Una seduta eseguita con un WO archiviato lo rimette in corso.</li>
-    <li>Con una seduta aperta, «← Sedute» torna all’elenco e «Riprendi» la riapre. Una seduta eseguita, anche solo in parte, non si elimina: si può modificare.</li></ul>`)}
+    <li>Con una seduta aperta, «← Sedute» torna all’elenco e «Riprendi» la riapre. Una singola seduta si può eliminare dallo Storico o dalla seduta stessa: se contiene dati (serie fatte, note) l’app chiede conferma e mostra cosa si perde; se è stata solo avviata e terminata senza nulla di fatto, la elimina subito. I WO eseguiti invece non si cancellano: si archiviano.</li></ul>`)}
   ${sec('Preparare una seduta per un’altra volta',`<p>Puoi preparare una seduta senza farla subito: componi gli esercizi, i carichi, i protocolli, il finisher, poi tocca <b>«Salva per un prossimo allenamento»</b> in fondo alla seduta.</p>
     <ul><li><b>Aggiorna questa seduta</b>: la salva così com’è e la chiude.</li>
     <li><b>Salva come nuova seduta</b>: con un nome, un WO e una data. Il WO proposto è la prima lettera libera e si può cambiare, ma non può essere uno già usato. La seduta aperta resta com’era.</li></ul>
@@ -1823,7 +1831,7 @@ function vSess(s){
     <p class="muted">${sessSumTxt(s,!!s.updated)}</p>
     ${s.tempi?`<p class="muted">Tempi: ${tempiTxt(s.tempi)}</p>`:''}
     ${s.note?`<p><b>Note:</b> ${esc(s.note)}</p>`:''}
-    <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span>${s.ex.some(e=>(e.s||[]).some(x=>x[1]))?'':`<button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button>`}</div>
+    <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span><button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button></div>
   </div>`:''}</article>`;
 }
 function vExHistory(name,noCharts){
@@ -2733,7 +2741,7 @@ const A={
   progOpen(el){closeSheet();S.dList=false;const x=S.progs.find(p=>p.id===el.dataset.id);if(!x)return;if(S.draft&&S.draft.ex.length)saveNow();
     S.draft={...clone(x),isNew:false,_d0:x.d,prog:true};S.draft.ex.forEach(e=>{e.s=e.s||[];e.k=e.k||0});persistDraft();lastSaved=JSON.stringify({...sessionObj(S.draft),updated:0});S.saveMsg='';render();window.scrollTo(0,0)},
   closeDraft(){saveNow();S.dList=false;S.draft=null;store('diario-bozza',null);S.saveMsg='';render()},
-  askDelDraft(){if(S.draft&&isExec(S.draft)){sheet('<h3>Non si può eliminare</h3><p class="muted">Questa seduta ha già serie eseguite: per tenere integro lo storico non si elimina. Puoi modificarla.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>');render();return}confirmSheet('Eliminare la seduta?','La seduta e i suoi esercizi vengono tolti dal diario.','Elimina','delDraft')},
+  askDelDraft(){if(!S.draft)return;delAsk(S.draft,'delDraft','')},
   async delDraft(){const id=S.draft.id;closeSheet();clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null);await delSession(id);render()},
   toggleSess(el){const id=el.dataset.id;S.open.has(id)?S.open.delete(id):S.open.add(id);render()},
   moreWeeks(){S.storWeeks+=8;render()},
@@ -2743,8 +2751,8 @@ const A={
     S.draft={...clone(s),isNew:false,_d0:s.d};S.draft.ex.forEach(e=>{e.s=e.s||[];e.k=e.k||0});persistDraft();
     lastSaved=JSON.stringify({...sessionObj(S.draft),updated:0});S.saveMsg='';S.tab='diario';render();window.scrollTo(0,0);
   },
-  askDelSess(el){const x=S.hist.find(y=>y.id===el.dataset.id);if(x&&isExec(x))return;confirmSheet('Eliminare la seduta?','La seduta viene tolta dallo storico.','Elimina','delSess',`data-id="${esc(el.dataset.id)}"`)},
-  async delSess(el){closeSheet();await delSession(el.dataset.id);render()},
+  askDelSess(el){const x=S.hist.find(y=>y.id===el.dataset.id)||S.progs.find(y=>y.id===el.dataset.id);if(!x)return;delAsk(x,'delSess',`data-id="${esc(x.id)}"`)},
+  async delSess(el){closeSheet();const id=el.dataset.id;if(S.draft&&S.draft.id===id){clearTimeout(saveTimer);S.draft=null;store('diario-bozza',null)}S.open.delete(id);await delSession(id);render()},
   async exportCsv(){
     const rows=[['SET','GG','WO','Data','Esercizio','Protocollo','Tempo','Kg','Zavorra Kg','%Intensità','Rep previste','Serie a +1',...Array.from({length:20},(_,i)=>'S'+(i+1)),'Esiti','TotRep','Tonnellaggio','Volume','Serie fallite','Stato','Fatica','Note']];
     const dec=v=>v==null||v===''?'':String(v).replace('.',',');
@@ -3054,7 +3062,7 @@ async function importBackup(obj){
 }
 async function delSession(id){
   try{
-    if(S.mode==='db'){await S.base.collection('sedute').doc(id).set({id,deleted:true,updated:Date.now()})}
+    if(S.mode==='db'){S.sed.set(id,{id,deleted:true});merge();await S.base.collection('sedute').doc(id).set({id,deleted:true,updated:Date.now()})}
     else{const all=load('diario-sedute')||{};all[id]={id,deleted:true};store('diario-sedute',all);S.sed.set(id,{id,deleted:true});merge()}
   }catch(e){}
 }
