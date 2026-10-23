@@ -356,6 +356,7 @@ body.lock{overflow:hidden}
 <script>
 "use strict";
 /* ---------- costanti ---------- */
+const APP_VER='45';
 const GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
 const FATICA=['Facile','Facile/Liscia','Liscia','Liscia/Difficile','Difficile','Difficile/Dura','Dura','Dura/Fallito','Fallito'];
 const RPE={'Facile':6.5,'Facile/Liscia':7.5,'Liscia':8,'Liscia/Difficile':8.5,'Difficile':9,'Difficile/Dura':9.5,'Dura':10,'Dura/Fallito':10.5,'Fallito':11};
@@ -1378,7 +1379,7 @@ function vGuida(){
   const ch=(c,t)=>`<span class="chipx" style="background:${c}"></span>${t}`;
   const tb=(h,rows)=>`<div style="overflow-x:auto"><table class="tbl"><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   return `<div class="top"><h1>Guida</h1></div><div class="guide">
-  <p class="muted" style="margin:0 0 14px">Come usare l’app e come sono calcolati i numeri. Tocca un titolo per aprirlo.</p>
+  <p class="muted" style="margin:0 0 14px">Come usare l’app e come sono calcolati i numeri. Tocca un titolo per aprirlo. <span class="small">Versione ${APP_VER}</span></p>
   ${sec('Iniziare da zero, passo per passo',`<p>Per chi apre l’app per la prima volta, senza un backup da importare.</p>
     <ol>
     <li><b>Apri l’app.</b> Su claude.ai basta il link. Sul tablet o sul telefono aprila con Chrome e installala dal menu ⋮ → «Installa app» (o «Aggiungi a schermata Home»): avrai l’icona e funzionerà anche senza internet.</li>
@@ -1804,7 +1805,7 @@ function vStorico(){
     <label class="f" style="flex:1;min-width:200px">Esercizio<select data-f="st:ex"><option value="">Tutte le sedute</option>${(S.names||[]).map(n=>`<option ${n===ex?'selected':''}>${esc(n)}</option>`).join('')}</select></label>
   </div>
   <div class="row" style="margin:-6px 0 16px">${canSave()?`<button class="btn" data-a="exportCsv">Esporta CSV</button><button class="btn" data-a="exportBak">Esporta backup</button>`:''}<button class="btn" data-a="importBtn">Importa backup</button></div>`;
-  h+=`<p class="muted small" style="margin:-8px 0 14px">${S.mode==='db'?'Dati salvati nel tuo account Claude':'Dati salvati su questo dispositivo'}: ${S.hist.length} sedute${S.prof.list.length>1?`, profilo «${esc(profName(PID))}»`:''}${S.mode==='local'?(S.persist===true?'; memoria protetta: il browser non la cancella da solo.':S.persist===false?'; memoria non protetta: esporta un backup ogni tanto (installare l’app aiuta a proteggerla).':''):''}</p>`;
+  h+=`<p class="muted small" style="margin:-8px 0 14px">Versione ${APP_VER}. ${S.mode==='db'?'Dati salvati nel tuo account Claude':'Dati salvati su questo dispositivo'}: ${S.hist.length} sedute${S.prof.list.length>1?`, profilo «${esc(profName(PID))}»`:''}${S.mode==='local'?(S.persist===true?'; memoria protetta: il browser non la cancella da solo.':S.persist===false?'; memoria non protetta: esporta un backup ogni tanto (installare l’app aiuta a proteggerla).':''):''}</p>`;
   if(!S.hist.length)return h+`<p class="empty">${S.mode==='loading'?'Carico lo storico…':'Nessuna seduta salvata. Le sedute che registri nel Diario compaiono qui.'}</p>`;
   if(ex)return h+vExHistory(ex);
   const weeks=new Map();
@@ -3142,7 +3143,8 @@ $('#fileImp').addEventListener('change',async ev=>{
     done('Backup importato',(S.prof.list.length>1?`Nel profilo «${esc(profName(PID))}»: `:'')+(r.n?`${r.n} sedute nuove o aggiornate.`:`nessuna seduta nuova: ${S.hist.length} sedute erano già presenti${S.mode==='local'?' e le ho salvate di nuovo nella memoria del dispositivo':''}.`)+(r.nt?` ${r.nt} test e massimali importati.`:'')+(r.nm?` ${r.nm} misurazioni importate.`:'')+(r.cfg?' Ho ripreso anche le impostazioni dei timer e della progressione.':''));render()}
   catch(e){done('Backup non importato',e&&e.message==='spazio'?'Lo spazio del browser per questa app è pieno.':'Il file non è un backup del diario: scegli il file diario-backup….json esportato dall’app.')}
 });
-if(STANDALONE&&'serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(STANDALONE&&'serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.register('sw.js').then(r=>{try{r.update()}catch(e){}}).catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had||window.__swReload)return;window.__swReload=true;const go=()=>{if(T&&!T.done){setTimeout(go,5000);return}try{if(S.draft)persistDraft()}catch(e){}location.reload()};go()})}
 if(SES&&SES.phase==='train')SES.phase='between';
 if(sesActive())ensureLoop();
 init();
