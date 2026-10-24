@@ -1,36 +1,23 @@
-DIARIO DI ALLENAMENTO - pacchetto completo, versione 47
-=======================================================
+DIARIO DI ALLENAMENTO - versione da far provare
+=================================================
 
-Contiene l'app intera (funziona anche senza internet):
-  index.html, sw.js, manifest.webmanifest, icon-192-v2.png, icon-512-v2.png, icon-maskable-512-v2.png
-Dentro NON ci sono i tuoi dati: quelli stanno sul tablet/telefono e nei file di backup.
+È l'app completa ma vuota: nessuna seduta, test o protocollo.
+Alla prima apertura mostra un benvenuto con «Come iniziare»; la scheda
+«Guida» spiega tutto passo per passo.
 
-A) SE L'APP È GIÀ PUBBLICATA (repository «diario» su GitHub)
-   1. Su github.com apri il repository «diario».
-   2. «Add file» > «Upload files»: trascina TUTTI i file di questo pacchetto
-      (sostituiscono quelli vecchi) > «Commit changes».
-   3. Aspetta un paio di minuti, poi sul tablet/telefono apri l'app con internet attivo.
-      Se avevi una versione precedente alla 45: chiudila del tutto e riaprila una seconda volta.
-   4. Controlla in «Guida» (in alto) che ci sia scritto «Versione 47».
+COME PUBBLICARLA (5 minuti, una volta sola)
+1. Su github.com crea un nuovo repository pubblico, per esempio «allenamento».
+2. «Add file» → «Upload files»: trascina TUTTI i file di questo pacchetto
+   (index.html, sw.js, manifest.webmanifest, le tre icone) → «Commit changes».
+3. «Settings» → «Pages» → Source: «Deploy from a branch», Branch: «main», cartella «/ (root)» → «Save».
+4. Dopo un paio di minuti l'app è su:  https://TUONOME.github.io/allenamento/
 
-B) PRIMA PUBBLICAZIONE (una volta sola, gratis)
-   1. Crea un account su github.com e un nuovo repository pubblico, ad esempio «diario».
-   2. «Add file» > «Upload files»: trascina tutti i file > «Commit changes».
-   3. «Settings» > «Pages» > Source «Deploy from a branch», branch «main», cartella «/ (root)» > «Save».
-   4. Dopo un paio di minuti l'app è su  https://TUONOME.github.io/diario/
+COSA MANDARE ALL'AMICO
+Solo il link. Lo apre con Chrome (o Safari su iPhone); se gli piace la può
+installare dal menu ⋮ → «Installa app» (iPhone: Condividi → «Aggiungi alla schermata Home»).
 
-C) INSTALLARLA SUL TABLET O SUL TELEFONO
-   - Android: apri l'indirizzo con Chrome > menu ⋮ > «Installa app».
-   - iPhone/iPad: apri con Safari > Condividi > «Aggiungi alla schermata Home».
-   Da quel momento si apre dall'icona e funziona anche senza connessione.
-
-D) I TUOI DATI
-   - Restano sul dispositivo (nella memoria del browser). Ogni tanto: Storico > «Esporta backup».
-   - Per spostarli su un altro dispositivo o nella versione su claude.ai: «Importa backup» con quel file;
-     vengono aggiunte solo le sedute nuove o modificate.
-   - Con più profili sullo stesso dispositivo, il backup va esportato da ciascun profilo.
-
-E) NOVITÀ DELLA VERSIONE 47
-   - Timer libero: nella scheda Timer, «Timer libero» usa un timer da solo, senza seduta,
-     senza riscaldamento/defaticamento e senza scrivere nel diario; alla fine «Ripeti» o «Nuovo timer».
-   - L'app installata si aggiorna da sola appena c'è internet (dalla versione 45 in poi).
+DA SAPERE
+- I dati dell'amico restano solo sul suo dispositivo: tu non li vedi e lui non vede i tuoi.
+- Questa copia usa uno spazio dati separato: anche se la apri sul tuo tablet,
+  non vede e non tocca i dati della tua app «diario».
+- Se vuole tenere i dati o passarli a un altro dispositivo: Storico → «Esporta backup».

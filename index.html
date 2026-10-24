@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#1D2830">
 <link rel="icon" href="icon-192-v2.png">
 <link rel="apple-touch-icon" href="icon-192-v2.png">
+<script>window.DIARIO_NS='prova'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
@@ -355,7 +356,7 @@ body.lock{overflow:hidden}
 <script>
 "use strict";
 /* ---------- costanti ---------- */
-const APP_VER='47';
+const APP_VER='48';
 const GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
 const FATICA=['Facile','Facile/Liscia','Liscia','Liscia/Difficile','Difficile','Difficile/Dura','Dura','Dura/Fallito','Fallito'];
 const RPE={'Facile':6.5,'Facile/Liscia':7.5,'Liscia':8,'Liscia/Difficile':8.5,'Difficile':9,'Difficile/Dura':9.5,'Dura':10,'Dura/Fallito':10.5,'Fallito':11};
@@ -393,11 +394,12 @@ const newMf=()=>({d:todayIso(),vals:{},note:'',editId:null});
 const STANDALONE=!(window.claude&&typeof window.claude.use==='function');
 const S={tLib:(()=>{try{return localStorage.getItem('diario-timerLibero')==='1'}catch(e){return false}})(),delIds:new Set(),dSez:'corso',dList:false,progs:[],progAgg:'sed',prof:{list:[{id:'main',nome:''}],sum:{},ask:true},devMem:null,devEx:'',teamSrc:'dev',team:{members:new Map(),meta:{},names:{},code:null,unsub:null,mem:null,ex:''},protos:new Map(),protosLoaded:false,pf:null,progM:'e1',prog:'6m',exView:'list',misure:new Map(),mf:null,testSub:'test',tests:new Map(),testsLoaded:false,exSel:'',exQ:'',tf:null,tab:'diario',mode:'loading',stor:new Map(),sed:new Map(),hist:[],cfg:{esercizi:{}},draft:null,
   saveMsg:'',storEx:'',storWeeks:8,open:new Set(),progOpen:new Set(),newDate:todayIso(),downloads:null,
-  tmode:'rec',tc:{amrap:{min:10,lead:10,frac:'none',minsLeft:'',col:['#0284C7','#F97316','#16A34A','#9333EA','#DC2626','#0D9488'],restCol:'#E2E8F0',ex:[{n:'',rep:10},{n:'',rep:10}],warnSec:10,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120,link:null},
+  tmode:'rec',tc:{lad:{ex:[{n:''}],verso:'su',da:1,a:5,passo:1,volte:1,top2:'',ondaK:'gradini',lung:3,sposta:1,loDa:1,loA:3,hiDa:5,hiA:6,seq:'1,7,2,8,3',alt:false,restMode:'fix',rest:60,mult:2,lead:10,mark:'after',colWork:'#0284C7',colRest:'#16A34A',icol:[],warnSec:3,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120},
+  amrap:{min:10,lead:10,frac:'none',minsLeft:'',col:['#0284C7','#F97316','#16A34A','#9333EA','#DC2626','#0D9488'],restCol:'#E2E8F0',ex:[{n:'',rep:10},{n:'',rep:10}],warnSec:10,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120,link:null},
   rt:{n:'',target:50,rep:'',rest:60,lead:10,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,link:null},
   tst:{tipo:'t30',n:'',kg:'',rif:'',rifTouched:false,step:5,lead:10,col:['#0284C7','#16A34A','#9333EA'],warnSec:10,warnCol:'#FFC000',half:false},
   circ:{items:[{n:'',tipo:'time',val:40},{n:'',tipo:'time',val:40},{n:'',tipo:'time',val:40}],giri:3,restEx:15,restGiro:60,lead:10,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120},
-  rec:{n:6,lead:10,rest:'fix',sec:90,mult:2,auto:true,links:null,mode:'sep',items:[{n:'',sets:6,rep:''}],between:90,tr:0,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120},
+  rec:{n:6,mark:'after',lead:10,rest:'fix',sec:90,mult:2,auto:true,links:null,mode:'sep',items:[{n:'',sets:6,rep:''}],between:90,tr:0,colWork:'#0284C7',colRest:'#16A34A',warnSec:3,warnCol:'#FFC000',half:false,restEnd:false,restEndSec:120},
   emom:{k:2,giri:10,lead:10,mark:'next',giroFmt:'frac',col:['#0284C7','#16A34A','#9333EA'],warnSec:3,warnCol:'#FFC000',half:false,restOn:false,restSec:60,restEnd:false,restEndSec:120,restCol:'#E2E8F0',ex:[{n:'',rep:'',sec:60},{n:'',rep:'',sec:60},{n:'',rep:'',sec:60}]},
   edt:{lead:10,zones:1,min:15,min2:15,restZ:5,a:{n:'',rep:5},b:{n:'',rep:5},c:{n:'',rep:5},d:{n:'',rep:5},col:['#0284C7','#F97316','#16A34A','#9333EA'],warnSec:3,warnCol:'#FFC000',half:false,frac:'none',minsLeft:'',restEnd:false,restEndSec:120,restCol:'#E2E8F0'},snd:{style:'bip',fsAuto:true},sess:{warmOn:false,warmAuto:true,warmMode:'fix',warmMin:10,coolOn:false,coolAuto:true,coolMode:'fix',coolMin:5,colWarm:'#F97316',colCool:'#0284C7',coolKind:'time',pos:[{n:'Posizione 1',sec:60},{n:'Posizione 2',sec:60},{n:'Posizione 3',sec:60}],posTr:10}}};
 
@@ -617,10 +619,10 @@ function setupTimer(i){
       else if(P.tipo==='edt'){const c=S.tc.edt;c.link=idx;c.min=Math.max(1,num(P.min)||15);c.min2=c.min;c.restZ=num(P.restZ)??5;c.zones=idx.length>2?2:1;idx.forEach((j,n)=>{c[EK[n]]={n:ex[j].n,rep:ex[j].b??(num(P.rep)||5)}})}
       else if(P.tipo==='circ'){const c=S.tc.circ;c.links=idx;c.giri=Math.max(1,num(P.giri)||3);c.restEx=num(P.restEx)??15;c.restGiro=num(P.restGiroC)??60;
         c.items=idx.map((j,n)=>{const st=circSt(P,n);return {n:ex[j].n,tipo:st.work==='rep'?'rep':'time',val:st.work==='rep'?(ex[j].b??num(st.val)):num(st.val)}})}
-      else if(P.tipo==='st'||P.tipo==='ladder'){const c=S.tc.rec;if(P.tipo==='ladder')idx.forEach(j=>{const x=ex[j];if(!x.s.some(y=>y[1])){x.lad=ladList(P);x.b=null;x.k=0;x.s=[];setN(x,x.lad.length)}});
+      else if(P.tipo==='st'||P.tipo==='ladder'){const c=S.tc.rec;if(P.mark)c.mark=P.mark;if(P.tipo==='ladder')idx.forEach(j=>{const x=ex[j];if(!x.s.some(y=>y[1])){x.lad=ladList(P);x.b=null;x.k=0;x.s=[];setN(x,x.lad.length)}});
         c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:''}));c.mode=idx.length>1?'super':'sep';c.rest=P.tipo==='ladder'&&P.restMode==='mult'?'mult':P.tipo==='ladder'&&P.restMode==='free'?'free':num(P.rest)>0?'fix':'free';c.sec=num(P.rest)||60;c.mult=num(P.mult)||2;c.tr=0;c.between=c.sec;scheduleSave()}
       else if(P.tipo==='max'){setupMax(idx,num(P.rest)||60)}
-      else{const c=S.tc.rec;c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=idx.length>1?'super':'sep';
+      else{const c=S.tc.rec;if(P.mark)c.mark=P.mark;c.links=idx;c.items=idx.map(j=>({n:ex[j].n,sets:ex[j].s.length,rep:ex[j].b??''}));c.mode=idx.length>1?'super':'sep';
         c.rest=P.restMode==='mult'?'mult':'fix';c.sec=Math.max(5,num(P.rest)||90);c.mult=num(P.mult)||2;c.tr=num(P.tr)||0;c.between=c.sec}
       S.tmode=tp.mode;return tp}
     if(tp.mode==='emom'){const c=S.tc.emom;c.k=tp.idx.length;c.link=tp.idx;c.giri=tp.pp.giri||Math.max(...tp.idx.map(j=>ex[j].s.length));
@@ -814,11 +816,11 @@ async function init(){
   },()=>{});
 }
 
-const PREFKEYS={amrap:['lead','col','restCol','warnSec','warnCol','half','frac','minsLeft','restEnd','restEndSec'],rt:['lead','colWork','colRest','warnSec','warnCol','half'],tst:['tipo','step','lead','col','warnSec','warnCol','half'],circ:['items','icol','giri','restEx','restGiro','lead','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],emom:['mark','giroFmt','col','warnSec','warnCol','half','restOn','restSec','restEnd','restEndSec','restCol'],rec:['lead','icol','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],edt:['lead','zones','restZ','col','warnSec','warnCol','frac','minsLeft','restEnd','restEndSec','restCol'],snd:['style','fsAuto'],sess:['coolKind','pos','posTr','warmOn','warmAuto','warmMode','warmMin','coolOn','coolAuto','coolMode','coolMin','colWarm','colCool']};
+const PREFKEYS={lad:['ex','verso','da','a','passo','volte','top2','ondaK','lung','sposta','loDa','loA','hiDa','hiA','seq','alt','restMode','rest','mult','lead','mark','colWork','colRest','icol','warnSec','warnCol','half','restEnd','restEndSec'],amrap:['lead','col','restCol','warnSec','warnCol','half','frac','minsLeft','restEnd','restEndSec'],rt:['lead','colWork','colRest','warnSec','warnCol','half'],tst:['tipo','step','lead','col','warnSec','warnCol','half'],circ:['items','icol','giri','restEx','restGiro','lead','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],emom:['mark','giroFmt','col','warnSec','warnCol','half','restOn','restSec','restEnd','restEndSec','restCol'],rec:['mark','lead','icol','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],edt:['lead','zones','restZ','col','warnSec','warnCol','frac','minsLeft','restEnd','restEndSec','restCol'],snd:['style','fsAuto'],sess:['coolKind','pos','posTr','warmOn','warmAuto','warmMode','warmMin','coolOn','coolAuto','coolMode','coolMin','colWarm','colCool']};
 function loadPrefs(){
   if(S.prefsLoaded||!S.cfg.timer)return;
   for(const m in PREFKEYS){const p=S.cfg.timer[m];if(!p)continue;
-    PREFKEYS[m].forEach(k=>{if(p[k]==null)return;if(k==='items'||k==='pos'){if(Array.isArray(p[k])&&p[k].length)S.tc[m][k]=clone(p[k]);return}if(Array.isArray(p[k]))p[k].forEach((c,i)=>{if(c)S.tc[m][k][i]=bright(c)});else S.tc[m][k]=/col/i.test(k)?bright(p[k]):p[k]})}
+    PREFKEYS[m].forEach(k=>{if(p[k]==null)return;if(k==='items'||k==='pos'||(m==='lad'&&k==='ex')){if(Array.isArray(p[k])&&p[k].length)S.tc[m][k]=clone(p[k]);return}if(Array.isArray(p[k]))p[k].forEach((c,i)=>{if(c)S.tc[m][k][i]=bright(c)});else S.tc[m][k]=/col/i.test(k)?bright(p[k]):p[k]})}
   S.prefsLoaded=true;if(S.tab==='timer'&&!T)render();
 }
 function savePrefs(){
@@ -840,7 +842,7 @@ function vWarn(m,what){
     <p class="muted small" style="margin:6px 0 0">Gli ultimi 3 secondi suonano sempre; se l’avviso parte prima, un segnale ne segna l’inizio.</p>
     ${m==='edt'||m==='amrap'?`<label class="f" style="max-width:260px;margin-top:8px">Avvisi durante il tempo<select data-f="tc:${m}.frac">${[['none','Nessuno'],['half','A metà'],['thirds','A 1/3 e 2/3'],['quarters','A 1/4, metà e 3/4']].map(([k,l])=>`<option value="${k}" ${c.frac===k?'selected':''}>${l}</option>`).join('')}</select></label>
     <label class="f" style="max-width:260px;margin-top:8px">Avvisa quando mancano (minuti)<input type="text" inputmode="decimal" placeholder="es. 5, 1" value="${esc(c.minsLeft)}" data-f="tc:${m}.minsLeft"></label>`
-    :`<label class="row" style="flex-wrap:nowrap;margin-top:8px"><input type="checkbox" ${c.half?'checked':''} data-f="tc:${m}.half" style="width:22px;height:22px"> ${({emom:'Avviso a metà di ogni intervallo',rec:'Avviso a metà del recupero',circ:'Avviso a metà di ogni pausa',tst:'Avviso a metà di ogni blocco',amrap:'Avviso a metà del tempo',rt:'Avviso a metà del recupero'}[m]||'Avviso a metà')}</label>`}</div>
+    :`<label class="row" style="flex-wrap:nowrap;margin-top:8px"><input type="checkbox" ${c.half?'checked':''} data-f="tc:${m}.half" style="width:22px;height:22px"> ${({lad:'Avviso a metà del recupero',emom:'Avviso a metà di ogni intervallo',rec:'Avviso a metà del recupero',circ:'Avviso a metà di ogni pausa',tst:'Avviso a metà di ogni blocco',amrap:'Avviso a metà del tempo',rt:'Avviso a metà del recupero'}[m]||'Avviso a metà')}</label>`}</div>
   ${vSound()}`;
 }
 const STILI=[['bip','Bip'],['campanello','Campanello'],['fischietto','Fischietto'],['legno','Legno'],['gong','Gong'],['digitale','Digitale'],['marimba','Marimba'],['ring','Campana del ring'],['arcade','Arcade'],['tamburo','Tamburo'],['voce','Voce']];
@@ -1010,7 +1012,7 @@ function vCard(e,i){
   <div class="card-h">${exIcon(e.n,38)}<input type="text" value="${esc(e.n)}" data-f="e:${i}:n" list="names" aria-label="Esercizio"></div>
   ${e._why?`<p class="sugg">${esc(e._why)}</p>`:''}
   <div class="grid">
-    <label class="f wide">Protocollo<select data-f="e:${i}:pid"><option value="">Testo libero</option>${protoList().map(P=>`<option value="${esc(P.id)}" ${P.id===e.pid?'selected':''}>${esc(pName(P))}</option>`).join('')}</select></label>
+    <label class="f wide">Protocollo<select data-f="e:${i}:pid"><option value="">Testo libero</option>${protoList().map(P=>`<option value="${esc(P.id)}" ${P.id===e.pid?'selected':''}>${esc(pName(P))}</option>`).join('')}</select></label>${e.pid&&S.protos.get(e.pid)&&S.draft.ex.some((x,k)=>k!==i&&!x.fin&&!e.fin&&x.pid!==e.pid)?`<div class="f wide" style="align-self:end"><button class="btn" data-a="pidAll" data-i="${i}">Usa lo stesso protocollo per tutti gli esercizi</button></div>`:''}
     ${e.pid&&S.protos.get(e.pid)&&!S.protos.get(e.pid).deleted?'':`<label class="f wide">Testo del protocollo<input type="text" value="${esc(e.p)}" data-f="e:${i}:p"></label>`}
     <label class="f">Kg<input type="number" inputmode="decimal" step="any" value="${e.kg??''}" data-f="e:${i}:kg"></label>
     <label class="f">Zavorra<input type="number" inputmode="decimal" step="any" value="${e.z??''}" data-f="e:${i}:z"></label>
@@ -1142,6 +1144,7 @@ function protoSlots(P){if(P.tipo==='emom')return emK(P);if(P.tipo==='edt')return
 function addToDraft(x){const d=ensureDraft(),fi=d.ex.findIndex(e=>e.fin);if(fi<0)d.ex.push(x);else d.ex.splice(fi,0,x);S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;return d.ex.indexOf(x)}
 function goCard(i){S.tab='diario';render();setTimeout(()=>{const c=$('#card-'+i);if(c)c.scrollIntoView({block:'start'})},60)}
 function protoUse(id){const P=S.protos.get(id),src=new Set((P&&P.src||[]).map(normP));let n=0;for(const s of S.hist)if(s.ex.some(e=>e.pid===id||(!e.pid&&src.has(normP(e.p)))))n++;return n}
+function pfMark(){const v=S.pf.mark||'after';return `<div class="seg sm" role="group" aria-label="Quando segnare le ripetizioni" style="grid-column:1/-1;max-width:440px"><button data-a="pfSet" data-k="mark" data-v="during" aria-pressed="${v==='during'}">Ripetizioni durante la serie</button><button data-a="pfSet" data-k="mark" data-v="after" aria-pressed="${v!=='during'}">Ripetizioni dopo</button></div>`}
 function pfFields(){
   const f=S.pf,inp=(l,k,ty='number',ex='')=>`<label class="f">${l}<input type="${ty}" ${ty==='number'?'inputmode="decimal" step="any"':''} value="${esc(f[k])}" data-f="pf:${k}" ${ex}></label>`;
   const chk=(k,v,l)=>`<label class="row" style="flex-wrap:nowrap;grid-column:1/-1"><input type="checkbox" ${f[k]===v?'checked':''} data-f="pf:${k}" data-on="${v}" style="width:22px;height:22px"> ${l}</label>`;
@@ -1150,7 +1153,7 @@ function pfFields(){
     +inp('Giri','giri')+inp('Riposo a fine giro (s, 0 = no)','restGiro')
     +f.slots.slice(0,k).map((x,i)=>`<div class="muted small" style="grid-column:1/-1;margin-top:4px">${k>1?`Esercizio ${i+1} del giro`:'Ogni intervallo'}</div>`+sub('slots',i,'sec','Secondi')+sub('slots',i,'rep','Ripetizioni (es. 6 o 3-6)','text')).join('')
     +(k>1?`<p class="muted small" style="grid-column:1/-1;margin:0">Nella seduta gli esercizi con questo protocollo prendono, in ordine, il primo, il secondo e il terzo intervallo.</p>`:'')}
-  if(f.tipo==='st')return inp('Serie','serie')+inp('Ripetizioni per serie','rep','text')+inp('Recupero (s, 0 = libero)','rest')+`<p class="muted small" style="grid-column:1/-1;margin:0">Serie Target: tutte le serie previste con il recupero che ti serve; conta il tempo per completarle.</p>`;
+  if(f.tipo==='st')return inp('Serie','serie')+inp('Ripetizioni per serie','rep','text')+inp('Recupero (s, 0 = libero)','rest')+pfMark()+`<p class="muted small" style="grid-column:1/-1;margin:0">Serie Target: tutte le serie previste con il recupero che ti serve; conta il tempo per completarle.</p>`;
   if(f.tipo==='ladder'){const v=f.verso==='ar'?'sugiu':f.verso,ok=f.ondaK||'gradini',src=f.sugSrc||'test';
     let body='';
     if(v==='onda'&&ok==='pers')body=inp('Sequenza (es. 1,7,2,8,3,1,7)','seq','text');
@@ -1160,7 +1163,7 @@ function pfFields(){
     +(v==='onda'?`<div class="seg sm" role="group" aria-label="Tipo di onda" style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">${ONDAK.map(([k2,l2])=>`<button data-a="pfSet" data-k="ondaK" data-v="${k2}" aria-pressed="${ok===k2}">${l2}</button>`).join('')}</div>`:'')
     +(v==='sugiu'?chk('top2','1','Ripeti il gradino più alto (es. 1-2-3-3-2-1)'):'')
     +body+inp('Quante volte ripeti la scala','volte')
-    +`<div class="seg sm" role="group" aria-label="Recupero della ladder" style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));max-width:480px">${[['fix','Recupero fisso'],['mult','Multiplo della serie'],['free','Libero']].map(([k2,l2])=>`<button data-a="pfSet" data-k="restMode" data-v="${k2}" aria-pressed="${(f.restMode||'fix')===k2}">${l2}</button>`).join('')}</div>`+(f.restMode==='mult'?inp('Recupero = durata della serie ×','mult'):f.restMode==='free'?'':inp('Recupero (s)','rest'))+chk('group','super','Alternata con gli altri esercizi della seduta con questo protocollo')
+    +`<div class="seg sm" role="group" aria-label="Recupero della ladder" style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));max-width:480px">${[['fix','Recupero fisso'],['mult','Multiplo della serie'],['free','Libero']].map(([k2,l2])=>`<button data-a="pfSet" data-k="restMode" data-v="${k2}" aria-pressed="${(f.restMode||'fix')===k2}">${l2}</button>`).join('')}</div>`+(f.restMode==='mult'?inp('Recupero = durata della serie ×','mult'):f.restMode==='free'?'':inp('Recupero (s)','rest'))+chk('group','super','Alternata con gli altri esercizi della seduta con questo protocollo')+pfMark()
     +`<p class="muted small" style="grid-column:1/-1;margin:0" id="ladPrev">${ladPrev(f)}</p>`
     +`<div class="emx" style="grid-column:1/-1;margin-top:6px"><b>Proponi una ladder</b>
       <div class="seg sm" role="group" aria-label="Da dove partire" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:6px">${[['test','Dai test'],['rm','Da un 1RM'],['rep','Da massime ripetizioni']].map(([k2,l2])=>`<button data-a="pfSet" data-k="sugSrc" data-v="${k2}" aria-pressed="${src===k2}">${l2}</button>`).join('')}</div>
@@ -1184,7 +1187,7 @@ function pfFields(){
   return inp('Serie','serie')+inp('Ripetizioni (es. 6 o 3-8)','rep','text')
     +`<div class="seg sm" role="group" aria-label="Recupero" style="grid-column:1/-1;max-width:320px"><button data-a="pfSet" data-k="restMode" data-v="fix" aria-pressed="${f.restMode!=='mult'}">Recupero fisso</button><button data-a="pfSet" data-k="restMode" data-v="mult" aria-pressed="${f.restMode==='mult'}">Multiplo della serie</button></div>`
     +(f.restMode==='mult'?inp('Recupero = durata ×','mult'):inp('Recupero (s)','rest'))
-    +chk('group','super','Superset con gli altri esercizi della seduta con questo protocollo')+(f.group==='super'?inp('Pausa tra gli esercizi del superset (s)','tr'):'');
+    +chk('group','super','Superset con gli altri esercizi della seduta con questo protocollo')+pfMark()+(f.group==='super'?inp('Pausa tra gli esercizi del superset (s)','tr'):'');
 }
 function ladPrev(f){const l=ladList(f);return `Serie: ${ladWaves(f).map(x=>x.join(' · ')).join('  |  ')}${num(f.volte)>1?` (x${f.volte})`:''}, in tutto ${l.length} serie e ${l.reduce((x,y)=>x+y,0)} ripetizioni`}
 function repsAtPct(pc){if(pc>=1)return 1;let best=30,d=9;for(let r=1;r<=30;r+=.5){const q=pctOfReps(r);if(q&&Math.abs(q-pc)<d){d=Math.abs(q-pc);best=r}}return Math.round(best)}
@@ -1434,6 +1437,7 @@ function vGuida(){
     <li><b>EDT</b>: alterni due esercizi per il tempo della PR Zone confermando le ripetizioni; con due PR Zone, pausa e poi un’altra coppia.</li>
     <li><b>AMRAP</b>: più giri possibile entro il tempo; a ogni esercizio confermi le ripetizioni con ➜ (✓ se l’esercizio è uno solo).</li>
     <li><b>RT</b>: un totale di ripetizioni da raggiungere; dopo ogni serie segni quante ne hai fatte e vedi quante ne mancano.</li>
+    <li><b>Ladder</b>: la scala di ripetizioni (in salita, in discesa, su e giù, a onda o personalizzata), con uno o più esercizi, anche alternati, e recupero fisso, multiplo o libero.</li>
     <li><b>Circuito</b>: stazioni a tempo o a ripetizioni, pausa tra le stazioni e riposo tra i giri.</li>
     <li><b>Test</b>: Test 30′ / 15′ con +1 a ogni ripetizione, divise nei tre blocchi.</li></ul>
     <p><b>Timer libero</b>: in alto nella scheda Timer scegli «Timer libero» per usare un timer da solo, senza seduta, senza fasi e senza scrivere nel diario; alla fine puoi ripeterlo o sceglierne un altro. «Con la seduta» torna al funzionamento collegato al diario.</p>
@@ -1471,6 +1475,11 @@ function vGuida(){
     <li><b>➜</b>: conferma le ripetizioni e passa all’altro esercizio. Il colore dello schermo cambia con l’esercizio.</li>
     <li><b>I due riquadri</b>: ripetizioni e serie fatte finora per ciascun esercizio della zona; quello evidenziato è in corso.</li>
     <li><b>Pausa, Termina, Torna alla seduta</b>. Nella pausa tra le PR Zone e nel riposo finale puoi ancora registrare la serie in corso.</li></ul>`)}
+  ${sec('Più esercizi in sequenza con lo stesso timer',`<p>Per fare più esercizi uno dopo l’altro e il recupero solo a fine giro (come nel WO E):</p>
+    <ol><li>in <b>Esercizi → Protocolli</b> usa (o crea) un protocollo <b>Set&amp;Pause</b> con «Superset con gli altri esercizi», oppure un <b>Circuito</b>; scegli lì anche se segnare le ripetizioni durante la serie o dopo;</li>
+    <li>nella seduta sceglilo per un esercizio e tocca <b>«Usa lo stesso protocollo per tutti gli esercizi»</b>;</li>
+    <li>il pulsante del timer diventa «Timer Triset» (o Superset, Giant set, Circuito): passi da un esercizio all’altro e alla fine del giro parte il recupero. Anche «Avvia la seduta» li tratta come un unico blocco.</li></ol>
+    <p>Non serve rifare la seduta partendo dal timer.</p>`)}
   ${sec('Seduta completa: riscaldamento, finisher, stretching',`<ul>
     <li>In «Fasi della seduta» attivi <b>riscaldamento</b> e <b>defaticamento</b>: partono da soli o li avvii tu, a tempo fisso o finché non dici basta. Il defaticamento può essere <b>stretching a posizioni</b> (nome e secondi per ognuna).</li>
     <li>Il <b>finisher</b> (1–6 esercizi, con il suo WO) si fa a tempo, in Set&amp;Pause o a massime ripetizioni; viene riproposto dall’ultima seduta con lo stesso WO. Se c’è un finisher da fare, lo stretching aspetta che tu lo finisca.</li>
@@ -1871,7 +1880,7 @@ function chart(title,data,dec){
 }
 
 /* ----- timer: viste ----- */
-function cfgView(m){return m==='rec'?vCfgRec():m==='emom'?vCfgEmom():m==='circ'?vCfgCirc():m==='tst'?vCfgTst():m==='amrap'?vCfgAmrap():m==='rt'?vCfgRt():vCfgEdt()}
+function cfgView(m){return m==='lad'?vCfgLad():m==='rec'?vCfgRec():m==='emom'?vCfgEmom():m==='circ'?vCfgCirc():m==='tst'?vCfgTst():m==='amrap'?vCfgAmrap():m==='rt'?vCfgRt():vCfgEdt()}
 function vLibSwitch(){return `<div class="seg sm" role="group" aria-label="Come usare il timer" style="max-width:520px;margin:0 0 12px">
   <button data-a="tLib" data-v="0" aria-pressed="${!S.tLib}">Con la seduta</button><button data-a="tLib" data-v="1" aria-pressed="${S.tLib}">Timer libero</button></div>`}
 function vTimerLib(){
@@ -1881,7 +1890,7 @@ function vTimerLib(){
   <p class="muted small" style="margin:-4px 0 12px">Timer libero: parte da solo, senza seduta, senza riscaldamento o defaticamento e senza scrivere nel diario.</p>
   ${T&&T.done?`<div id="runBox" style="margin-bottom:18px">${vRun()}</div>`:''}
   <div class="seg" role="group" aria-label="Tipo di timer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr))">
-    ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div>
+    ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['lad','Ladder'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div>
   <div class="tcfg">${cfgView(m)}</div>`;
   return h;
 }
@@ -1894,9 +1903,9 @@ function vTimer(){
   const m=S.tmode;
   return `<div class="top"><h1>Timer</h1></div>${vLibSwitch()}${vSesBox()}${T&&T.done?`<div id="runBox" style="margin-bottom:18px">${vRun()}</div>`:''}
   <div class="seg" role="group" aria-label="Tipo di timer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr))">
-    ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}
+    ${[['rec','Set&amp;Pause'],['emom','EMOM'],['edt','EDT'],['circ','Circuito'],['amrap','AMRAP'],['rt','RT'],['lad','Ladder'],['tst','Test']].map(([k,l])=>`<button data-a="tmode" data-m="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}
   </div>
-  <div class="tcfg">${m==='rec'?vCfgRec():m==='emom'?vCfgEmom():m==='circ'?vCfgCirc():m==='tst'?vCfgTst():m==='amrap'?vCfgAmrap():m==='rt'?vCfgRt():vCfgEdt()}</div>`;
+  <div class="tcfg">${cfgView(m)}</div>`;
 }
 const stepper=(f,v,lbl)=>`<div class="stepper" role="group" aria-label="${lbl}"><button data-a="step" data-f="${f}" data-d="-1" aria-label="Meno">−</button><output>${v}</output><button data-a="step" data-f="${f}" data-d="1" aria-label="Più">+</button></div>`;
 function emomName(k){return k===1?'EMOM':`E${k}MOM`}
@@ -1961,6 +1970,41 @@ function fromBanner(m){
   const src=f&&f.p?(f.ok?`Impostato dal protocollo «${esc(f.p)}». `:`Il protocollo «${esc(f.p)}» non indica un timer: imposta tu il recupero. `):'';
   return `<p class="banner" style="border-left-color:var(--ok)">${src}Collegato a ${esc(names.join(' e '))}: ${what}. <button class="btn ghost" data-a="unlink" data-m="${m}">Scollega</button></p>`;
 }
+function markSeg(m,v){return `<div><div class="muted small" style="margin-bottom:4px">Segna le ripetizioni</div><div class="seg sm" role="group" aria-label="Quando segnare le ripetizioni" style="max-width:440px">
+  <button data-a="tset" data-f="${m}.mark" data-v="during" aria-pressed="${v==='during'}">Durante la serie</button><button data-a="tset" data-f="${m}.mark" data-v="after" aria-pressed="${v!=='during'}">Dopo, nel recupero</button></div>
+  <p class="muted small" style="margin:4px 0 0">${v==='during'?'Mentre fai la serie vedi − / + con l’obiettivo: «Fine serie» la registra. Nel recupero puoi ancora correggerla.':'Nel recupero segni le ripetizioni della serie appena fatta (con le frecce scegli l’esercizio del giro).'}</p></div>`}
+function vCfgLad(){
+  const c=S.tc.lad,v=c.verso==='ar'?'sugiu':c.verso,ok=c.ondaK||'gradini',multi=c.ex.length>1;
+  const inp=(l,k,ty='number')=>`<label class="f">${l}<input type="${ty}" ${ty==='number'?'inputmode="numeric"':''} value="${esc(c[k])}" data-f="tc:lad.${k}"></label>`;
+  let body='';
+  if(v==='onda'&&ok==='pers')body=inp('Sequenza (es. 1,7,2,8,3)','seq','text');
+  else if(v==='onda'&&ok==='alt')body=inp('Bassi: da','loDa')+inp('Bassi: a','loA')+inp('Alti: da','hiDa')+inp('Alti: a','hiA')+inp('Passo','passo');
+  else body=inp('Da (ripetizioni)','da')+inp('A (ripetizioni)','a')+inp('Passo','passo')+(v==='onda'?inp('Gradini per onda','lung')+inp('Spostamento tra le onde','sposta'):'');
+  return `<p class="lead">Scala di ripetizioni: ogni gradino è una serie con il suo obiettivo. Come il protocollo Ladder, ma da usare subito.</p>
+  <div><div class="muted small" style="margin-bottom:4px">Esercizi</div>
+  ${c.ex.map((x,i)=>`<div class="exrow" style="grid-template-columns:minmax(0,1fr) 40px;margin-bottom:6px"><label class="f">${multi?`Esercizio ${i+1}`:'Esercizio (facoltativo)'}<input type="text" list="names" value="${esc(x.n)}" data-f="tc:lad.ex.${i}.n"></label>
+    ${multi?`<button class="btn ghost" data-a="ladExDel" data-i="${i}" aria-label="Togli l’esercizio ${i+1}" style="align-self:end">✕</button>`:'<span></span>'}</div>${multi?colPick('lad','icol.'+i,(c.icol||[])[i]||c.colWork,`Colore durante ${exLbl(x.n,i+1)}`):''}`).join('')}
+  ${c.ex.length<4?'<button class="btn" data-a="ladExAdd">+ Aggiungi esercizio</button>':''}</div>
+  ${multi?`<label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${c.alt?'checked':''} data-f="tc:lad.alt" style="width:22px;height:22px"> Alternati: a ogni gradino un esercizio dopo l’altro (altrimenti tutta la scala del primo, poi del secondo…)</label>`:''}
+  <div class="seg sm" role="group" aria-label="Andamento della scala" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">${LADV.map(([k,l])=>`<button data-a="tset" data-f="lad.verso" data-v="${k}" aria-pressed="${v===k}">${l}</button>`).join('')}</div>
+  ${v==='onda'?`<div class="seg sm" role="group" aria-label="Tipo di onda" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">${ONDAK.map(([k,l])=>`<button data-a="tset" data-f="lad.ondaK" data-v="${k}" aria-pressed="${ok===k}">${l}</button>`).join('')}</div>`:''}
+  ${v==='sugiu'?`<label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${c.top2?'checked':''} data-f="tc:lad.top2" style="width:22px;height:22px"> Ripeti il gradino più alto</label>`:''}
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:0">${body}${inp('Quante volte ripeti la scala','volte')}</div>
+  <p class="muted small" id="ladPrevT" style="margin:0">${ladPrev(c)}</p>
+  <div><div class="muted small" style="margin-bottom:4px">Recupero</div><div class="seg sm" role="group" aria-label="Recupero" style="max-width:480px">
+    ${[['fix','Fisso'],['mult','Multiplo della serie'],['free','Libero']].map(([k,l])=>`<button data-a="tset" data-f="lad.restMode" data-v="${k}" aria-pressed="${(c.restMode||'fix')===k}">${l}</button>`).join('')}</div></div>
+  ${c.restMode==='mult'?`<label class="f" style="max-width:260px">Recupero = durata della serie ×<input type="number" inputmode="decimal" step="0.25" value="${c.mult}" data-f="tc:lad.mult"></label>`:c.restMode==='free'?'<p class="muted small" style="margin:0">Il cronometro conta il riposo: tocchi «Inizia serie» quando sei pronto.</p>':`<label class="f" style="max-width:200px">Secondi di recupero<input type="number" inputmode="numeric" value="${c.rest}" data-f="tc:lad.rest"></label>`}
+  ${markSeg('lad',c.mark)}
+  <label class="f" style="max-width:200px">Preparazione (s)<input type="number" inputmode="numeric" min="0" value="${c.lead}" data-f="tc:lad.lead"></label>
+  ${multi?'':`<div class="emx">${colPick('lad','colWork',c.colWork,'Colore durante la serie')}</div>`}
+  <div class="emx">${colPick('lad','colRest',c.colRest,'Colore durante il recupero')}</div>
+  ${vRestEnd('lad')}${vWarn('lad','recupero')}${vSesCfg()}
+  <div><button class="btn primary big" data-a="tStart">Avvia</button></div>`;
+}
+function ladToRec(c){const L=ladList(c),n=c.ex.length;
+  return {lead:Math.max(0,num(c.lead)||0),rest:c.restMode==='mult'?'mult':c.restMode==='free'?'free':'fix',sec:Math.max(5,num(c.rest)||60),mult:num(c.mult)||2,auto:true,links:null,
+    mode:c.alt&&n>1?'super':'sep',items:c.ex.map((x,i)=>({n:String(x.n||'').trim()||(n>1?`Esercizio ${i+1}`:''),sets:L.length,rep:'',lad:L.slice()})),between:Math.max(5,num(c.rest)||60),tr:0,
+    colWork:c.colWork,colRest:c.colRest,icol:c.icol||[],warnSec:c.warnSec,warnCol:c.warnCol,half:c.half,restEnd:c.restEnd,restEndSec:c.restEndSec,mark:c.mark}}
 function vCfgRec(){
   const c=S.tc.rec,linked=!!c.links,its=c.items,multi=its.length>1,sup=multi&&c.mode==='super';
   return `<p class="lead">Avvii ogni serie tu; alla fine parte il recupero e, se vuoi, la serie dopo parte da sola. Nelle ripetizioni puoi scrivere una scala (Ladder), es. 1-2-3-4-5: ogni numero è una serie.</p>
@@ -1986,6 +2030,7 @@ function vCfgRec(){
       <button data-a="tset" data-f="rec.rest" data-v="free" aria-pressed="${c.rest==='free'}">Libero</button></div></div>
   ${c.rest==='free'?'<p class="muted small" style="margin:0">Recupero libero: il cronometro conta il riposo e tu tocchi «Inizia serie» quando sei pronto (utile per le Serie Target).</p>':c.rest==='fix'?`<label class="f" style="max-width:200px">Secondi di recupero<input type="number" inputmode="numeric" value="${c.sec}" data-f="tc:rec.sec"></label>`
    :`<label class="f" style="max-width:300px">Recupero = durata ${sup?'del giro':'della serie'} ×<input type="number" inputmode="decimal" step="0.25" value="${c.mult}" data-f="tc:rec.mult"></label>`}
+  ${markSeg('rec',c.mark)}
   <label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${c.auto?'checked':''} data-f="tc:rec.auto" style="width:22px;height:22px"> La serie successiva parte da sola a fine recupero</label>
   <label class="f" style="max-width:260px">Preparazione (s)<input type="number" inputmode="numeric" min="0" value="${c.lead}" data-f="tc:rec.lead"></label>
   <p class="muted small" style="margin:-8px 0 0">${num(c.lead)>0?'Dopo il conto alla rovescia la prima serie parte da sola.':'Con 0 parti tu dalla prima serie con «Inizia».'}</p>
@@ -2204,14 +2249,15 @@ async function wake(on){
 }
 function tStart(){
   ensureAudio();
-  const m=S.tmode,c=clone(S.tc[m]);if(c.over){Object.assign(c,c.over);delete c.over}if(S.tc[m])S.tc[m].over=null;
+  let m=S.tmode,c=clone(S.tc[m]);const kind0=m;if(c.over){Object.assign(c,c.over);delete c.over}if(S.tc[m])S.tc[m].over=null;
+  if(m==='lad'){c=ladToRec(c);m='rec'}
   if(m==='emom'){c.ex=c.ex.slice(0,c.k).map((e,i)=>({n:e.n||`Esercizio ${i+1}`,rep:num(e.rep),sec:Math.max(5,num(e.sec)||60)}));c.giri=Math.max(1,c.giri);c.lead=Math.max(0,num(c.lead)||0);c.restSec=Math.max(5,num(c.restSec)||60);c.restEndSec=Math.max(5,num(c.restEndSec)||120);c.warnSec=Math.max(0,num(c.warnSec)??3)}
   if(m!=='emom'){c.warnSec=Math.max(0,num(c.warnSec)??3);c.restEndSec=Math.max(5,num(c.restEndSec)||120)}
   if(m==='edt'){c.zones=Number(c.zones)===2?2:1;c.min2=Math.max(1,num(c.min2)||15);c.restZ=Math.max(0,num(c.restZ)??5);c.min=Math.max(1,num(c.min)||15);EK.slice(0,c.zones*2).forEach((k,i)=>{c[k].n=c[k].n||`Esercizio ${k.toUpperCase()}`;c[k].rep=num(c[k].rep)||5})}
   if(m==='rec'){c.lead=Math.max(0,num(c.lead)||0);c.sec=Math.max(5,num(c.sec)||90);c.mult=Math.max(.25,num(c.mult)||2);c.tr=Math.max(0,num(c.tr)||0);c.between=Math.max(0,num(c.between)??90)}
   if(m==='circ'){c.giri=Math.max(1,c.giri);c.lead=Math.max(0,num(c.lead)||0);c.tr=Math.max(0,num(c.restEx)??15);c.sec=Math.max(0,num(c.restGiro)??60);c.rest='fix';c.auto=true;c.mode='super'}
   const isFin=!!S.finNext;S.finNext=false;
-  T={isFin,mode:m==='circ'?'rec':m,kind:m,cfg:c,acc:0,since:now(),paused:false,done:false,lastSec:null};
+  T={isFin,mode:m==='circ'?'rec':m,kind:kind0==='lad'?'lad':m,cfg:c,acc:0,since:now(),paused:false,done:false,lastSec:null};
   if(m==='tst'){const E=ENDU[c.tipo];c.lead=Math.max(0,num(c.lead)||0);c.step=Math.max(1,num(c.step)||5);c.warnSec=Math.max(0,num(c.warnSec)??10);
     Object.assign(T,{counts:[0,0,0],blk:-1,lead:c.lead*1000,total:E.min*60000,bms:E.min*20000})}
   if(m==='amrap'){c.min=Math.max(1,num(c.min)||10);c.lead=Math.max(0,num(c.lead)||0);c.warnSec=Math.max(0,num(c.warnSec)??10);c.restEndSec=Math.max(5,num(c.restEndSec)||120);
@@ -2242,8 +2288,8 @@ function buildSP(c,kind){
     for(let g=0;g<c.giri;g++)exs.forEach((e,i)=>steps.push({i,j:g,rest:i<exs.length-1?'tr':'main',w:e._w}));
   }else{
     if(c.links&&S.draft){c.links.forEach(j=>{const x=S.draft.ex[j];if(x)exs.push(x)});linked=exs.length>0}
-    if(!linked)c.items.forEach((it,i)=>{const nm=String(it.n||'').trim()||(c.items.length>1?`Esercizio ${i+1}`:''),lad=String(it.rep||'').split(/[-–,\s]+/).map(Number).filter(x=>x>0);
-      if(lad.length>=3){exs.push({n:nm,b:null,k:0,lad,st:'Eseguito',s:lad.map(r=>[r,''])});return}
+    if(!linked)c.items.forEach((it,i)=>{const nm=String(it.n||'').trim()||(c.items.length>1?`Esercizio ${i+1}`:''),lad=Array.isArray(it.lad)&&it.lad.length?it.lad.slice():String(it.rep||'').split(/[-–,\s]+/).map(Number).filter(x=>x>0);
+      if(lad.length>=3||(Array.isArray(it.lad)&&it.lad.length)){exs.push({n:nm,b:null,k:0,lad,st:'Eseguito',s:lad.map(r=>[r,''])});return}
       const sets=Math.max(1,Math.min(20,num(it.sets)||1)),rep=num(it.rep);
       exs.push({n:nm,b:rep,k:0,st:'Eseguito',s:Array.from({length:sets},()=>[rep??'',''])})});
     if(c.mode==='super'&&exs.length>1){const R=Math.max(...exs.map(e=>e.s.length));
@@ -2580,7 +2626,7 @@ function vRun(){
     if(T.phase==='lead'){ph='Si parte tra';ex=e?lbl(e,st):'';}
     else if(T.phase==='ready'){ph=T.cfg.maxMode?`Esercizio ${st.i+1} di ${T.exs.length}`:serie;ex=e&&e.n?lbl(e,st):(p!=null?`${p} ripetizioni`:'');sub=T.k?'Recupero finito':'Quando sei pronto';main=`<button class="btn primary big" data-a="tGo">Inizia</button>`}
     else if(T.phase==='work'){ph=T.cfg.maxMode?`Esercizio ${st.i+1} di ${T.exs.length}`:serie;ex=e?(e.n?lbl(e,st):(p!=null?`${p} ripetizioni`:'')):'';sub=T.cfg.maxMode?`Massime ripetizioni${e.s[st.j][1]===''&&e.s[st.j][0]!==''?`, l’ultima volta ${e.s[st.j][0]}`:''}`:(st&&st.rest==='tr'?nxTxt:'');
-      if(circ&&st&&!st.w){const x=e.s[st.j];main=`<div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div><button class="btn primary big" data-a="tEndSet">Fatto</button>`}
+      if((circ||T.cfg.mark==='during')&&st&&!st.w){const x=e.s[st.j];main=`<div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div><button class="btn primary big" data-a="tEndSet">${circ?'Fatto':'Fine serie'}</button>`}
       else main=`<button class="btn primary big" data-a="tEndSet">${circ?'Fine stazione':'Fine serie'}</button>`}
     else{ph=T.final?(T.cfg.maxMode?'Riposo: segna le ripetizioni':'Riposo finale'):T.cfg.maxMode?'Riposo: segna le ripetizioni':{tr:circ?'Pausa':'Cambio',between:'Cambio esercizio',main:circ?'Riposo tra i giri':'Recupero'}[T.restKind]||'Recupero';
       if(!T.final&&!isFinite(T.restMs))ph='Recupero libero';
@@ -2611,7 +2657,7 @@ function vRun(){
     extra=`<div class="tot">${[EK[zb],EK[zb+1]].map(x=>`<div>${esc(c[x].n)}<b>${tot(x)} rep</b>${ser(x)} serie</div>`).join('')}</div>`;
   }
   const pt=emomPaint();
-  const title=T.mode==='amrap'?'AMRAP':T.mode==='rt'?'RT':T.mode==='tst'?`Test ${ENDU[T.cfg.tipo].min}′`:T.mode==='rec'?(T.kind==='circ'?'Circuito':T.exs.length>1?(T.cfg.mode==='super'?grpName(T.exs.length):'Set&amp;Pause'):(T.exs[0]&&T.exs[0].n?esc(T.exs[0].n):'Set&amp;Pause')):T.mode==='emom'?emomName(T.cfg.ex.length):'EDT';
+  const title=T.mode==='amrap'?'AMRAP':T.mode==='rt'?'RT':T.mode==='tst'?`Test ${ENDU[T.cfg.tipo].min}′`:T.mode==='rec'?(T.kind==='lad'?'Ladder':T.kind==='circ'?'Circuito':T.exs.length>1?(T.cfg.mode==='super'?grpName(T.exs.length):'Set&amp;Pause'):(T.exs[0]&&T.exs[0].n?esc(T.exs[0].n):'Set&amp;Pause')):T.mode==='emom'?emomName(T.cfg.ex.length):'EDT';
   return `<div class="run full ${runClass()}" id="runPanel"${pt?` style="background:${pt.bg};color:${pt.fg};--pbg:${pt.bg};--pfg:${pt.fg}"`:''}>
     ${sesTop(title)}
     <div class="r-main">${giro}${ph||T.paused?`<p class="ph">${ph}${T.paused?' (in pausa)':''}</p>`:''}${ex?`<p class="ex-now">${ex}</p>`:''}
@@ -2655,7 +2701,7 @@ function emomAutoOk(si){const s=T.slots[si];if(s)autoOk(emomEx(s.i),s.g)}
 function markTarget(){
   if(!T||T.done)return null;
   if(T.mode==='rec'){
-    if(T.phase==='work'&&T.kind==='circ'){const st=spStep();return st&&!st.w?{e:T.exs[st.i],j:st.j,now:true}:null}
+    if(T.phase==='work'&&(T.kind==='circ'||T.cfg.mark==='during')){const st=spStep();return st&&!st.w?{e:T.exs[st.i],j:st.j,now:true}:null}
     if(T.phase!=='rest'||T.mk==null)return null;const st=T.steps[T.mk],b=spBlockStart(T.mk);
     return {e:T.exs[st.i],j:st.j,nav:T.exs.length>1?{prev:T.mk>b,next:T.mk<T.done_k}:null}}
   if(!S.draft)return null;
@@ -2785,7 +2831,7 @@ const A={
   },
   /* timer */
   tmode(el){S.tmode=el.dataset.m;render()},
-  tset(el){const [m,k]=el.dataset.f.split('.');const v=el.dataset.v;S.tc[m][k]=v==='true'?true:v==='false'?false:isNaN(Number(v))?v:Number(v);if(m==='snd'||m==='sess'||m==='tst'||(m==='emom'&&(k==='mark'||k==='giroFmt')))savePrefs();render()},
+  tset(el){const [m,k]=el.dataset.f.split('.');const v=el.dataset.v;S.tc[m][k]=v==='true'?true:v==='false'?false:isNaN(Number(v))?v:Number(v);if(m==='snd'||m==='sess'||m==='tst'||m==='lad'||k==='mark'||(m==='emom'&&k==='giroFmt'))savePrefs();render()},
   sndTest(){ensureAudio();[['tick',3],['tick',2],['tick',1],['change','Trazioni'],['half'],['warn'],['end']].forEach(([k,n],i)=>setTimeout(()=>sound(k,n),i*1000))},
   tcol(el){const e=S.tc[el.dataset.m||'emom'],k=el.dataset.k,mm=k.match(/^(\w+)\.(\d+)$/);if(mm){if(!Array.isArray(e[mm[1]]))e[mm[1]]=[];e[mm[1]][+mm[2]]=el.dataset.v}else e[k]=el.dataset.v;savePrefs();render()},
   toSession(){S.tab='diario';render();const ix=T&&T.mode==='emom'&&T.cfg.link?T.cfg.link[0]:T&&T.mode==='rec'&&T.linked&&S.tc.rec.links?S.tc.rec.links[0]:null;const c=ix!=null&&$('#card-'+ix);if(c)c.scrollIntoView({block:'start'});else window.scrollTo(0,0)},
@@ -2834,7 +2880,8 @@ const A={
     T.exs.filter(e=>e.s.some(x=>x[1])).forEach(e=>{
       const ex=exFromHistory(e.n||'Esercizio',d.d,d.id);delete ex._why;ex.s=e.s.filter(x=>x[1]).map(x=>[x[0],x[1]]);
       if(e.b!=null){ex.b=e.b;ex.k=0}ex.t=mins;
-      ex.p=circ?`Circuito ${c.giri} giri, ${e._w?`${e._w}″`:`${e.b} rep`}, pausa ${c.tr}″, riposo ${c.sec}″`:`${grp}${ex.s.length}x${e.b??'?'} + Rest ${c.rest==='fix'?`${c.sec}″`:`×${c.mult}`}`;
+      if(T.kind==='lad'&&e.lad){ex.lad=e.lad.slice();ex.b=null;ex.k=0;ex.p=`Ladder ${e.lad.join('-')}, ${c.rest==='fix'?`Rest ${c.sec}″`:c.rest==='mult'?`Rest ×${c.mult}`:'recupero libero'}`}
+      else ex.p=circ?`Circuito ${c.giri} giri, ${e._w?`${e._w}″`:`${e.b} rep`}, pausa ${c.tr}″, riposo ${c.sec}″`:`${grp}${ex.s.length}x${e.b??'?'} + Rest ${c.rest==='fix'?`${c.sec}″`:`×${c.mult}`}`;
       d.ex.push(ex)});
     scheduleSave();tReset();S.tab='diario';render();window.scrollTo(0,0);
   },
@@ -2919,6 +2966,11 @@ const A={
     if(c.warmOn&&c.warmAuto)return startWarm();if(c.warmOn){SES.phase='pre';sesSave();render();return}startTrain();render()},
   planNow(){planStartCur()},
   planSkip(){const P=S.plan;if(!P)return;P.wait=null;planNext()},
+  pidAll(el){const i=+el.dataset.i,d=S.draft,e=d.ex[i],P=e&&S.protos.get(e.pid);if(!P)return;let n=0;
+    d.ex.forEach((x,k)=>{if(k!==i&&!x.fin&&!x.s.some(y=>y[1])){applyProto(x,P);n++}});S.tc.rec.links=null;S.tc.emom.link=null;S.tc.edt.link=null;S.tc.circ.links=null;scheduleSave();render();
+    sheet(`<h3>Protocollo per tutti</h3><p class="muted">«${esc(pName(P))}» ora vale per ${n+1} esercizi. ${P.tipo==='sp'&&P.group!=='super'?'Per farli in sequenza con un solo recupero a fine giro, il protocollo deve avere «Superset con gli altri esercizi»: lo trovi in Esercizi → Protocolli → Modifica.':'Il pulsante del timer li fa partire insieme.'}</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
+  ladExAdd(){S.tc.lad.ex.push({n:''});savePrefs();render()},
+  ladExDel(el){S.tc.lad.ex.splice(+el.dataset.i,1);savePrefs();render()},
   exToSess(el){const d=ensureDraft(),x=exFromHistory(el.dataset.n,d.d,d.id);const i=addToDraft(x);scheduleSave();S.exSel='';goCard(i)},
   pUse(el){const P=S.protos.get(el.dataset.id);if(!P)return;const n=protoSlots(P);
     sheet(`<h3>${esc(pName(P))}</h3><p class="muted">Scegli ${n>1?`fino a ${n} esercizi, nell’ordine in cui li fai`:'l’esercizio'}: li aggiungo alla seduta di oggi${S.draft?' aperta':' (ne apro una nuova)'} con questo protocollo.</p>
@@ -3128,7 +3180,7 @@ function onField(el,isChange){
     const r=$('#tfRes');if(r)r.innerHTML=tfResult();return}
   if(kind==='dm'){const t=S.tests.get(a);if(!t)return;const n=num(v);if(!(n>0))return;t.rm=n;t.updated=Date.now();
     clearTimeout(S.dmT);S.dmT=setTimeout(async()=>{await saveTestDoc(t);await applyTest(t)},1200);return}
-  if(kind==='tc'){const path=a.split('.');let o=S.tc;for(let i=0;i<path.length-1;i++)o=o[path[i]];o[path[path.length-1]]=v;if(/^(emom|rec|edt|amrap|rt)\.(col|warn|rest|half|frac|minsLeft|lead)|^sess\.|^snd\.|^circ\./.test(a))savePrefs();if(/\.(restOn|restEnd|warmOn|coolOn)$/.test(a))render();
+  if(kind==='tc'){const path=a.split('.');let o=S.tc;for(let i=0;i<path.length-1;i++)o=o[path[i]];o[path[path.length-1]]=v;if(/^(emom|rec|edt|amrap|rt)\.(col|warn|rest|half|frac|minsLeft|lead)|^sess\.|^snd\.|^circ\.|^lad\./.test(a))savePrefs();if(a.startsWith('lad.')){const lp=$('#ladPrevT');if(lp)lp.textContent=ladPrev(S.tc.lad)}if(/\.(restOn|restEnd|warmOn|coolOn)$/.test(a))render();
     if(a.startsWith('tst.')){const c=S.tc.tst;if(a==='tst.rif')c.rifTouched=true;
       if(a==='tst.n'&&!c.rifTouched){const t=maxFor(c.n,todayIso());c.rif=t?t.rm:'';const el=$('#tstRif');if(el)el.value=c.rif}
       if(/^tst\.(step|lead|warn|half|col)/.test(a))savePrefs();const sg=$('#tstSug');if(sg)sg.textContent=tstSugTxt()}
