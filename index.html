@@ -139,6 +139,11 @@ input[type=number]{font-family:var(--f-num);font-size:19px;font-weight:600}
 .mini i.e-ok{background:var(--ok)}.mini i.e-fat{background:var(--fat)}.mini i.e-ko{background:var(--ko)}.mini i.e-skip{background:var(--skip)}
 .sess-d{padding:0 12px 12px;border-top:1px solid var(--line)}
 .sess-d .ex{padding:10px 0;border-bottom:1px dashed var(--line)}
+.exser{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.exser span{min-width:42px;text-align:center;border-radius:6px;padding:4px 6px;font-family:var(--f-num);font-weight:700;font-size:16px;background:var(--line);color:var(--ink)}
+.exser span small{display:block;font-family:var(--f-text);font-weight:400;font-size:10px}
+.exser .e-ok{background:var(--ok);color:var(--on-ok)}.exser .e-fat{background:var(--fat);color:#111}.exser .e-ko{background:var(--ko);color:var(--on-ko)}.exser .e-skip{background:var(--skip);color:#fff}
+.exfull{margin:10px 0 0}.exfull .sess{margin:0}
 .sess-d .ex:last-of-type{border-bottom:0}
 .sess-d p{margin:4px 0;font-size:14px}
 .chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;margin:0 0 14px}
@@ -2027,7 +2032,7 @@ function vEsercizio(n){
       ${b?`<p style="margin:0 0 8px">Dal test del ${fmtD(bz.d)}: il solo peso corporeo (${fk(num(bz.bw))} kg) è il <b>${b.pbw}%</b> del massimale${b.mr?`, circa <b>${b.mr}</b> ripetizioni massime e ${b.mrset} per serie`:''}.</p>`:''}
       ${mr?`<div class="muted small">Massime ripetizioni del ${fmtD(mr.d)}: ${mr.rep}</div><div style="overflow-x:auto"><table class="tbl"><thead><tr>${[40,50,60,70,80].map(q=>`<th>${q}%</th>`).join('')}</tr></thead><tbody><tr>${[40,50,60,70,80].map(q=>`<td>${Math.floor(mr.rep*q/100)}</td>`).join('')}</tr></tbody></table></div>`:''}</section>`})()}
   ${tests.length?`<section class="card"><h3>Test e massimali</h3>${tests.map(vTestRow).join('')}</section>`:''}
-  <h3 style="margin:18px 0 10px">Sedute</h3>${vExHistory(n,true)}`;
+  <h3 style="margin:18px 0 4px">Sedute</h3><p class="muted small" style="margin:0 0 10px">Tocca una seduta per il dettaglio dell’esercizio; da lì vedi la seduta intera e modifichi l’esercizio o tutta la seduta.</p>${vExHistory(n,true)}`;
 }
 function vTestRow(t){
   const rmT=t.rm>0&&t.tipo!=='default';
@@ -2187,7 +2192,7 @@ function vSess(s){
     <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span><button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button></div>
   </div>`:''}</article>`;
 }
-function vExHistory(name,noCharts){
+function vExHistoryOld(name,noCharts){
   const occ=[];
   for(const s of S.hist)for(const e of s.ex)if(e.n===name)occ.push({s,e,m:metrics(e,!!s.updated)});
   const pts=occ.filter(o=>o.e.st!=='Non eseguito'&&o.m.tot!=null).slice(0,60).reverse();
@@ -4470,6 +4475,34 @@ Object.assign(A,{
       <div class="row" style="margin-top:14px"><button class="btn primary" data-a="tStopNow">Termina solo il timer</button><button class="btn" data-a="tStopAll">Termina tutta la seduta</button><button class="btn" data-a="closeSheet">Annulla</button></div>`)},
   tStopAll(){closeSheet();if(runOn())tStop();if(sesActive())endSession();else render()},
 });}
+
+
+/* ---------- v1.4o: dall'esercizio alle sue sedute: dettaglio, seduta intera, modifica ---------- */
+function vExHistory(name,noCharts){
+  const occ=[];for(const s of S.hist)(s.ex||[]).forEach((e,k)=>{if(e.n===name)occ.push({s,e,k,m:metrics(e,!!s.updated)})});
+  const pts=occ.filter(o=>o.e.st!=='Non eseguito'&&o.m.tot!=null).slice(0,60).reverse();let h='';
+  if(pts.length>1&&!noCharts){h+=chart('Carico (kg)',pts.map(o=>({v:Number(o.e.kg)||null,f:o.m.fails>0,d:o.s.d})),1);h+=chart('Volume',pts.map(o=>({v:o.m.vol,f:o.m.fails>0,d:o.s.d})),2)}
+  const lim=S.exHistN||40;
+  h+=occ.slice(0,lim).map(({s,e,k,m})=>{const key=s.id+'#'+k,open=S.exOpenH&&S.exOpenH.has(key),full=S.exFullH&&S.exFullH.has(key),skip=e.st==='Non eseguito';
+    return `<article class="sess"><button data-a="exHTog" data-k="${esc(key)}" aria-expanded="${!!open}"><div class="sess-t">${s.wo?`<span class="wo">${esc(s.wo)}</span>`:''}<b>${fmtD(s.d)}</b><span class="muted small">${e.kg?`${fmtN(e.kg,e.kg%1?1:0)} kg`:''}${e.pct?`, ${fmtN(e.pct*100)}%`:''}</span><span class="spacer"></span><span class="muted small">${open?'▴':'▾'}</span></div>
+    <div class="row"><span class="mini">${(e.s||[]).map(x=>`<i class="e-${skip?'skip':x[1]}"></i>`).join('')}</span><span class="small">${skip?'non eseguito':(e.s||[]).map(x=>x[0]).join(' ')}</span></div>
+    <p class="small muted" style="margin:4px 0 0">${latiTxt(e)?`Lati: ${latiTxt(e)}. `:''}${e.b!=null?`Piano ${e.b}${e.k?`, prime ${e.k} a ${e.b+1}`:''}. `:''}Volume ${fmtN(m.vol,2)}${m.fails?`, ${m.fails} serie fallite`:''}${e.f?`, ${esc(e.f.toLowerCase())}`:''}</p></button>
+    ${open?`<div class="sess-d">
+      <p class="small" style="margin:10px 0 0">${e.p?`<b>${esc(e.p)}</b><br>`:''}${[e.kg!=null&&e.kg!==''?`Kg ${fmtN(e.kg,1).replace(/,0$/,'')}`:'',e.z?`zavorra ${fmtN(e.z,1).replace(/,0$/,'')} kg`:'',e.pct?`${fmtN(e.pct*100)}% 1RM`:'',e.t?`tempo ${e.t}′`:''].filter(Boolean).join(' · ')}</p>
+      ${skip?'<p class="muted">Non eseguito.</p>':`<div class="exser">${(e.s||[]).map((x,j)=>`<span class="e-${x[1]||''}">${esc(x[0]===''||x[0]==null?'–':x[0])}<small>${j+1}ª ${x[1]?ESITO[x[1]].toLowerCase():''}</small></span>`).join('')}</div>`}
+      <p class="muted small" style="margin:0">TotRep ${fmtN(m.tot)}, tonnellaggio ${fmtN(m.ton)}, volume ${fmtN(m.vol,2)}${m.dens!=null?`, densità ${fmtN(m.dens,2)}`:''}${m.pi!=null?`, PowerIndex ${fmtN(m.pi,1)}`:''}${m.rm?`, 1RM stimato ${fmtN(m.rm,1)} kg`:''}</p>
+      ${e.note?`<p class="small" style="margin:6px 0 0"><b>Note:</b> ${esc(e.note)}</p>`:''}
+      <div class="row" style="margin-top:10px"><button class="btn primary" data-a="exHEdit" data-id="${esc(s.id)}" data-k="${k}">Modifica questo esercizio</button><button class="btn" data-a="exHFull" data-k="${esc(key)}">${full?'Nascondi la seduta':'Vedi tutta la seduta'}</button></div>
+      ${full?`<div class="exfull">${(()=>{const had=S.open.has(s.id);S.open.add(s.id);const x=vSess(s);if(!had)S.open.delete(s.id);return x})()}</div>`:''}
+    </div>`:''}</article>`}).join('');
+  if(occ.length>lim)h+=`<button class="btn" data-a="exHMore" style="margin-top:6px">Mostra altre sedute (${occ.length-lim})</button>`;
+  return h}
+Object.assign(A,{
+  exHTog(el){const k=el.dataset.k;S.exOpenH=S.exOpenH||new Set();S.exOpenH.has(k)?S.exOpenH.delete(k):S.exOpenH.add(k);render()},
+  exHFull(el){const k=el.dataset.k;S.exFullH=S.exFullH||new Set();S.exFullH.has(k)?S.exFullH.delete(k):S.exFullH.add(k);render()},
+  exHMore(){S.exHistN=(S.exHistN||40)+40;render()},
+  exHEdit(el){const id=el.dataset.id,k=+el.dataset.k;A.editSess({dataset:{id}});if(S.draft&&S.draft.id===id)goCard(k)},
+});
 
 const canSave=()=>!!S.downloads||STANDALONE;
 async function saveFile(filename,data){
