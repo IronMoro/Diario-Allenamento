@@ -278,6 +278,7 @@ body.lock{overflow:hidden}
 .tbl th:first-child,.tbl td:first-child{text-align:left}
 .exrow-b{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 12px;width:100%;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;margin:0 0 8px}
 .exrow-b:focus-visible{outline:3px solid var(--skip)}
+.sesrun{margin:16px 0 0;padding:10px 12px;border:2px solid var(--ink);border-radius:8px;font-size:15px}
 .exf{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0 0 10px}
 .extab-w{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 .extab{border-collapse:collapse;width:100%;font-size:14px}
@@ -1062,7 +1063,7 @@ function vDiario(){
   ${vFin(d)}
   <section class="card" id="sessSum">${vSessSum(d,true)}</section>
   <label class="f">Note sulla seduta<textarea data-f="d:note" rows="2">${esc(d.note)}</textarea></label>
-  <div class="row" style="margin-top:18px">
+  ${sesActive()?`<p class="sesrun">⏱ Cronometro della seduta in corso: <b class="sClock">${fmtDur(Date.now()-SES.start)}</b>. «Chiudi seduta» lo ferma e salva i tempi.</p>`:''}<div class="row" style="margin-top:18px">
     <button class="btn primary" data-a="closeDraft">Chiudi seduta</button>
     <button class="btn" data-a="progAsk">Salva, programma…</button>
     <span class="spacer"></span>
@@ -1615,7 +1616,7 @@ function vGuida(){
     <li>Durante il timer lo schermo resta acceso; ⛶ apre lo schermo intero. Il tipo di suono (anche a voce) si sceglie in fondo alla pagina del timer: «Prova il suono».</li></ul>`)}
   ${sec('Salvare, programmare, modificare un allenamento',`<ul>
     <li><b>Si salva da sola</b> mentre ti alleni: alla prima serie segnata la seduta va nello Storico. Finché non segni niente resta solo «aperta» (puoi uscire e riprenderla con «Riprendi»): così aprire un WO per guardarlo non riempie lo storico e non fa avanzare la progressione.</li>
-    <li><b>«Chiudi seduta»</b> quando hai finito. Se non hai fatto serie ti chiedo se tenere le modifiche nel WO, programmarla o scartarla.</li>
+    <li><b>«Chiudi seduta»</b> quando hai finito: ferma anche il timer e il cronometro della seduta, se stanno ancora andando, e salva i tempi. Se non hai fatto serie ti chiedo se tenere le modifiche nel WO, programmarla o scartarla.</li>
     <li><b>«Salva, programma…»</b> in fondo alla seduta:
       <ul><li><b>Aggiorna il WO</b>: le modifiche (esercizi, protocolli, finisher, nome) valgono le prossime volte che apri quel WO da «In corso». Non crea sedute nuove.</li>
       <li><b>Programma per un altro giorno</b>: la seduta va in «Programmate» con la data che scegli.</li>
@@ -3219,7 +3220,7 @@ function updateMini(){
   if((!T||T.done)&&SES&&SES.start&&sesActive()){mi.hidden=false;const n=Date.now();
     if(isPos()){const q=posClock(n);$('#miniBtn').textContent=`${q.seg.tr?'Cambio':q.seg.n} ${mmss(q.rem)}`}
     else if(SES.phase==='warm'||SES.phase==='cool'){const pc=phaseClock(n);$('#miniBtn').textContent=`${SES.phase==='warm'?'Riscaldamento':'Defaticamento'} ${pc.fixed?mmss(pc.rem):fmtDur(pc.el)}`}
-    else $('#miniBtn').textContent=`Seduta ${fmtDur(n-SES.start)}`;return}
+    else $('#miniBtn').textContent=`Seduta in corso ${fmtDur(n-SES.start)} · tocca per terminarla`;return}
   if(!T||T.done){mi.hidden=true;return}
   mi.hidden=false;$('#miniBtn').textContent=`${T.mode==='lsf'?`Ladder ${T.P[T.pi].name} ${T.P[T.pi].cur}`:T.mode==='ft'?(T.st<0?'Per tempo':T.cfg.items[T.st].n):T.mode==='amrap'?`AMRAP, giro ${T.rounds+1}`:T.mode==='rt'?`RT ${rtDone()}/${T.cfg.target}`:T.mode==='tst'?`Test ${T.counts.reduce((a,b)=>a+b,0)} rip.`:T.mode==='rec'?(T.phase==='rest'?(T.kind==='circ'?'Pausa':'Recupero'):(spStep()?`${T.exs[spStep().i].n||'Serie'} ${spStep().j+1}`:'')):T.mode==='emom'?emomName(T.cfg.ex.length):'EDT'} ${clockText()}`;
 }
@@ -4450,6 +4451,25 @@ function vExList(){
     <td><span class="tag">${r.mono?'Mono':'Bi'}</span></td><td>${r.cat?'<span class="muted">–</span>':`<span class="tag">${r.cl?'Corpo lib.':'Attrezzi'}</span>`}</td><td><span class="tag">${{stretch:'Stretching',mob:'Mobilità'}[r.cat]||'Allenam.'}</span></td><td class="num">${r.t?fmtN(r.t.rm,1):''}</td></tr>`).join('')}
   </tbody></table></div>`}
 Object.assign(A,{exSort(el){const k=el.dataset.k;S.exSo=k;const l=$('#exList');if(l)l.innerHTML=vExList();else render()}});
+
+
+/* ---------- v1.4n: chiudere la seduta ferma anche il cronometro ---------- */
+const runOn=()=>!!(T&&!T.done);
+function sesStopAll(){if(runOn())tStop();if(sesActive())endSession();const t=SES&&SES.tempi;SES=null;sesSave();if(loopId&&!runOn()){clearInterval(loopId);loopId=null}wake(false);return t}
+{const _close=A.closeDraft,_ask=A.tAskStop;
+Object.assign(A,{
+  closeDraft(el){if(!(el&&el.dataset&&(el.dataset.go||el.dataset.ok))&&(sesActive()||runOn())){const d=S.draft;
+      sheet(`<h3>Chiudere la seduta?</h3><p class="muted">${runOn()?'C’è un timer ancora in corso. ':''}${sesActive()?`Il cronometro della seduta segna ${fmtDur(Date.now()-SES.start)}. `:''}Chiudendo fermo ${runOn()?'il timer e ':''}il cronometro e salvo i tempi nella seduta.</p>
+        <div class="row" style="margin-top:14px"><button class="btn primary" data-a="closeDraft" data-go="1">Ferma tutto e chiudi la seduta</button><button class="btn" data-a="closeSheet">Torna alla seduta</button></div>`);return}
+    closeSheet();const d=S.draft,t=(sesActive()||runOn()||(SES&&SES.phase==='done'))?sesStopAll():null;
+    if(d&&t&&!d.tempi){d.tempi=t}
+    _close.call(A,el&&el.dataset&&el.dataset.ok?el:undefined);
+    if(t&&!$('#sheetRoot').innerHTML)sheet(`<h3>Seduta chiusa</h3><p class="muted">Tempo totale ${fmtDur((t.tot||0)*1000)}: ${esc(tempiTxt(t))}. La trovi nello Storico.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
+  tAskStop(){if(!sesActive())return _ask.call(A);
+    sheet(`<h3>Terminare?</h3><p class="muted">Puoi fermare solo questo timer e continuare la seduta con il prossimo, oppure terminare tutta la seduta: in quel caso si ferma anche il cronometro della seduta (${fmtDur(Date.now()-SES.start)}).</p>
+      <div class="row" style="margin-top:14px"><button class="btn primary" data-a="tStopNow">Termina solo il timer</button><button class="btn" data-a="tStopAll">Termina tutta la seduta</button><button class="btn" data-a="closeSheet">Annulla</button></div>`)},
+  tStopAll(){closeSheet();if(runOn())tStop();if(sesActive())endSession();else render()},
+});}
 
 const canSave=()=>!!S.downloads||STANDALONE;
 async function saveFile(filename,data){
