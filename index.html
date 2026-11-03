@@ -205,7 +205,9 @@ input[type=number]{font-family:var(--f-num);font-size:19px;font-weight:600}
 body.lock{overflow:hidden}
 .run.full{position:fixed;inset:0;z-index:30;border-radius:0;margin:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top" "main" "side";gap:clamp(4px,1.2vh,14px);padding:calc(env(safe-area-inset-top,0px) + clamp(6px,1.5vh,14px)) clamp(10px,3vw,28px) calc(env(safe-area-inset-bottom,0px) + clamp(8px,2vh,18px));overflow:hidden}
 .r-top{grid-area:top;display:flex;align-items:center;gap:10px;font-family:var(--f-num);font-size:clamp(15px,min(3.8vw,2.6vh),24px);font-weight:600}
-.r-top .r-title{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-top .r-title{flex:0 1 auto;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-top .r-ora{margin-left:auto}
+.r-top .r-ic{opacity:.75;font-weight:400}
 .r-top .r-ses{white-space:nowrap;opacity:.9}
 .r-top .fsb{background:transparent;border:1.5px solid currentColor;color:inherit;border-radius:6px;width:clamp(32px,5vh,42px);height:clamp(32px,5vh,42px);font-size:clamp(14px,2.4vh,20px);padding:0;flex:none}
 .r-main{grid-area:main;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;gap:clamp(2px,.8vh,8px)}
@@ -222,6 +224,11 @@ body.lock{overflow:hidden}
 .run.full .repadj button{width:clamp(40px,min(12vw,7vh),76px);height:clamp(40px,min(12vw,7vh),76px);font-size:clamp(22px,4vh,34px)}
 .run.full .repadj output{font-size:clamp(30px,min(11vw,7vh),76px);min-width:2ch}
 .run.full .esito{margin:0 auto;width:100%}
+.run .sub{font-weight:700}
+.esito button{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:0}
+.run.full .esito button{padding-top:.5em}
+.esito button .lb{line-height:1.1;text-transform:uppercase;font-weight:800}
+.esito button .ck{font-size:5.2em;font-weight:900;line-height:.9;margin:auto 0;-webkit-text-stroke:3px currentColor}
 .run.full .esito button{padding:clamp(6px,1.3vh,14px) 4px;font-size:clamp(13px,min(3.6vw,2.2vh),18px)}
 .run.full .tot{margin:0;gap:clamp(6px,1vw,10px)}
 .run.full .tot div{padding:clamp(4px,.8vh,8px) 10px;font-size:clamp(12px,1.8vh,16px)}
@@ -229,7 +236,7 @@ body.lock{overflow:hidden}
 .run:not(.full) .msub{margin-top:14px}
 /* timer: dati più grandi e pulsanti facili da toccare */
 .run.full .r-top{font-size:clamp(18px,min(4.8vw,3.4vh),34px)}
-.run.full .r-top .r-ses{font-size:clamp(15px,min(3.8vw,2.6vh),24px);font-weight:600}
+.run.full .r-top .r-ses{font-size:calc(2*clamp(15px,min(3.8vw,2.6vh),24px));font-weight:700}
 .run.full .ph{font-size:clamp(18px,min(5.6vw,4vh),42px)}
 .run.full .giro{font-size:clamp(40px,min(16vw,10vh),150px)}
 .run.full .ex-now{font-size:clamp(24px,min(8vw,6vh),76px)}
@@ -256,7 +263,7 @@ body.lock{overflow:hidden}
 }
 .run.full{--u:14px;gap:calc(var(--u)*.5);padding:calc(env(safe-area-inset-top,0px) + var(--u)*.6) calc(var(--u)*.9) calc(env(safe-area-inset-bottom,0px) + var(--u)*.7)}
 .run.full .r-top{font-size:calc(var(--u)*1.5)}
-.run.full .r-top .r-ses{font-size:clamp(15px,min(3.8vw,2.6vh),24px)}
+.run.full .r-top .r-ses{font-size:calc(2*clamp(15px,min(3.8vw,2.6vh),24px));font-weight:700}
 .run.full .r-top .fsb{width:calc(var(--u)*2.4);height:calc(var(--u)*2.4);font-size:calc(var(--u)*1.2)}
 .run.full .r-main{gap:calc(var(--u)*.25)}
 .run.full .r-side{gap:calc(var(--u)*.6)}
@@ -825,7 +832,7 @@ function vPlanBetween(){
       <div class="clock" id="planCd" role="timer">${r!=null?ckS(mmss(r)):'–'}</div>
       <p class="sub">${esc(planCfgSum(b.mode,b.cfg))}${r==null?'. Parti quando sei pronto':''}</p></div>
     <div class="r-side"><div class="ctl"><button class="btn primary big" data-a="planNow">${r!=null?'Avvia ora':'Avvia'}</button></div>
-      <div class="ctl ctl2"><button class="btn" data-a="planSkip">Salta questo blocco</button><button class="btn" data-a="toSession">Torna alla seduta</button><button class="btn" data-a="sesAskEnd">Termina seduta</button></div></div></div>`;
+      <div class="ctl ctl2"><button class="btn" data-a="planSkip">Salta questo blocco</button><button class="btn" data-a="toSession">Diario</button><button class="btn" data-a="sesAskEnd">Termina seduta</button></div></div></div>`;
 }
 function vPlanEdit(){
   const P=S.plan,b=P.blocks[S.planEdit];S.noSesCfg=true;
@@ -2827,12 +2834,13 @@ function sesTick(){
     if(pc.rem<=0){SES.phase==='warm'?endWarm():endSession()}}
 }
 function enterFs(){if(S.tc.snd.fsAuto===false||!document.fullscreenEnabled||document.fullscreenElement)return;try{document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}}
-const fsBtn=()=>document.fullscreenEnabled?`<button class="fsb" data-a="fs" aria-label="Schermo intero">⛶</button>`:'';
-const sesTop=title=>`<div class="r-top"><span class="r-title">${title}</span>${SES&&SES.start?`<span class="r-ses">Seduta <b class="sClock">${fmtDur(Date.now()-SES.start)}</b></span>`:''}${fsBtn()}</div>`;
+const fsBtn=()=>!window.AndroidBridge&&document.fullscreenEnabled?`<button class="fsb" data-a="fs" aria-label="Schermo intero">⛶</button>`:'';
+const hhmm=()=>{const d=new Date();return `${d.getHours()}:${pad(d.getMinutes())}`};
+const sesTop=title=>`<div class="r-top"><span class="r-title">${title}</span>${SES&&SES.start?`<span class="r-ses" aria-label="Tempo della seduta"><span class="r-ic">⏱</span> <b class="sClock">${fmtDur(Date.now()-SES.start)}</b></span>`:''}<span class="r-ses r-ora" aria-label="Ora">${hhmm()}</span>${fsBtn()}</div>`;
 function vPhase(){
   const c=SES.cfg,k=SES.phase,col=k==='cool'?c.colCool:c.colWarm,fg=fgFor(col);
   const st=`style="background:${col};color:${fg};--pbg:${col};--pfg:${fg}"`;
-  const back=`<button class="btn" data-a="toSession">${S.draft?'Torna alla seduta':'Vai al diario'}</button>`;
+  const back=`<button class="btn" data-a="toSession">Diario</button>`;
   if(k==='pre')return `<div class="run full" ${st}>${sesTop('Riscaldamento')}
     <div class="r-main"><p class="ex-now">Pronto per il riscaldamento?</p><p class="sub">${c.warmMode==='fix'?`Durata ${fmtN(num(c.warmMin)||0,1)}′`:'Finisce quando lo dici tu'}</p></div>
     <div class="r-side"><div class="ctl"><button class="btn primary big" data-a="sesWarm">Inizia riscaldamento</button></div>
@@ -2894,7 +2902,7 @@ function countdownBeeps(remMs){
   if(s!==T.lastSec){if(s<=3&&s>=1&&T.lastSec!=null)sound('tick',s);T.lastSec=s}
 }
 function tick(){
-  sesTick();
+  sesTick();{const ro=document.querySelectorAll('.r-ora'),h=hhmm();ro.forEach(x=>{if(x.textContent!==h)x.textContent=h})}
   if(!T&&!sesActive()){clearInterval(loopId);loopId=null}
   if(!T||T.done||T.paused){updateRun();return}
   const t=clk();
@@ -3116,7 +3124,7 @@ function vRun(){
     const nameOf=sl=>sl.rest?(sl.end?'Riposo finale':'Riposo'):esc(T.cfg.ex[sl.i].n);
     if(lead||T.slot<0){ph='Si parte tra';ex=esc(T.cfg.ex[0].n);const r0=repOf(0,0);sub=r0?`${r0} ripetizioni`:''}
     else{const s=T.slots[T.slot],nx=T.slots[T.slot+1],r=repOf(s.i,s.g);
-      ph=T.cfg.giriMax?'Giro':'';giro=T.cfg.giriMax?`<p class="giro" aria-label="Giro ${s.g+1}">${s.g+1}</p>`:T.cfg.giroFmt==='down'?`<p class="giro" aria-label="Mancano ${T.cfg.giri-s.g} giri compreso questo">${T.cfg.giri-s.g}</p>`:`<p class="giro" aria-label="Giro ${s.g+1} di ${T.cfg.giri}">${s.g+1}/${T.cfg.giri}</p>`;const su=s.rest?'':uniOf(T.cfg.ex[s.i]);ex=nameOf(s)+(r?` × ${r}`:'')+(su?' <span style="font-size:.6em">per arto</span>':'');sub=(su?(su==='fila'?'Prima DX poi SX · ':'Alternati DX / SX · '):'')+(nx?`Poi: ${nameOf(nx)}${repOf(nx.i,nx.g)?` × ${repOf(nx.i,nx.g)}`:''}`:'Ultimo intervallo');
+      ph=T.cfg.giriMax?'Giro':'';giro=T.cfg.giriMax?`<p class="giro" aria-label="Giro ${s.g+1}">${s.g+1}</p>`:T.cfg.giroFmt==='down'?`<p class="giro" aria-label="Mancano ${T.cfg.giri-s.g} giri compreso questo">${T.cfg.giri-s.g}</p>`:`<p class="giro" aria-label="Giro ${s.g+1} di ${T.cfg.giri}">${s.g+1}/${T.cfg.giri}</p>`;const su=s.rest?'':uniOf(T.cfg.ex[s.i]);ex=nameOf(s)+(r&&!(()=>{const m=markTarget();return m&&m.now&&m.e===emomEx(s.i)})()?` × ${r}`:'')+(su?' <span style="font-size:.6em">per arto</span>':'');sub=(su?(su==='fila'?'Prima DX poi SX · ':'Alternati DX / SX · '):'')+(nx?`Poi: ${nameOf(nx)}${repOf(nx.i,nx.g)?` × ${repOf(nx.i,nx.g)}`:''}`:'Ultimo intervallo');
       if(T.cfg.giriMax)main=`<div class="ctl ctl2">${s.rest?'':'<button class="btn" data-a="emFail">Serie fallita</button>'}<button class="btn primary" data-a="emBasta">Basta</button></div>`;
       const mt=markTarget();if(mt)extra=vMark(mt)}
   }else{
@@ -3142,7 +3150,7 @@ function vRun(){
     <div class="r-main">${giro}${ph||T.paused?`<p class="ph">${ph}${T.paused?' (in pausa)':''}</p>`:''}${ex?`<p class="ex-now">${ex}</p>`:''}
     <div class="clock" id="tClock" role="timer">${clockText()}</div>${sub?`<p class="sub">${sub}</p>`:''}</div>
     <div class="r-side">${main?`<div class="ctl">${main}</div>`:''}${extra}
-    <div class="ctl ctl2">${pauseBtn}${stopBtn}<button class="btn" data-a="toSession">${T&&T.free?'Diario':S.draft?'Torna alla seduta':'Vai al diario'}</button></div></div></div>`;
+    <div class="ctl ctl2">${pauseBtn}${stopBtn}<button class="btn" data-a="toSession">Diario</button></div></div></div>`;
 }
 function vDone(){
   const t=T.endClock;let body='',act='';
@@ -3183,7 +3191,7 @@ function vDone(){
     if(T.log.length)act=T.cfg.link?`<button class="btn primary" data-a="saveEdt">Salva nella seduta</button>`:`<button class="btn primary" data-a="saveEdt">Inserisci nel diario</button><button class="btn" data-a="tReset">Non inserire</button>`;
   }
   if(T.applied){act='';body+=`<p class="sub">Già salvato nella seduta.</p>`}
-  const back=S.draft&&!act.includes('emomBack')?`<button class="btn" data-a="toSession">Torna alla seduta</button>`:'';
+  const back=S.draft&&!act.includes('emomBack')?`<button class="btn" data-a="toSession">Diario</button>`:'';
   const fr=!!T.free&&!(T.mode==='ft'&&T.cfg.test);
   return `<div class="run done" id="runPanel"><p class="ph">Finito</p>${body}<div class="ctl">${fr?'<button class="btn primary" data-a="tRepeat">Ripeti</button>':act}${fr?'':back}${!fr&&(act.includes('Non inserire')||act.includes('Non salvare'))?'':'<button class="btn" data-a="tReset">Nuovo timer</button>'}</div></div>`;
 }
@@ -3214,9 +3222,11 @@ function vMark(mt){
   const x=mt.e.s[mt.j],p=planned(mt.e,mt.j);
   const multi=T.mode==='emom'?T.cfg.ex.length>1:T.exs.length>1,txt=mt.now?`Serie ${mt.j+1} in corso`:multi?`${esc(mt.e.n)}: serie ${mt.j+1} appena fatta`:`Serie ${mt.j+1} appena fatta`;
   if(T.mode==='rec'&&mt.now)return '';
+  if(T.mode==='emom'&&mt.now&&!mt.nav)return `<div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div>
+  <div class="esito">${(()=>{const cur=x[1]&&x[1]!=='skip'?x[1]:esDef(mt.e,mt.j);return ['ok','fat','ko'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
   return `<p class="sub msub">${mt.nav?`<button class="btn" data-a="mkMove" data-d="-1" ${mt.nav.prev?'':'disabled'} aria-label="Serie precedente" style="min-height:0;padding:6px 18px;font-size:1.2em">‹</button> `:''}${txt}${mt.nav?` <button class="btn" data-a="mkMove" data-d="1" ${mt.nav.next?'':'disabled'} aria-label="Serie successiva" style="min-height:0;padding:6px 18px;font-size:1.2em">›</button>`:''}</p>
   <div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div>
-  <div class="esito">${(()=>{const cur=x[1]&&x[1]!=='skip'?x[1]:esDef(mt.e,mt.j);return ['ok','fat','ko'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}">${cur===k?'✓ ':''}${ESITO[k]}</button>`).join('')})()}</div>`;
+  <div class="esito">${(()=>{const cur=x[1]&&x[1]!=='skip'?x[1]:esDef(mt.e,mt.j);return ['ok','fat','ko'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
 }
 
 function updateMini(){
