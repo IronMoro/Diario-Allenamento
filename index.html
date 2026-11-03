@@ -672,7 +672,7 @@ function merge(){
   const m=new Map(S.stor);
   for(const [id,s] of S.sed){if(s.deleted)m.delete(id);else m.set(id,s)}
   S.delIds.forEach(id=>m.delete(id));
-  m.forEach(woNorm);if(S.draft)woNorm(S.draft);if(S.mode==='db')setTimeout(teamPublishSoon,0);setTimeout(profPublishSoon,0);
+  {const R=(S.cfg&&S.cfg.woRen||[]).length;m.forEach((x,id)=>{if(x&&x.wo&&(x.woN||0)<R&&!Object.isExtensible(x)){x=clone(x);m.set(id,x);if(S.sed.has(id))S.sed.set(id,x);else if(S.stor.has(id))S.stor.set(id,x)}woNorm(x)})}if(S.draft)woNorm(S.draft);if(S.mode==='db')setTimeout(teamPublishSoon,0);setTimeout(profPublishSoon,0);
   const all=[...m.values()];S.progs=all.filter(x=>x.prog).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
   S.hist=all.filter(x=>!x.prog&&!(x.updated&&!isExec(x)&&!String(x.note||'').trim()&&!x.ft&&!x.tempi)).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1));
   const names=new Set();S.hist.forEach(s=>s.ex.forEach(e=>e.n&&names.add(e.n)));
@@ -918,7 +918,7 @@ async function init(){
       claude.use('downloads').then(d=>{S.downloads=d;if(S.tab==='storico')render()}).catch(()=>{});
     }
   }catch(e){}
-  try{if(db&&uid){const pd=await db.doc(`data/users/${uid}/profili`).get();if(pd.exists)S.prof={sum:{},ask:true,...pd.data()}}else{const pl=load('diario-profili');if(pl&&Array.isArray(pl.list))S.prof={sum:{},ask:true,...pl}}}catch(e){}
+  try{if(db&&uid){const pd=await db.doc(`data/users/${uid}/profili`).get();if(pd.exists)S.prof={sum:{},ask:true,...dbData(pd)}}else{const pl=load('diario-profili');if(pl&&Array.isArray(pl.list))S.prof={sum:{},ask:true,...pl}}}catch(e){}
   if(!S.prof.list.some(x=>x.id===PID)){PID='main';try{localStorage.setItem(NS+'diario-profilo','main')}catch(e){}S.draft=load('diario-bozza')}
   if(!db||!uid){
     S.mode='local';
@@ -934,29 +934,29 @@ async function init(){
   S.base=db.doc(`data/users/${uid}/diario${PID==='main'?'':'_'+PID}`);S.db=db;S.uid=uid;S.userNS=user;dbCacheLoad();
   try{
     const q=await S.base.collection('storico').get();
-    q.docs.forEach(d=>{const v=d.data();(v&&v.sedute||[]).forEach(s=>S.stor.set(s.id,s))});
+    q.docs.forEach(d=>{const v=dbData(d);(v&&v.sedute||[]).forEach(s=>S.stor.set(s.id,s))});
   }catch(e){S.loadErr=true}
   S.mode='db';merge();render();if(!S.fromCache)profAsk();dbCacheSave(true);
   S.base.collection('sedute').onSnapshot(q=>{
-    S.sed=new Map(q.docs.map(d=>[d.id,d.data()]));merge();dbCacheSave();
+    S.sed=new Map(q.docs.map(d=>[d.id,dbData(d)]));merge();dbCacheSave();
     if(S.tab==='storico')render();
   },()=>{S.loadErr=true});
   S.base.onSnapshot(d=>{
-    const v=d.exists?d.data():null;const before=(S.cfg.woRen||[]).length;S.cfg={esercizi:{},...(v?clone(v):{})};loadPrefs();
+    const v=d.exists?dbData(d):null;const before=(S.cfg.woRen||[]).length;S.cfg={esercizi:{},...(v?clone(v):{})};loadPrefs();
     if((S.cfg.woRen||[]).length!==before){merge();render()}
     if(!S.team.code&&teamCodes().length)teamWatch(teamCodes()[0]);
     S.cfgOk=true;bioCheck();dbCacheSave();
   },()=>{});
   S.base.collection('test').onSnapshot(q=>{
-    S.tests=new Map(q.docs.map(d=>[d.id,d.data()]));S.testsLoaded=true;ensureDefaults();dbCacheSave();
+    S.tests=new Map(q.docs.map(d=>[d.id,dbData(d)]));S.testsLoaded=true;ensureDefaults();dbCacheSave();
     if(S.tab==='esercizi'||S.tab==='massimali')render();
   },()=>{});
   S.base.collection('protocolli').onSnapshot(q=>{
-    S.protos=new Map(q.docs.map(d=>[d.id,d.data()]));S.protosLoaded=true;ensureProtos();ensureCodes();dbCacheSave();
+    S.protos=new Map(q.docs.map(d=>[d.id,dbData(d)]));S.protosLoaded=true;ensureProtos();ensureCodes();dbCacheSave();
     if(S.tab==='esercizi'||S.tab==='diario')render();
   },()=>{});
   S.base.collection('misure').onSnapshot(q=>{
-    S.misure=new Map(q.docs.map(d=>[d.id,d.data()]));if(S.tab==='massimali')render();S.misOk=true;bioCheck();dbCacheSave();
+    S.misure=new Map(q.docs.map(d=>[d.id,dbData(d)]));if(S.tab==='massimali')render();S.misOk=true;bioCheck();dbCacheSave();
   },()=>{});
 }
 
@@ -1511,8 +1511,8 @@ async function teamPublish(force){
 function teamWatch(code){
   if(S.team.unsub){try{S.team.unsub()}catch(e){}}S.team.unsub=null;S.team.members=new Map();S.team.code=code||null;S.team.mem=null;
   if(!code||!teamOk())return;
-  try{S.team.unsub=S.db.collection('membri').where('squadre','array-contains',code).onSnapshot(q=>{S.team.members=new Map(q.docs.map(d=>[d.id,d.data()]));teamNames();if(S.tab==='esercizi'&&S.exView==='team')render()},()=>{})}catch(e){}
-  S.db.doc('squadre/'+code).get().then(d=>{S.team.meta[code]=d.exists?d.data():null;if(S.tab==='esercizi'&&S.exView==='team')render()}).catch(()=>{});
+  try{S.team.unsub=S.db.collection('membri').where('squadre','array-contains',code).onSnapshot(q=>{S.team.members=new Map(q.docs.map(d=>[d.id,dbData(d)]));teamNames();if(S.tab==='esercizi'&&S.exView==='team')render()},()=>{})}catch(e){}
+  S.db.doc('squadre/'+code).get().then(d=>{S.team.meta[code]=d.exists?dbData(d):null;if(S.tab==='esercizi'&&S.exView==='team')render()}).catch(()=>{});
 }
 async function teamNames(){try{const ps=await S.userNS.profiles([...S.team.members.keys()]);S.team.names=ps||{};if(S.tab==='esercizi'&&S.exView==='team')render()}catch(e){}}
 const tName=id=>id===S.uid?'Tu':((S.team.names[id]&&S.team.names[id].name)||'Atleta');
@@ -4514,6 +4514,23 @@ Object.assign(A,{
   exHEdit(el){const id=el.dataset.id,k=+el.dataset.k;A.editSess({dataset:{id}});if(S.draft&&S.draft.id===id)goCard(k)},
 });
 
+
+/* ---------- v1.4q: importazione su claude.ai più robusta ---------- */
+const stab=o=>Array.isArray(o)?`[${o.map(stab).join(',')}]`:o&&typeof o==='object'?`{${Object.keys(o).filter(k=>k!=='updated'&&o[k]!==undefined).sort().map(k=>JSON.stringify(k)+':'+stab(o[k])).join(',')}}`:JSON.stringify(o??null);
+const sameSess=(a,b)=>stab(a)===stab(b);
+async function dbPutAll(list,put){const bad=[];let done=0,i=0;const tot=list.length;
+  const prog=()=>{const el=$('#impProg');if(el)el.textContent=`${done} di ${tot} sedute`};
+  if(tot)sheet(`<h3>Importo il backup…</h3><p class="muted"><span id="impProg">0 di ${tot} sedute</span>. Non chiudere la pagina.</p>`);
+  const one=async x=>{let err=null;for(let k=0;k<4;k++){try{await put(x);done++;prog();return}catch(e){err=e;await new Promise(r=>setTimeout(r,400*2**k))}}bad.push({x,err:String(err&&err.message||err)});done++;prog()};
+  const worker=async()=>{while(i<list.length){const x=list[i++];await one(x)}};
+  await Promise.all([worker(),worker(),worker()]);return bad}
+function impBadShow(){const B=S.impBad;S.impBad=null;if(!B||!B.length)return;
+  setTimeout(()=>sheet(`<h3>${B.length} ${B.length===1?'seduta non importata':'sedute non importate'}</h3><p class="muted">Le altre sono state importate. Queste non sono state accettate dal salvataggio di claude.ai:</p>
+    <ul class="small">${B.slice(0,12).map(b=>`<li>${esc(fmtD(b.x.d||''))} ${esc(b.x.wo||'')}: ${esc(b.err)}</li>`).join('')}${B.length>12?`<li>… e altre ${B.length-12}</li>`:''}</ul>
+    <p class="muted small">Riprova l’importazione: le sedute già importate non vengono riscritte. Se il problema resta, mandami una foto di questo messaggio.</p>
+    <div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`),400)}
+
+function dbData(x){const v=x.data();return v&&typeof v==='object'?clone(v):v}
 const canSave=()=>!!S.downloads||STANDALONE;
 async function saveFile(filename,data){
   if(S.downloads){try{await S.downloads.save({filename,data})}catch(e){}return}
@@ -4527,10 +4544,10 @@ async function importBackup(obj,mode){
   for(const x of obj.sedute){
     if(!x||typeof x.id!=='string')continue;
     if(!x.deleted&&(!x.d||!Array.isArray(x.ex)))continue;
-    const c=cur.get(x.id);if(c&&(c.updated||0)>=(x.updated||0))continue;
+    const c=cur.get(x.id);if(c&&(c.updated||0)>=(x.updated||0))continue;if(c&&sameSess(c,x))continue;
     (x.updated||x.deleted?upd:base).push(x);
   }
-  if(S.mode==='db'){for(const x of [...base,...upd])await S.base.collection('sedute').doc(x.id).set(x)}
+  if(S.mode==='db'){const bad=await dbPutAll([...base,...upd],x=>S.base.collection('sedute').doc(x.id).set(x));if(bad.length){const ok=new Set(bad.map(b=>b.x.id));for(let i=base.length-1;i>=0;i--)if(ok.has(base[i].id))base.splice(i,1);for(let i=upd.length-1;i>=0;i--)if(ok.has(upd[i].id))upd.splice(i,1);S.impBad=bad}}
   else{
     const st=new Map(S.stor);base.forEach(x=>st.set(x.id,x));/* riscrive sempre tutto, anche se non c’è nulla di nuovo */
     const sd=new Map(S.sed);upd.forEach(x=>sd.set(x.id,x));const m={};sd.forEach((v,k)=>m[k]=v);
@@ -4688,8 +4705,9 @@ function vImpAsk(o){const k=bakCounts(o),c=o.cfg||{},d=o.exported?fmtD(String(o.
    <div class="row" style="margin-top:14px"><button class="btn primary" data-a="impGo" data-m="all">Ripristina tutto</button><button class="btn" data-a="impGo" data-m="add">Aggiungi ai miei dati</button><button class="btn" data-a="closeSheet">Annulla</button></div>`}
 A.impGo=async function(el){const obj=S.impObj,all=el.dataset.m==='all';if(!obj){closeSheet();return}S.impObj=null;sheet('<h3>Importo il backup…</h3>');
   try{const r=await importBackup(obj,all?'all':'add');
-    impDone('Backup importato',(S.prof.list.length>1?`Nel profilo «${esc(profName(PID))}»: `:'')+(r.n?`${r.n} sedute nuove o aggiornate.`:`nessuna seduta nuova: ${S.hist.length} sedute erano già presenti${S.mode==='local'?' e le ho salvate di nuovo nella memoria del dispositivo':''}.`)+(r.nt?` ${r.nt} test e massimali importati.`:'')+(r.nm?` ${r.nm} misurazioni importate.`:'')+(r.np?` ${r.np} protocolli importati.`:'')+(r.cfg?(all?' Impostazioni di timer, esercizi, WO, profilo e promemoria riprese dal backup.':' Ho aggiunto le impostazioni che mancavano.'):''));render()}
-  catch(e){impDone('Backup non importato',e&&e.message==='spazio'?'Lo spazio del browser per questa app è pieno.':'Il file non è un backup del diario: scegli il file diario-backup….json esportato dall’app.')}};
+    impDone('Backup importato',(S.prof.list.length>1?`Nel profilo «${esc(profName(PID))}»: `:'')+(r.n?`${r.n} sedute nuove o aggiornate.`:`nessuna seduta nuova: ${S.hist.length} sedute erano già presenti${S.mode==='local'?' e le ho salvate di nuovo nella memoria del dispositivo':''}.`)+(r.nt?` ${r.nt} test e massimali importati.`:'')+(r.nm?` ${r.nm} misurazioni importate.`:'')+(r.np?` ${r.np} protocolli importati.`:'')+(r.cfg?(all?' Impostazioni di timer, esercizi, WO, profilo e promemoria riprese dal backup.':' Ho aggiunto le impostazioni che mancavano.'):''));try{render()}catch(e2){console.error(e2)}}
+  catch(e){impDone('Backup non importato',e&&e.message==='spazio'?'Lo spazio del browser per questa app è pieno.':e&&e.message==='formato'?'Il file non è un backup del diario: scegli il file diario-backup….json esportato dall’app.':`Errore durante l’importazione: ${esc(String(e&&e.message||e))}. Niente è stato cancellato; riprova, e se si ripete mandami questo messaggio.`)}
+  impBadShow()};
 function impText(txt,name){txt=String(txt||'').replace(/^\uFEFF/,'').trim();const fn=esc(name||'');
   if(!txt){impDone('Backup non importato',`Il file «${fn}» è vuoto: quando l’hai esportato il salvataggio non era andato a buon fine. Esporta di nuovo il backup (ora l’app controlla che il file sia salvato) e riprova.`);return}
   let obj=null;try{obj=JSON.parse(txt)}catch(e){impDone('Backup non importato',`Il file «${fn}» è incompleto o danneggiato (${Math.max(1,Math.round(txt.length/1024))} KB). Esporta di nuovo il backup e riprova.`);return}
