@@ -1818,10 +1818,19 @@ function vGuida(){
     <p><b>Carico, regola del 20%</b>: finché resti sotto, l’obiettivo è superare il totale dell’ultima volta. Quando superi del 20% il totale della prima seduta con quel carico, la volta dopo ti propongo circa +5% di carico (per gli esercizi a corpo libero, in zavorra) e si riparte. Con esito Difficile o Dura ti propongo lo stesso carico, con il pulsante «Incrementa». La prima volta in EDT, se c’è il massimale, ti propongo un carico da 10–12 ripetizioni massime (circa 72% di 1RM) e serie da 5.</p>
     <p>Nella scheda dell’esercizio (Esercizi → Elenco), in Andamento, il riquadro <b>EDT</b> mostra il totale di ogni PR Zone con i cambi di carico, le ripetizioni al minuto, il record e con quale esercizio eri abbinato.</p>`)}
   ${sec('Cambiare l’ordine degli esercizi',`<p>Nella seduta, in <b>Struttura della seduta</b>, le frecce ↑ ↓ di ogni blocco spostano un gruppo o un esercizio da solo; dentro un gruppo, «Ordine nel gruppo» sposta gli esercizi (A1, A2…). Sempre lì, con il menu «Da solo / Gruppo A…» di ogni esercizio, metti due o più esercizi nello stesso gruppo per farli insieme (o ne togli uno): se uno dei due ha già il protocollo, lo prende anche l’altro. Nella guida passo passo, al passo <b>Esercizi</b>, ogni esercizio ha le sue frecce.</p><p>Se la seduta viene da un WO già eseguito almeno una volta, al primo spostamento scegli: <b>Modifica il WO</b> (da ora in poi avrà il nuovo ordine) oppure <b>Fanne un nuovo WO</b> (questa seduta diventa un WO nuovo e quello di partenza resta com’era). In tutti e due i casi le sedute già fatte non cambiano. Se il WO non è mai stato eseguito, l’ordine si cambia e basta.</p>`)}
-  ${sec('Programmi',`<p>Un <b>programma</b> è una sequenza di giorni di allenamento, e ogni giorno è un WO. Esempio: Giorno 1 = WO con Trazioni & Dip e Stacco & Military; Giorno 2 = WO con Dip & Trazioni e Squat & Panca inclinata; Giorno 3 = WO con Trazioni & Dip e Polpacci.</p>
-  <p>Lo crei in Sedute → <b>Programmi</b> → «+ Nuovo programma»: dai un nome, scegli il WO di ogni giorno (se ti manca, «Componi un nuovo WO con la guida») e mettili in ordine con le frecce. Un solo programma alla volta è <b>attivo</b>.</p>
-  <p>Il programma attivo compare in Sedute → In corso, sotto la data: «Oggi: Giorno 2 di 3». Con «Inizia il Giorno 2» apri il WO come al solito, con le progressioni di sempre (A step, carichi, EDT…). I giorni vanno <b>in sequenza</b> (1, 2, 3, poi di nuovo 1), qualunque giorno della settimana sia: se salti un allenamento non perdi il giro. Puoi anche fare un altro giorno dal menu «Un altro giorno…».</p>
-  <p>Nella scheda del programma vedi l’<b>avanzamento A step</b> di ogni esercizio (es. Trazioni 18/30). Il programma resta attivo finché non lo <b>sospendi</b> o lo <b>chiudi</b>; le sedute e i WO restano comunque nello storico. Si può eliminare solo un programma mai usato.</p>`)}
+  ${sec('Programmi',`<p>Un <b>programma</b> è un insieme di giorni di allenamento, e ogni giorno è un WO. Esempio: Giorno 1 = WO con Trazioni & Dip e Stacco & Military; Giorno 2 = WO con Dip & Trazioni e Squat & Panca inclinata; Giorno 3 = WO con Trazioni & Dip e Polpacci.</p>
+  <p>Lo crei in Sedute → <b>Programmi</b> → «+ Nuovo programma»: dai un nome, scegli il WO di ogni giorno (se ti manca, «Componi un nuovo WO con la guida») e mettili in ordine con le frecce. Per ogni giorno scegli <b>quando</b> si fa: «In sequenza», oppure uno o più giorni della settimana (es. il WO P sempre il lunedì e il giovedì). Un programma può essere tutto in sequenza, tutto a <b>giorni fissi</b> oppure <b>ibrido</b> (alcuni WO in giorni dedicati, gli altri in sequenza). Un solo programma alla volta è <b>attivo</b>. Attenzione: il WO deve essere salvato (seduta eseguita, oppure «Aggiorna il WO» nella guida) per comparire nell’elenco.</p>
+  <p>Il programma attivo compare in Sedute → In corso, sotto la data: «Oggi: Giorno 2 di 3». Con «Inizia il Giorno 2» apri il WO come al solito, con le progressioni di sempre (A step, carichi, EDT…). Nel giorno della settimana di un WO fisso, l’app propone quello; negli altri giorni propone il prossimo WO della sequenza (1, 2, 3, poi di nuovo 1): se salti un allenamento in sequenza non perdi il giro. Se un giorno fisso è passato senza farlo te lo segnala con «Recupera»; se oggi non c’è niente in programma ti dice qual è il prossimo. Puoi sempre fare un altro giorno dal menu «Un altro giorno…».</p>
+  <p>Nella scheda del programma vedi l’<b>avanzamento A step</b> di ogni esercizio (es. Trazioni 18/30).</p>
+  <p><b>Creare un programma dalla guida di composizione.</b> Componi un WO con «Componi con la guida»; nel Riepilogo tocca «Inserisci in un programma…», scegli un programma esistente oppure «+ Nuovo programma» (con il nome) e decidi quando si fa: in sequenza o in giorni fissi. L’app salva il WO e lo aggiunge come giorno successivo del programma (se c’era già, aggiorna solo quando si fa). Ripeti per ogni WO: un WO alla volta, il programma si completa.</p>
+  <p><b>Attiva, Sospendi, Chiudi, Riapri, Elimina.</b> In qualsiasi caso le sedute fatte, i WO e le progressioni restano tutti: cambia solo se e come il programma ti viene proposto.</p>
+  <ul>
+  <li><b>Attiva</b>: il programma comincia a proporti il giorno da fare in Sedute → In corso. Ne è attivo uno solo alla volta: attivandone un altro, quello di prima viene sospeso.</li>
+  <li><b>Sospendi</b>: una pausa (vacanza, infortunio, un periodo con un altro programma). Il programma smette di essere proposto ma resta com’è, modificabile; lo riprendi con «Attiva» e la sequenza continua da dove eri rimasto.</li>
+  <li><b>Chiudi</b>: il programma è finito (es. hai completato le tabelle A step). Chiede conferma, va in fondo all’elenco come «chiuso» e non si può attivare né modificare: lo conservi come storico.</li>
+  <li><b>Riapri</b>: rimette un programma chiuso tra quelli utilizzabili; poi con «Attiva» lo riprendi.</li>
+  <li><b>Elimina</b>: c’è solo per un programma mai usato (nessuna seduta avviata dal programma), ed è definitivo.</li>
+  </ul>`)}
   ${sec('Protocollo A step',`<p>Pensato per gli esercizi a corpo libero (trazioni, dip, piegamenti…) ma va bene per qualsiasi esercizio. Una <b>tabella di step</b> dice quante ripetizioni fare in ogni serie: lo step 1 è il più facile, l’ultimo il più duro.</p>
   <p>Nel protocollo scegli un modello (<b>Corpo libero</b> 5 serie, <b>Con carico</b> 4 serie, oppure <b>Personalizzata</b>), il numero di serie, il numero di step e le <b>ripetizioni totali</b> del primo e dell’ultimo step (es. da 5 a 60): l’app calcola gli step intermedi e puoi correggere a mano ogni casella. Se il totale di partenza non si divide in serie uguali, o quello finale non segue la progressione (o è troppo vicino al primo per il numero di step), l’app ti suggerisce il numero migliore (per l’ultimo step arrotondato per eccesso) con un pulsante «Usa»; se vuoi tenere proprio il tuo numero, le ripetizioni in più vanno nelle prime serie. Il recupero è di 90″ e lo puoi cambiare.</p>
   <p>La prima volta l’app ti propone lo step di partenza partendo dalle tue <b>ripetizioni massime in una serie</b>: dal test di ripetizioni massime se c’è, altrimenti stimate dal 1RM e dal carico, altrimenti dalla serie migliore nello storico. Sceglie lo step la cui prima serie è circa il 60% di quel massimo (es. 15 rip. massime → prima serie 9 → step 16, 9-6-6-6-6). Nella scheda dell’esercizio, nel campo «Step», puoi sempre cambiarlo. Poi: <b>tutte le serie riuscite</b> → step successivo; <b>una serie fallita</b> → ripeti lo step; <b>fallito due volte di fila</b> → uno step indietro. Finita la tabella ti propone +2,5 kg (di zavorra per il corpo libero) e di ripartire dallo step 15: entrambi i valori si cambiano nel protocollo.</p>
@@ -4646,14 +4655,14 @@ Object.assign(A,{pzMode(el){const o=el.dataset.k==='tm2'?S.tmEdit:S.plan;if(!o)r
 /* ---------- v1.4z: procedura guidata «Componi la seduta» ---------- */
 const WZT=['Da dove parti','Esercizi','Gruppi','Protocollo','Timer','Finisher','Svolgimento','Riepilogo'];
 const WZQ=['Da dove vuoi partire?','Quali esercizi fai oggi?','Quali esercizi fai insieme?','Come fai ogni blocco?','Con quale timer?','Vuoi un finisher?','Come si svolge la seduta?','Tutto pronto'];
-const WZH=['Il WO copia esercizi, gruppi, protocolli, timer e svolgimento dell’ultima volta: poi ti propongo le ripetizioni e i carichi per oggi.',
+const WZH=['Il WO copia esercizi, gruppi, protocolli, timer e svolgimento dell’ultima volta: poi ti propongo le ripetizioni e i carichi per oggi. Per costruire un programma componi qui un WO alla volta: alla fine lo inserisci nel programma.',
  'Per ognuno ti propongo serie, ripetizioni e carico partendo dall’ultima volta. Con ✎ apri la scheda completa dell’esercizio. Puoi cambiare tutto anche dopo.',
  'Gli esercizi con la stessa lettera si fanno uno dopo l’altro, con un solo protocollo e un solo timer (superset, E2MOM, circuito…). Quelli senza lettera si fanno da soli.',
  'Per ogni blocco scegli il protocollo: ti propongo solo quelli adatti al numero di esercizi. Se il blocco ha già un protocollo, «Modifica protocollo» lo cambia e «Crea un nuovo protocollo» ne fa uno nuovo da zero; altrimenti usa «Crea il protocollo».',
  'Il timer parte da un modello e la seduta ne tiene una copia. Con «Modifica timer» cambi tempi, preparazione e avvisi, poi torni qui.',
  'Esercizi brevi alla fine della seduta, con il loro modo di svolgimento. Se non ti serve, tocca «Salta».',
  'Riscaldamento, pausa tra i blocchi e defaticamento: con «Avvia la seduta» va tutto di fila.',
- 'Controlla la seduta: tocca una riga per tornare a quel passo.'];
+ 'Controlla la seduta: tocca una riga per tornare a quel passo. Con «Inserisci in un programma…» salvi il WO e lo metti in un programma (nuovo o esistente), scegliendo se farlo in sequenza o in giorni fissi.'];
 function wzBar(n){return `<div class="wz-bar">${WZT.map((_,i)=>`<i class="${i+1<n?'on':i+1===n?'now':''}"></i>`).join('')}</div>`}
 function wzExLineOld(e){const p=[];if(isCl(e.n)&&e.bw!=null)p.push(`corpo libero: ${fmtN(e.bw,1).replace(/,0$/,'')} + zavorra ${fmtN(Number(e.z)||0,1).replace(/,0$/,'')} = ${fmtN(e.kg||0,1).replace(/,0$/,'')} kg`);else if(e.kg!=null&&e.kg!=='')p.push(`${fmtN(e.kg,1).replace(/,0$/,'')} kg`);
   const n=(e.s||[]).length;if(isFt(e))p.push('per tempo');else if(n)p.push(e.b!=null?`${n} ${n===1?'serie':'serie'} da ${e.b}${e.k?` (prime ${e.k} a ${e.b+1})`:''}`:`${n} serie`);
@@ -4683,7 +4692,7 @@ function vWzStep8(d){const B=sessBlocks(d),c=sesTs(d),row=(st,html,bad)=>`<butto
    ...B.filter(b=>strB(d,b)).map(b=>{const r=strRt(d,b);return row(7,`<b>Defaticamento</b> · ${esc(b.idx.map(j=>d.ex[j].n).join(', '))}${r?` · routine ${esc(r.desc)}`:''}`)}),
    fin.length?row(6,`<b>Finisher${d.fin&&d.fin.wo?' '+esc(d.fin.wo):''}</b> · ${esc(fin.map(e=>e.n).join(', '))}`):row(6,'<b>Finisher</b> · nessuno')];
   return `<section class="card" style="padding:4px 14px">${rows.join('')}</section>${warn.length?`<p class="warnx small">${warn.length===1?'Il blocco':'I blocchi'} ${warn.join(', ')} ${warn.length===1?'non ha':'non hanno'} un protocollo: puoi avviare lo stesso, ma il timer userà le impostazioni generali.</p>`:''}
-   <div class="row" style="gap:8px;margin-top:10px">${d.ex.some(e=>(e.s||[]).length||isFt(e)||isEdtE(e))?'<button class="btn primary" data-a="wzEnd" data-v="avvia">Avvia la seduta</button>':''}<button class="btn" data-a="wzEnd" data-v="prog">Salva e programma…</button>${d.wo?`<button class="btn" data-a="wzEnd" data-v="wo">Aggiorna il WO ${esc(d.wo)}</button>`:''}<button class="btn" data-a="wzEnd" data-v="chiudi">Chiudi la guida</button></div>`}
+   <div class="row" style="gap:8px;margin-top:10px">${d.ex.some(e=>(e.s||[]).length||isFt(e)||isEdtE(e))?'<button class="btn primary" data-a="wzEnd" data-v="avvia">Avvia la seduta</button>':''}<button class="btn" data-a="wzEnd" data-v="prog">Salva e programma…</button>${d.wo?`<button class="btn" data-a="wzEnd" data-v="wo">Aggiorna il WO ${esc(d.wo)}</button>`:''}${d.wo?'<button class="btn" data-a="wzPrg">Inserisci in un programma…</button>':''}<button class="btn" data-a="wzEnd" data-v="chiudi">Chiudi la guida</button></div>`}
 function vWizard(){const W=S.wz,n=W.step,d=S.draft;
   if(n>1&&!d){S.wz={step:1,src:'wo'};return vWizard()}
   let body='';
@@ -5525,20 +5534,44 @@ const prgAct=()=>prgAll().find(p=>p.attivo&&!p.chiuso)||null;
 function prgSave(P){P.updated=Date.now();S.cfg.programmi={...(S.cfg.programmi||{}),[P.id]:P};saveCfg()}
 function prgWoInfo(wo){const v=wo&&woLast().get(wo);return v?{wo,nome:v.nome||'',ex:(v.ex||[]).filter(e=>e.n&&!e.fin).map(e=>e.n),v}:{wo,nome:'',ex:[],v:null,miss:true}}
 function prgSess(P){return S.hist.filter(s=>s&&s.prg&&s.prg.id===P.id)}
-function prgNext(P){const n=(P.giorni||[]).length;if(!n)return null;const L=prgSess(P);
-  if(L.length){const s=L[0],g=Math.min(n-1,Math.max(0,s.prg.g|0));return {g:(g+1)%n,last:s,lastG:g,done:L.length}}
-  return {g:0,last:null,lastG:null,done:0}}
+const PWD=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'],PWS=['dom','lun','mar','mer','gio','ven','sab'],PWO=[1,2,3,4,5,6,0],PWL=['L','M','M','G','V','S','D'];
+const wdOf=iso=>new Date(isoUTC(iso)).getUTCDay();
+const prgGs=(P,i)=>((P.gs||[])[i]||[]).filter(w=>w>=0&&w<=6);
+function prgTipo(P){const n=(P.giorni||[]).length,f=(P.giorni||[]).filter((_,i)=>prgGs(P,i).length).length;return !f?'in sequenza':f===n?'a giorni fissi':'ibrido'}
+const prgWhen=(P,i)=>{const g=prgGs(P,i);return g.length?PWO.filter(w=>g.includes(w)).map(w=>PWS[w]).join(', '):'in sequenza'};
+/* cosa proporre in una data: giorni fissi di quel giorno della settimana, poi il prossimo della sequenza */
+function prgToday(P,iso){const n=(P.giorni||[]).length;if(!n)return null;const L=prgSess(P),wd=wdOf(iso),seqI=[],fixI=[];
+  for(let i=0;i<n;i++)(prgGs(P,i).length?fixI:seqI).push(i);
+  const fx=fixI.filter(i=>prgGs(P,i).includes(wd)&&!L.some(s=>s.prg.g===i&&s.d===iso));
+  let seqNext=null;if(seqI.length){const ls=L.find(s=>seqI.includes(s.prg.g|0));seqNext=ls?seqI[(seqI.indexOf(ls.prg.g|0)+1)%seqI.length]:seqI[0]}
+  const missed=[];fixI.forEach(i=>{let best=null;prgGs(P,i).forEach(w=>{const back=(wd-w+7)%7;if(!back)return;const d0=isoMinus(iso,back);if(P.creato&&d0<P.creato)return;if(!best||d0>best)best=d0});
+    if(best&&!L.some(s=>s.prg.g===i&&s.d>=best))missed.push({i,d:best})});
+  let up=null;fixI.forEach(i=>prgGs(P,i).forEach(w=>{const ah=(w-wd+7)%7||7;if(!up||ah<up.ah)up={i,ah,w}}));
+  const prim=fx.length?fx[0]:seqNext;
+  return {n,fx,seqI,fixI,seqNext,prim,missed,up,doneToday:L.filter(s=>s.d===iso),done:L.length,last:L[0]||null}}
 function prgStepEx(P){const out=new Map();(P.giorni||[]).forEach(wo=>{const I=prgWoInfo(wo);if(!I.v)return;(I.v.ex||[]).forEach(x=>{if(!x.n||x.fin)return;const Q=x.pid&&S.protos.get(x.pid);if(Q&&!Q.deleted&&Q.tipo==='step'&&!out.has(x.n))out.set(x.n,Q)})});
   return [...out.entries()].map(([n,Q])=>{const N=stepTab(Q).length,R=stepRows(n),L=R[R.length-1];let nx=null;try{const e={n};stepPlan(e,n,'9999-12-31','');if(e.step!=null)nx=e.step}catch(x){}
     const fin=!!(L&&L.ok&&L.N&&L.st>=L.N);return {n,N,st:L?L.st:null,ok:L?L.ok:null,nx,fin,cyc:R.filter((r,i)=>i>0&&R[i-1].ok&&R[i-1].N&&R[i-1].st>=R[i-1].N).length}})}
-function vPrgNext(){const P=prgAct();if(!P||!(P.giorni||[]).length)return '';const q=prgNext(P),n=P.giorni.length,I=prgWoInfo(P.giorni[q.g]);
-  return `<div class="prgnx"><div class="muted small">Programma «${esc(P.nome||'Senza nome')}»${q.done?` · ${q.done} ${q.done===1?'seduta':'sedute'}, giro ${Math.floor(q.done/n)+1}`:''}</div>
-    <div style="font-size:20px;margin:2px 0"><b>Oggi: Giorno ${q.g+1} di ${n}</b> · WO ${esc(I.wo)}${I.nome?` «${esc(I.nome)}»`:''}</div>
-    <div class="muted small">${I.miss?'<span class="warnx">Questo WO non esiste più: modifica il programma.</span>':esc(I.ex.join(', '))}${q.last?` · ultima: Giorno ${q.lastG+1} il ${fmtD(q.last.d)}`:''}</div>
-    <div class="row" style="margin-top:8px">${I.miss?'':`<button class="btn primary" data-a="prgStart" data-id="${esc(P.id)}" data-g="${q.g}">Inizia il Giorno ${q.g+1}</button>`}${n>1?`<select data-f="prgday:${esc(P.id)}" aria-label="Fai un altro giorno" style="width:auto"><option value="">Un altro giorno…</option>${P.giorni.map((w,i)=>i===q.g?'':`<option value="${i}">Giorno ${i+1} · WO ${esc(w)}</option>`).join('')}</select>`:''}</div></div>`}
-function vPrgCard(P){const q=prgNext(P),n=(P.giorni||[]).length,SE=prgStepEx(P),allFin=SE.length&&SE.every(x=>x.fin),act=P.attivo&&!P.chiuso;
-  return `<div class="prg${act?' act':''}"><div class="row" style="align-items:baseline"><b style="font-size:19px">${esc(P.nome||'Senza nome')}</b><span class="muted small">${P.chiuso?'chiuso':act?'attivo':'non attivo'} · ${n} ${n===1?'giorno':'giorni'}${q&&q.done?` · ${q.done} ${q.done===1?'seduta':'sedute'}`:''}</span></div>
-    <div>${(P.giorni||[]).map((w,i)=>{const I=prgWoInfo(w);return `<div class="prg-d${act&&q&&q.g===i?' nx':''}"><span class="gk">${i+1}</span><div class="gw"><b>WO ${esc(w)}</b>${I.nome?` «${esc(I.nome)}»`:''}<div class="muted small">${I.miss?'<span class="warnx">WO non trovato</span>':esc(I.ex.join(', '))}</div></div>${act&&q&&q.g===i?'<span class="small"><b>prossimo</b></span>':''}</div>`}).join('')}</div>
+function vPrgNext(){const P=prgAct();if(!P||!(P.giorni||[]).length)return '';const iso=S.newDate||todayIso(),q=prgToday(P,iso),n=q.n,wd=wdOf(iso),isT=iso===todayIso();
+  const gl=i=>{const I=prgWoInfo(P.giorni[i]);return `Giorno ${i+1} · WO ${esc(I.wo)}${I.nome?` «${esc(I.nome)}»`:''}`};
+  const st=(i,lbl,pri)=>prgWoInfo(P.giorni[i]).miss?'':`<button class="btn${pri?' primary':''}" data-a="prgStart" data-id="${esc(P.id)}" data-g="${i}">${lbl}</button>`;
+  const quando=isT?`Oggi (${PWD[wd]})`:`${PWD[wd].charAt(0).toUpperCase()+PWD[wd].slice(1)} ${fmtD(iso)}`;
+  let head,sub='',btn='';
+  if(q.prim!=null){const I=prgWoInfo(P.giorni[q.prim]),fix=q.fx.includes(q.prim);
+    head=q.doneToday.length&&!fix?`Prossimo in sequenza: ${gl(q.prim)}`:`${quando}: ${gl(q.prim)}`;
+    sub=I.miss?'<span class="warnx">Questo WO non esiste più: modifica il programma.</span>':`${esc(I.ex.join(', '))}${fix?` · giorno fisso del ${PWS[wd]}`:q.fixI.length?' · in sequenza':''}`;
+    btn=st(q.prim,`Inizia il Giorno ${q.prim+1}`,true)}
+  else{head=`${quando}: nessun giorno in programma`;if(q.up){sub=`Il prossimo è il ${gl(q.up.i)}, ${PWD[q.up.w]}.`;btn=st(q.up.i,`Fai oggi il Giorno ${q.up.i+1}`,false)}}
+  const extra=q.fx.slice(1).map(i=>`<div class="small" style="margin-top:6px">Anche oggi: ${gl(i)} ${st(i,'Inizia',false)}</div>`).join('');
+  const done=q.doneToday.length?`<div class="small" style="margin-top:4px">Fatto ${isT?'oggi':'quel giorno'}: ${q.doneToday.map(s=>`Giorno ${(s.prg.g|0)+1} ✓`).join(', ')}</div>`:'';
+  const miss=q.missed.filter(m=>m.i!==q.prim).map(m=>`<div class="small" style="margin-top:6px"><span class="warnx">Saltato:</span> ${gl(m.i)} di ${PWD[wdOf(m.d)]} ${fmtD(m.d)} ${st(m.i,'Recupera',false)}</div>`).join('');
+  const others=[...Array(n).keys()].filter(i=>i!==q.prim);
+  return `<div class="prgnx"><div class="muted small">Programma «${esc(P.nome||'Senza nome')}» (${prgTipo(P)})${q.done?` · ${q.done} ${q.done===1?'seduta':'sedute'}`:''}${q.last?` · ultima: Giorno ${(q.last.prg.g|0)+1} il ${fmtD(q.last.d)}`:''}</div>
+    <div style="font-size:20px;margin:2px 0"><b>${head}</b></div><div class="muted small">${sub}</div>${done}${extra}${miss}
+    <div class="row" style="margin-top:8px">${btn}${others.length?`<select data-f="prgday:${esc(P.id)}" aria-label="Fai un altro giorno" style="width:auto"><option value="">Un altro giorno…</option>${others.map(i=>`<option value="${i}">Giorno ${i+1} · WO ${esc(P.giorni[i])} (${prgWhen(P,i)})</option>`).join('')}</select>`:''}</div></div>`}
+function vPrgCard(P){const q0=prgToday(P,todayIso()),q=q0&&{g:q0.prim,done:q0.done},n=(P.giorni||[]).length,SE=prgStepEx(P),allFin=SE.length&&SE.every(x=>x.fin),act=P.attivo&&!P.chiuso;
+  return `<div class="prg${act?' act':''}"><div class="row" style="align-items:baseline"><b style="font-size:19px">${esc(P.nome||'Senza nome')}</b><span class="muted small">${P.chiuso?'chiuso':act?'attivo':'non attivo'} · ${prgTipo(P)} · ${n} ${n===1?'giorno':'giorni'}${q&&q.done?` · ${q.done} ${q.done===1?'seduta':'sedute'}`:''}</span></div>
+    <div>${(P.giorni||[]).map((w,i)=>{const I=prgWoInfo(w);return `<div class="prg-d${act&&q&&q.g===i?' nx':''}"><span class="gk">${i+1}</span><div class="gw"><b>WO ${esc(w)}</b>${I.nome?` «${esc(I.nome)}»`:''}<div class="muted small">${I.miss?'<span class="warnx">WO non trovato</span>':esc(I.ex.join(', '))}</div></div><span class="small" style="text-align:right;flex:none">${prgWhen(P,i)}${act&&q&&q.g===i?'<br><b>oggi</b>':''}</span></div>`}).join('')}</div>
     ${SE.length?`<div style="margin-top:8px"><div class="muted small">Avanzamento A step</div>${SE.map(x=>`<div class="prg-st"><span style="flex:0 1 46%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.n)}</span><span class="bar"><u style="width:${x.st?Math.round(x.st/x.N*100):0}%"></u></span><span class="small" style="white-space:nowrap">${x.st?`${x.st}/${x.N}`:'–'}${x.fin?' ✓':''}${x.cyc?` · finita ${x.cyc}×`:''}</span></div>`).join('')}
       ${allFin?'<p class="small" style="margin:6px 0 0"><b>Hai completato tutte le tabelle A step.</b> Puoi chiudere il programma oppure continuare: ogni esercizio riparte da uno step più basso con più carico.</p>':''}</div>`:''}
     <div class="row" style="margin-top:10px">${act?'':P.chiuso?`<button class="btn" data-a="prgReopen" data-id="${esc(P.id)}">Riapri</button>`:`<button class="btn primary" data-a="prgOn" data-id="${esc(P.id)}">Attiva</button>`}${P.chiuso?'':`<button class="btn" data-a="prgEdit" data-id="${esc(P.id)}">Modifica</button>`}${act?`<button class="btn" data-a="prgOff" data-id="${esc(P.id)}">Sospendi</button>`:''}${P.chiuso?'':`<button class="btn ghost" data-a="prgCloseAsk" data-id="${esc(P.id)}">Chiudi</button>`}${q&&q.done?'':`<button class="btn ghost danger" data-a="prgDelAsk" data-id="${esc(P.id)}">Elimina</button>`}</div></div>`}
@@ -5547,27 +5580,28 @@ function vPrgEd(){const E=S.prgEd;if(!E)return '';const L=[...woLast().values()]
   const n=E.giorni.length;
   return `<section class="card prg-ed" id="prgEd"><h3 style="margin:0 0 8px">${E.id?'Modifica programma':'Nuovo programma'}</h3>
     <label class="f">Nome del programma<input type="text" value="${esc(E.nome||'')}" data-f="prg:nome" placeholder="es. Multifrequenza corpo libero"></label>
-    <p class="muted small" style="margin:10px 0 4px">Ogni giorno è un WO. L’app li propone in sequenza: Giorno 1, 2, 3… e poi di nuovo l’1, senza legarli ai giorni della settimana.</p>
-    ${E.giorni.map((w,i)=>`<div class="prg-d"><span class="gk">${i+1}</span><select data-f="prg:g:${i}" aria-label="WO del giorno ${i+1}">${opt(w)}</select><span class="row" style="gap:4px;flex:none"><button class="btn" data-a="prgMv" data-i="${i}" data-d="-1" ${i?'':'disabled'} aria-label="Sposta prima">↑</button><button class="btn" data-a="prgMv" data-i="${i}" data-d="1" ${i<n-1?'':'disabled'} aria-label="Sposta dopo">↓</button><button class="btn ghost danger" data-a="prgDelG" data-i="${i}" aria-label="Togli il giorno ${i+1}">✕</button></span></div>`).join('')}
+    <p class="muted small" style="margin:10px 0 4px">Ogni giorno è un WO. Per ogni giorno scegli <b>quando</b>: «In sequenza» (l’app propone il prossimo della sequenza, qualunque giorno sia) oppure uno o più giorni della settimana (L M M G V S D). Puoi mescolarli: un programma tutto in sequenza, tutto a giorni fissi, oppure ibrido.</p>
+    ${E.giorni.map((w,i)=>`<div class="prg-d"><span class="gk">${i+1}</span><select data-f="prg:g:${i}" aria-label="WO del giorno ${i+1}">${opt(w)}</select><span class="row" style="gap:4px;flex:none"><button class="btn" data-a="prgMv" data-i="${i}" data-d="-1" ${i?'':'disabled'} aria-label="Sposta prima">↑</button><button class="btn" data-a="prgMv" data-i="${i}" data-d="1" ${i<n-1?'':'disabled'} aria-label="Sposta dopo">↓</button><button class="btn ghost danger" data-a="prgDelG" data-i="${i}" aria-label="Togli il giorno ${i+1}">✕</button></span></div><div class="seg sm prg-wd" role="group" aria-label="Quando si fa il giorno ${i+1}" style="display:grid;grid-template-columns:2.6fr repeat(7,1fr);margin:0 0 8px"><button data-a="prgWd" data-i="${i}" data-w="seq" aria-pressed="${!(E.gs[i]||[]).length}">In sequenza</button>${PWO.map((w,k)=>`<button data-a="prgWd" data-i="${i}" data-w="${w}" aria-pressed="${(E.gs[i]||[]).includes(w)}" aria-label="${PWD[w]}">${PWL[k]}</button>`).join('')}</div>`).join('')}
     <div class="row" style="margin-top:8px"><button class="btn" data-a="prgAddG">+ Aggiungi un giorno</button><button class="btn ghost" data-a="wzStart" data-v="new">Componi un nuovo WO con la guida</button></div>
     ${S.prgErr?`<p class="warnx small">${esc(S.prgErr)}</p>`:''}
     <div class="row" style="margin-top:12px"><button class="btn primary" data-a="prgSaveEd">Salva programma</button><button class="btn" data-a="prgCancel">Annulla</button></div></section>`}
 function vPrgSec(){const L=prgAll().sort((a,b)=>(b.attivo&&!b.chiuso)-(a.attivo&&!a.chiuso)||(a.chiuso?1:0)-(b.chiuso?1:0)||(b.updated||0)-(a.updated||0));
-  return `<p class="muted small" style="margin:0 0 8px">Un programma è una sequenza di giorni, e ogni giorno è un WO (es. Giorno 1: Trazioni & Dip + Stacco & Military). Il programma attivo compare in «In corso» e ti propone il giorno da fare. I WO e le loro progressioni (A step, carichi…) restano quelli di sempre.</p>
+  return `<p class="muted small" style="margin:0 0 8px">Un programma è un insieme di giorni di allenamento, e ogni giorno è un WO (es. Giorno 1: Trazioni & Dip + Stacco & Military). Ogni giorno si fa in sequenza oppure in giorni fissi della settimana. Il programma attivo compare in «In corso» e ti propone il giorno da fare. I WO e le loro progressioni (A step, carichi…) restano quelli di sempre.</p>
     ${vPrgEd()}${L.length?L.map(vPrgCard).join(''):S.prgEd?'':'<p class="empty">Nessun programma.</p>'}
     ${S.prgEd?'':'<button class="btn primary" data-a="prgNew">+ Nuovo programma</button>'}`}
 function sessionObj(dr){const o=sessionObjP(dr);if(dr&&dr.prg)o.prg=clone(dr.prg);return o}
 Object.assign(A,{
-  prgNew(){S.prgEd={nome:'',giorni:['']};S.prgErr='';render();setTimeout(()=>{const x=$('#prgEd');if(x)x.scrollIntoView({block:'start'})},60)},
-  prgEdit(el){const P=(S.cfg.programmi||{})[el.dataset.id];if(!P)return;S.prgEd={id:P.id,nome:P.nome||'',giorni:(P.giorni||[]).slice()};if(!S.prgEd.giorni.length)S.prgEd.giorni=[''];S.prgErr='';render();setTimeout(()=>{const x=$('#prgEd');if(x)x.scrollIntoView({block:'start'})},60)},
-  prgAddG(){if(!S.prgEd)return;S.prgEd.giorni.push('');render()},
-  prgDelG(el){const E=S.prgEd;if(!E)return;E.giorni.splice(+el.dataset.i,1);if(!E.giorni.length)E.giorni=[''];render()},
-  prgMv(el){const E=S.prgEd;if(!E)return;const i=+el.dataset.i,j=i+(+el.dataset.d);if(j<0||j>=E.giorni.length)return;[E.giorni[i],E.giorni[j]]=[E.giorni[j],E.giorni[i]];render()},
+  prgNew(){S.prgEd={nome:'',giorni:[''],gs:[[]]};S.prgErr='';render();setTimeout(()=>{const x=$('#prgEd');if(x)x.scrollIntoView({block:'start'})},60)},
+  prgEdit(el){const P=(S.cfg.programmi||{})[el.dataset.id];if(!P)return;S.prgEd={id:P.id,nome:P.nome||'',giorni:(P.giorni||[]).slice(),gs:(P.giorni||[]).map((_,i)=>prgGs(P,i).slice())};if(!S.prgEd.giorni.length){S.prgEd.giorni=[''];S.prgEd.gs=[[]]}S.prgErr='';render();setTimeout(()=>{const x=$('#prgEd');if(x)x.scrollIntoView({block:'start'})},60)},
+  prgAddG(){if(!S.prgEd)return;S.prgEd.giorni.push('');S.prgEd.gs.push([]);render()},
+  prgWd(el){const E=S.prgEd;if(!E)return;const i=+el.dataset.i,w=el.dataset.w;let g=E.gs[i]||[];if(w==='seq')g=[];else{const n=+w;g=g.includes(n)?g.filter(x=>x!==n):[...g,n]}E.gs[i]=g;render()},
+  prgDelG(el){const E=S.prgEd;if(!E)return;E.giorni.splice(+el.dataset.i,1);E.gs.splice(+el.dataset.i,1);if(!E.giorni.length){E.giorni=[''];E.gs=[[]]}render()},
+  prgMv(el){const E=S.prgEd;if(!E)return;const i=+el.dataset.i,j=i+(+el.dataset.d);if(j<0||j>=E.giorni.length)return;[E.giorni[i],E.giorni[j]]=[E.giorni[j],E.giorni[i]];[E.gs[i],E.gs[j]]=[E.gs[j]||[],E.gs[i]||[]];render()},
   prgCancel(){S.prgEd=null;S.prgErr='';render()},
   prgSaveEd(){const E=S.prgEd;if(!E)return;const g=E.giorni.filter(Boolean);if(!g.length){S.prgErr='Scegli il WO di almeno un giorno.';render();return}
     if(E.giorni.some(x=>!x)){S.prgErr='C’è un giorno senza WO: sceglilo oppure toglilo con ✕.';render();return}
     const old=E.id&&(S.cfg.programmi||{})[E.id],first=!prgAll().length;
-    const P={...(old||{}),id:E.id||('prg'+Date.now().toString(36)),nome:String(E.nome||'').trim().slice(0,60),giorni:g,creato:old&&old.creato||todayIso()};
+    const P={...(old||{}),id:E.id||('prg'+Date.now().toString(36)),nome:String(E.nome||'').trim().slice(0,60),giorni:g,gs:E.giorni.map((_,i)=>(E.gs[i]||[]).slice().sort()),creato:old&&old.creato||todayIso()};
     if(!old&&(first||!prgAct()))P.attivo=true;prgSave(P);S.prgEd=null;S.prgErr='';render()},
   prgOn(el){const id=el.dataset.id,M={...(S.cfg.programmi||{})};Object.values(M).forEach(p=>{if(p&&p.attivo&&p.id!==id)M[p.id]={...p,attivo:false,updated:Date.now()}});S.cfg.programmi=M;const P=M[id];if(!P)return;prgSave({...P,attivo:true});render()},
   prgOff(el){const P=(S.cfg.programmi||{})[el.dataset.id];if(!P)return;prgSave({...P,attivo:false});render()},
@@ -5578,6 +5612,33 @@ Object.assign(A,{
   prgDel(){const P=(S.cfg.programmi||{})[S.prgDel];closeSheet();if(!P)return;prgSave({id:P.id,deleted:true});render()},
   prgStart(el){const P=(S.cfg.programmi||{})[el.dataset.id],g=+el.dataset.g;if(!P||!P.giorni[g])return;const wo=P.giorni[g];if(!woLast().get(wo))return;
     A.fromTpl({dataset:{wo,id:''}});if(S.draft&&S.draft.wo===wo){S.draft.prg={id:P.id,g};persistDraft();render()}},
+});
+
+
+/* ---------- v1.5za: inserire il WO della guida in un programma ---------- */
+function wzPrgSheet(){const Q=S.wzPrgQ,d=S.draft;if(!Q||!d)return;const L=prgAll().filter(p=>!p.chiuso),P=Q.pid&&Q.pid!=='new'?(S.cfg.programmi||{})[Q.pid]:null,pos=P?(P.giorni||[]).indexOf(d.wo):-1;
+  sheet(`<h3>Inserisci il WO ${esc(d.wo)} in un programma</h3>
+    <label class="f">Programma<select data-f="wzprg:pid">${L.map(p=>`<option value="${esc(p.id)}" ${Q.pid===p.id?'selected':''}>${esc(p.nome||'Senza nome')}${p.attivo?' (attivo)':''} · ${(p.giorni||[]).length} giorni</option>`).join('')}<option value="new" ${Q.pid==='new'?'selected':''}>+ Nuovo programma</option></select></label>
+    ${Q.pid==='new'?`<label class="f" style="margin-top:8px">Nome del nuovo programma<input type="text" value="${esc(Q.nome||'')}" data-f="wzprg:nome" placeholder="es. Multifrequenza corpo libero"></label>`:''}
+    ${P?`<p class="muted small" style="margin:8px 0 0">${pos>=0?`Il WO ${esc(d.wo)} è già il Giorno ${pos+1} di questo programma: aggiorno solo quando si fa.`:`Diventa il Giorno ${(P.giorni||[]).length+1}. L’ordine lo cambi poi in Sedute → Programmi.`}</p>`:'<p class="muted small" style="margin:8px 0 0">Diventa il Giorno 1; gli altri WO li aggiungi componendoli con la guida o da Sedute → Programmi.</p>'}
+    <div class="muted small" style="margin:12px 0 4px">Quando si fa</div>
+    <div class="seg sm" role="group" aria-label="Quando si fa" style="display:grid;grid-template-columns:2.6fr repeat(7,1fr)"><button data-a="wzPrgWd" data-w="seq" aria-pressed="${!Q.gs.length}">In sequenza</button>${PWO.map((w,k)=>`<button data-a="wzPrgWd" data-w="${w}" aria-pressed="${Q.gs.includes(w)}" aria-label="${PWD[w]}">${PWL[k]}</button>`).join('')}</div>
+    <p class="muted small" style="margin:6px 0 0">${Q.gs.length?`Sempre il ${PWO.filter(w=>Q.gs.includes(w)).map(w=>PWD[w]).join(', ')}.`:'L’app lo propone quando tocca a lui nella sequenza, qualunque giorno sia.'}</p>
+    ${Q.err?`<p class="warnx small">${esc(Q.err)}</p>`:''}
+    <div class="row" style="margin-top:14px"><button class="btn primary" data-a="wzPrgOk">Inserisci</button><button class="btn" data-a="closeSheet">Annulla</button></div>`)}
+Object.assign(A,{
+  wzPrg(){const d=S.draft;if(!d||!String(d.wo||'').trim())return;const L=prgAll().filter(p=>!p.chiuso),act=prgAct();const P0=act||L[0];
+    S.wzPrgQ={pid:P0?P0.id:'new',nome:'',gs:[]};if(P0){const i=(P0.giorni||[]).indexOf(d.wo);if(i>=0)S.wzPrgQ.gs=prgGs(P0,i).slice()}wzPrgSheet()},
+  wzPrgWd(el){const Q=S.wzPrgQ;if(!Q)return;const w=el.dataset.w;if(w==='seq')Q.gs=[];else{const n=+w;Q.gs=Q.gs.includes(n)?Q.gs.filter(x=>x!==n):[...Q.gs,n]}wzPrgSheet()},
+  wzPrgOk(){const Q=S.wzPrgQ,d=S.draft;if(!Q||!d)return;const wo=d.wo;
+    if(Q.pid==='new'&&!String(Q.nome||'').trim()){Q.err='Scrivi il nome del nuovo programma.';wzPrgSheet();return}
+    woTplSave(d,wo);if(d.prog||isExec(d)||S.sed.has(d.id))saveNow();
+    let P;if(Q.pid==='new'){P={id:'prg'+Date.now().toString(36),nome:String(Q.nome).trim().slice(0,60),giorni:[wo],gs:[Q.gs.slice().sort()],creato:todayIso()};if(!prgAct())P.attivo=true}
+    else{const P0=(S.cfg.programmi||{})[Q.pid];if(!P0)return;P={...P0,giorni:(P0.giorni||[]).slice(),gs:(P0.giorni||[]).map((_,i)=>prgGs(P0,i).slice())};const i=P.giorni.indexOf(wo);if(i>=0)P.gs[i]=Q.gs.slice().sort();else{P.giorni.push(wo);P.gs.push(Q.gs.slice().sort())}}
+    prgSave(P);S.wzPrgQ=null;const g=P.giorni.indexOf(wo)+1;
+    sheet(`<h3>Fatto</h3><p>Il WO <b>${esc(wo)}</b> è il <b>Giorno ${g}</b> del programma «${esc(P.nome||'Senza nome')}» (${prgWhen(P,g-1)}).</p><p class="muted small">${P.attivo?'Il programma è attivo: lo trovi in Sedute → In corso.':'Il programma non è attivo: lo attivi in Sedute → Programmi.'}${P.giorni.length<2?' Per aggiungere altri giorni componi un altro WO con la guida, oppure vai in Sedute → Programmi.':''}</p>
+      <div class="row" style="margin-top:14px"><button class="btn primary" data-a="wzPrgGo">Vai al programma</button><button class="btn" data-a="closeSheet">Resta nella guida</button></div>`)},
+  wzPrgGo(){closeSheet();S.wz=null;S.pf=null;S.dList=true;S.dSez='prg';S.tab='diario';render();window.scrollTo(0,0)},
 });
 
 const canSave=()=>!!S.downloads||STANDALONE;
@@ -5679,6 +5740,7 @@ function onField(el,isChange){
   if(kind==='stp'){if(!isChange)return;const d=S.draft,e=d&&d.ex[+a];if(!e||!isStepE(e))return;const P=S.protos.get(e.pid),n=stepTab(P).length,st=Math.max(1,Math.min(n,Math.round(num(v)||1)));if(st!==e.step){stepSet(e,P,st);e._why=`Step ${st} scelto da te.`;delete e._sAlt;scheduleSave()}render();return}
   if(kind==='prg'){const E=S.prgEd;if(!E)return;if(a==='nome')E.nome=v;else if(a==='g'){E.giorni[+b]=v;S.prgErr=''}return}
   if(kind==='prgday'){if(v==='')return;A.prgStart({dataset:{id:a,g:v}});return}
+  if(kind==='wzprg'){const Q=S.wzPrgQ;if(!Q)return;if(a==='nome'){Q.nome=v;return}if(a==='pid'){Q.pid=v;wzPrgSheet();return}return}
   if(kind==='exf'){S.exF=S.exF||{};S.exF[a]=v;const l=$('#exList');if(l)l.innerHTML=vExList();return}
   if(kind==='tc'&&/^sess\.pos\./.test(a))delete S.tc.sess.rid;
   if(kind==='rt'){const c=S.tc.sess,r=v&&rtMap()[v];if(r){c.pos=clone(r.pos);c.posTr=r.posTr;c.rid=r.id;c.coolOn=true;c.coolKind='pos'}else delete c.rid;savePrefs();render();return}
