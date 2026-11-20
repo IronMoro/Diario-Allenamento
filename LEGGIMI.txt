@@ -1,6 +1,6 @@
-DIARIOAPP - versione di prova (Beta-Test 1.4), web
-==================================================
+GYMER - versione di prova (Beta-Test 1.4), web
+===============================================
 Contiene dati di esempio che si caricano alla prima apertura e si tolgono con «Togli i dati di esempio».
 Pubblicala in un repository GitHub diverso da quello dell'app vera (es. «diario-prova»), con «Settings > Pages».
 I dati della prova sono tenuti separati da quelli dell'app vera anche sullo stesso telefono.
-Servono anche manifest.webmanifest (copialo dal repository «diario») e le tre icone incluse qui (icon-192-v2.png, icon-512-v2.png, icon-maskable-512-v2.png).
+Carica index.html, sw.js, manifest.webmanifest e le tre icone incluse qui (icon-192-v2.png, icon-512-v2.png, icon-maskable-512-v2.png).
