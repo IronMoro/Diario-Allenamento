@@ -985,7 +985,7 @@ async function init(){
   },()=>{});
 }
 
-const PREFKEYS={ft:['lead','items'],lad:['passoGiu','sfida','np','names','amax','ex','verso','da','a','passo','volte','top2','ondaK','lung','sposta','loDa','loA','hiDa','hiA','seq','alt','restMode','rest','mult','lead','mark','colWork','colRest','icol','warnSec','warnCol','half','restEnd','restEndSec'],amrap:['lead','col','restCol','warnSec','warnCol','half','frac','minsLeft','restEnd','restEndSec'],rt:['lead','colWork','colRest','warnSec','warnCol','half'],tst:['tipo','step','lead','col','warnSec','warnCol','half'],circ:['mark','items','icol','giri','restEx','restGiro','lead','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],emom:['mark','giroFmt','col','warnSec','warnCol','half','restOn','restSec','restEnd','restEndSec','restCol'],rec:['mark','lead','icol','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],edt:['lead','zones','restZ','fatAuto','col','warnSec','warnCol','frac','minsLeft','restEnd','restEndSec','restCol'],snd:['style','fsAuto','secs','vol'],sess:['coolKind','pos','posTr','rid','warmOn','warmAuto','warmMode','warmMin','coolOn','coolAuto','coolMode','coolMin','colWarm','colCool']};
+const PREFKEYS={ft:['lead','items'],lad:['passoGiu','sfida','np','names','grpRest','slotSec','amax','ex','verso','da','a','passo','volte','top2','ondaK','lung','sposta','loDa','loA','hiDa','hiA','seq','alt','restMode','rest','mult','lead','mark','colWork','colRest','icol','warnSec','warnCol','half','restEnd','restEndSec'],amrap:['lead','col','restCol','warnSec','warnCol','half','frac','minsLeft','restEnd','restEndSec'],rt:['lead','colWork','colRest','warnSec','warnCol','half'],tst:['tipo','step','lead','col','warnSec','warnCol','half'],circ:['mark','items','icol','giri','restEx','restGiro','lead','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],emom:['mark','giroFmt','col','warnSec','warnCol','half','restOn','restSec','restEnd','restEndSec','restCol'],rec:['mark','lead','icol','colWork','colRest','warnSec','warnCol','half','restEnd','restEndSec'],edt:['lead','zones','restZ','fatAuto','col','warnSec','warnCol','frac','minsLeft','restEnd','restEndSec','restCol'],snd:['style','fsAuto','secs','vol'],sess:['coolKind','pos','posTr','rid','warmOn','warmAuto','warmMode','warmMin','coolOn','coolAuto','coolMode','coolMin','colWarm','colCool']};
 function loadPrefs(){
   if(S.prefsLoaded||!S.cfg.timer)return;
   for(const m in PREFKEYS){const p=S.cfg.timer[m];if(!p)continue;
@@ -1763,7 +1763,7 @@ function vGuida(){
     <li><b>Conto alla rovescia</b>: un semplice timer libero con 6 tempi pronti (30″, 45″, 60″, 90″, 120″, 150″, che puoi cambiare con «Modifica i tempi») e un contatore di quante volte lo avvii, che correggi con − e + o azzeri. «Avvia» lo fa partire nella pagina; «⤢ Schermo intero» lo apre a tutto schermo, fermo («Pronto»): lì scegli il tempo, lo avvii, lo metti in pausa e alla fine lo riavvii con un tocco, finché non tocchi «Chiudi». Il numero segue «Conto alla rovescia solo in secondi».</li>
     <li><b>EMOM MAX</b>: al posto del numero di giri scegli «MAX»: vai avanti finché tocchi «Basta» e alla fine vedi quanti giri completi hai fatto. Scegli se, quando non fai le ripetizioni previste («Serie fallita»), ti fermi o continui.</li>
     <li><b>Ripetizioni e fatica che si ripetono</b>: se durante la seduta cambi le ripetizioni di una serie, la segni «a fatica» oppure «fallita» (che toglie una ripetizione), le serie successive dello stesso esercizio partono già con quel numero e quell’esito, finché non cambi di nuovo (nelle ladder si ripete solo «a fatica»). Vale anche in AMRAP ed EDT: ogni esercizio riparte dalle ripetizioni dell’ultima volta.</li>
-    <li><b>Ladder sfida</b> (in salita o su e giù): da soli o in gruppo (fino a 8, a turno). Dopo ogni serie «Fatta» o «Fallita»; le ripetizioni possono salire fino a MAX, senza cima. In su e giù chi fallisce in salita comincia a scendere. Vince chi completa più serie. In su e giù il passo in discesa può essere diverso da quello in salita.</li>
+    <li><b>Ladder sfida</b> (in salita o su e giù): da soli o in gruppo (fino a 8, a turno). Dopo ogni serie «Fatta» o «Fallita»; le ripetizioni possono salire fino a MAX, senza cima. In su e giù chi fallisce in salita comincia a scendere. Vince chi completa più serie. In su e giù il passo in discesa può essere diverso da quello in salita. In gruppo scegli il <b>recupero</b>: «Il tempo degli altri» (appena uno finisce tocca al successivo) oppure «Turni a tempo fisso» (es. 30″ a testa: chi non chiude la serie in tempo la fallisce, e il turno dopo parte allo scadere, così il recupero è sempre uguale).</li>
     <li><b>Esercizi per arto</b> (monolaterali, vedi «Esercizi monolaterali e Lati»): in ogni esercizio e in Set&amp;Pause, Ladder, EMOM, EDT, Circuito e Per tempo scegli «Lati»: entrambi insieme, per arto prima DX poi SX, oppure per arto alternati. Le ripetizioni sono per arto. Con «prima DX poi SX» in Set&amp;Pause e Circuito tocchi «Fine lato destro» e poi «Fine serie»; nelle stazioni a tempo il cambio lato suona a metà.</li></ul>
     <p><b>Timer libero</b>: in alto nella scheda Timer scegli «Timer libero» per usare un timer da solo, senza seduta, senza fasi e senza scrivere nel diario; alla fine puoi ripeterlo o sceglierne un altro. «Con la seduta» torna al funzionamento collegato al diario.</p>
     <p>Per tutti: preparazione, colori, avviso prima della fine, avviso a metà, suoni (anche a voce), schermo intero, riposo alla fine. «Torna alla seduta» lascia il timer acceso. I timer avviati dalla seduta scrivono serie e tempo nel diario; gli altri a fine timer chiedono se inserirli.</p>`)}
@@ -2440,16 +2440,16 @@ function vCfgLad(){
   ${v==='onda'?`<div class="seg sm" role="group" aria-label="Tipo di onda" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">${ONDAK.map(([k,l])=>`<button data-a="tset" data-f="lad.ondaK" data-v="${k}" aria-pressed="${ok===k}">${l}</button>`).join('')}</div>`:''}
   ${v==='sugiu'?`<label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${c.top2?'checked':''} data-f="tc:lad.top2" style="width:22px;height:22px"> Ripeti il gradino più alto</label>`:''}
   ${v==='su'||v==='sugiu'?`<div class="emx"><div class="muted small" style="margin-bottom:4px">Modalità</div><div class="seg sm" role="group" aria-label="Modalità della ladder" style="max-width:420px"><button data-a="tset" data-f="lad.sfida" data-v="false" aria-pressed="${!c.sfida}">Normale</button><button data-a="tset" data-f="lad.sfida" data-v="true" aria-pressed="${!!c.sfida}">Sfida</button></div>
-    ${c.sfida?`<p class="muted small" style="margin:6px 0">Sfida: ${v==='sugiu'?'si sale e poi si scende':'si sale'} gradino per gradino; dopo ogni serie tocchi «Fatta» o «Fallita». ${v==='sugiu'?'Chi fallisce in salita comincia a scendere; chi fallisce in discesa ha finito.':'Chi fallisce ha finito.'} Vince chi completa più serie. In gruppo si fa a turno: il recupero è il tempo degli altri. Da solo: quante serie riesci a completare, con il recupero scelto più sotto.${multi?' Si usa solo il primo esercizio.':''}</p>
+    ${c.sfida?`<p class="muted small" style="margin:6px 0">Sfida: ${v==='sugiu'?'si sale e poi si scende':'si sale'} gradino per gradino; dopo ogni serie tocchi «Fatta» o «Fallita». ${v==='sugiu'?'Chi fallisce in salita comincia a scendere; chi fallisce in discesa ha finito.':'Chi fallisce ha finito.'} Vince chi completa più serie. In gruppo si fa a turno, con il recupero che scegli più sotto: il tempo degli altri, oppure turni a tempo fisso. Da solo: quante serie riesci a completare, con il recupero scelto più sotto.${multi?' Si usa solo il primo esercizio.':''}</p>
       <div class="row" style="align-items:flex-end;gap:16px"><div><div class="muted small">Partecipanti</div>${stepper('lad.np',Math.max(1,Math.min(8,num(c.np)||1)),'Partecipanti')}</div>
       <label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${c.amax?'checked':''} data-f="tc:lad.amax" style="width:22px;height:22px"> Ripetizioni fino a MAX (senza cima)</label></div>
       ${(num(c.np)||1)>1?`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin:8px 0 0">${Array.from({length:Math.min(8,num(c.np)||1)},(_,i)=>`<label class="f">Partecipante ${i+1}<input type="text" maxlength="20" value="${esc((c.names||[])[i]||'')}" placeholder="${i?`Atleta ${i+1}`:'Io'}" data-f="tc:lad.names.${i}"></label>`).join('')}</div>`:''}`:''}</div>`:''}
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:0">${body}${inp('Quante volte ripeti la scala','volte')}</div>
-  <p class="muted small" id="ladPrevT" style="margin:0">${ladPrev(c)}</p>
-  <div><div class="muted small" style="margin-bottom:4px">Recupero</div><div class="seg sm" role="group" aria-label="Recupero" style="max-width:480px">
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:0">${body}${lsfOn(c)?'':inp('Quante volte ripeti la scala','volte')}</div>
+  ${lsfOn(c)&&c.amax?'':`<p class="muted small" id="ladPrevT" style="margin:0">${ladPrev(c)}</p>`}
+  ${lsfMulti(c)?lsfGrpRest(c):`<div><div class="muted small" style="margin-bottom:4px">Recupero</div><div class="seg sm" role="group" aria-label="Recupero" style="max-width:480px">
     ${[['fix','Fisso'],['mult','Multiplo della serie'],['free','Libero']].map(([k,l])=>`<button data-a="tset" data-f="lad.restMode" data-v="${k}" aria-pressed="${(c.restMode||'fix')===k}">${l}</button>`).join('')}</div></div>
-  ${c.restMode==='mult'?`<label class="f" style="max-width:260px">Recupero = durata della serie ×<input type="number" inputmode="decimal" step="0.25" value="${c.mult}" data-f="tc:lad.mult"></label>`:c.restMode==='free'?'<p class="muted small" style="margin:0">Il cronometro conta il riposo: tocchi «Inizia serie» quando sei pronto.</p>':`<label class="f" style="max-width:200px">Secondi di recupero<input type="number" inputmode="numeric" value="${c.rest}" data-f="tc:lad.rest"></label>`}
-  ${markSeg('lad',c.mark)}
+  ${c.restMode==='mult'?`<label class="f" style="max-width:260px">Recupero = durata della serie ×<input type="number" inputmode="decimal" step="0.25" value="${c.mult}" data-f="tc:lad.mult"></label>`:c.restMode==='free'?'<p class="muted small" style="margin:0">Il cronometro conta il riposo: tocchi «Inizia serie» quando sei pronto.</p>':`<label class="f" style="max-width:200px">Secondi di recupero<input type="number" inputmode="numeric" value="${c.rest}" data-f="tc:lad.rest"></label>`}`}
+  ${lsfOn(c)?'':markSeg('lad',c.mark)}
   <label class="f" style="max-width:200px">Preparazione (s)<input type="number" inputmode="numeric" min="0" value="${c.lead}" data-f="tc:lad.lead"></label>
   ${multi?'':`<div class="emx">${colPick('lad','colWork',c.colWork,'Colore durante la serie')}</div>`}
   <div class="emx">${colPick('lad','colRest',c.colRest,'Colore durante il recupero')}</div>
@@ -2781,7 +2781,7 @@ function tStart(){
   if(m==='emom'&&c.link&&S.draft)c.link.forEach(j=>{const x=S.draft.ex[j];if(x&&!c.giriMax&&x.s.length<c.giri)setN(x,c.giri)});
   if(m==='lsf'){const np=Math.max(1,Math.min(8,num(c.np)||1)),da=Math.max(1,num(c.da)||1),ps=Math.max(1,num(c.passo)||1),pg=Math.max(1,num(c.passoGiu)||ps),a=c.amax?null:Math.max(da,num(c.a)||5);
     Object.assign(T,{L:{np,da,ps,pg,a,su:c.verso==='sugiu',top2:!!c.top2,n:String((c.ex[0]||{}).n||'').trim()||'Ladder',uni:uniOf(c.ex[0])},
-      P:Array.from({length:np},(_,i)=>({name:String((c.names||[])[i]||'').trim()||(i?`Atleta ${i+1}`:'Io'),ph:'up',cur:da,done:[],fail:null})),pi:0,phase:c.lead>0?'lead':'work',ph0:0,restMs:0});
+      grp:c.grpRest==='slot'?'slot':'altri',slot:Math.max(5,num(c.slotSec)||30),P:Array.from({length:np},(_,i)=>({name:String((c.names||[])[i]||'').trim()||(i?`Atleta ${i+1}`:'Io'),ph:'up',cur:da,done:[],fail:null})),pi:0,phase:c.lead>0?'lead':'work',ph0:0,restMs:0});
     if(!c.lead)lsfGo(0,0)}
   if(m==='ft'){c.items=ftNorm(c.items);c.lead=Math.max(0,num(c.lead)||0);if(!c.items.length)c.items=[{n:'Esercizio 1',tipo:'rep',val:50,perLeg:false}];
     Object.assign(T,{st:-1,st0:0,splits:[],sets:c.items.map(()=>[]),pend:null,lead:c.lead*1000});if(!T.lead)ftStation(0,0)}
@@ -2816,16 +2816,17 @@ function buildSP(c,kind){
 }
 const spStep=()=>T.steps[T.k];
 /* ---- Ladder sfida ---- */
-function lsfGo(t,pi){T.pi=pi;T.phase='work';T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;sound('change',T.L.np>1?T.P[pi].name:'via')}
+function lsfGo(t,pi){T.nx=null;T.pi=pi;T.phase='work';T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;sound('change',T.L.np>1?T.P[pi].name:'via')}
 function lsfDone(ok){const t=clk(),p=T.P[T.pi],L=T.L,dur=t-T.ph0;
   if(ok){p.done.push(p.cur);if(p.ph==='up'){let nx=p.cur+L.ps;if(L.a!=null&&nx>L.a){if(L.su){p.ph='down';nx=L.top2?p.cur:p.cur-L.pg}else{p.ph='out'}}p.cur=nx}else p.cur-=L.pg}
   else{p.fail=p.cur;if(p.ph==='up'&&L.su){p.ph='down';p.cur-=L.pg}else p.ph='out'}
   if(p.ph==='down'&&p.cur<L.da)p.ph='out';
   let nx=-1;for(let k=1;k<=L.np;k++){const j=(T.pi+k)%L.np;if(T.P[j].ph!=='out'){nx=j;break}}
   if(nx<0){T.workEnd=t;tStop();sound('end');render();return}
-  if(L.np===1){const c=T.cfg;T.restMs=c.restMode==='free'?Infinity:c.restMode==='mult'?Math.round(dur*c.mult):c.sec*1000;T.phase='rest';T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;ok?beepShort():sound('warn');updateRun();return}
+  if(L.np===1){const c=T.cfg;T.restMs=c.restMode==='free'?Infinity:c.restMode==='mult'?Math.round(dur*(num(c.mult)||2)):(num(c.rest)||num(c.sec)||60)*1000;T.phase='rest';T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;ok?beepShort():sound('warn');updateRun();return}
+  if(lsfSlot()){const end=T.ph0+T.slot*1000;if(t<end-300){T.phase='wait';T.nx=nx;T.lastSec=null;T.warned=false;ok?beepShort():sound('warn');updateRun();return}lsfGo(Math.max(t,end),nx);updateRun();return}
   lsfGo(t,nx);updateRun()}
-function lsfTick(t){if(T.phase==='lead'){countdownBeeps(T.cfg.lead*1000-t);if(t>=T.cfg.lead*1000)lsfGo(T.cfg.lead*1000,0)}
+function lsfTick(t){if(lsfSlot()&&(T.phase==='work'||T.phase==='wait')){const rem=T.slot*1000-(t-T.ph0);if(T.phase==='work'){countdownBeeps(rem);warnBeep(rem);if(rem<=0){lsfDone(false);return}}else if(rem<=0){lsfGo(T.ph0+T.slot*1000,T.nx);updateRun();return}else countdownBeeps(rem);return}if(T.phase==='lead'){countdownBeeps(T.cfg.lead*1000-t);if(t>=T.cfg.lead*1000)lsfGo(T.cfg.lead*1000,0)}
   else if(T.phase==='rest'&&isFinite(T.restMs)){const rem=T.restMs-(t-T.ph0);countdownBeeps(rem);warnBeep(rem);halfBeep(rem,T.restMs);if(rem<=0)lsfGo(t,T.pi)}}
 /* ---- Per tempo ---- */
 const ftDone=i=>T.sets[i].reduce((a,b)=>a+b,0);
@@ -3114,7 +3115,7 @@ function clockText(){return ckS(clockText0())}
 function clockText0(){
   const t=clk();
   if(T.mode==='amrap'){if(T.final)return mmss(T.cfg.restEndSec*1000-(t-T.finalStart));if(t<T.leadMs)return mmss(T.leadMs-t);return mmss(T.totalMs-(t-T.leadMs))}
-  if(T.mode==='lsf'){if(T.phase==='lead')return mmss(T.cfg.lead*1000-t);if(T.phase==='rest')return isFinite(T.restMs)?mmss(T.restMs-(t-T.ph0)):mmssUp(t-T.ph0);return mmssUp(t-T.ph0)}
+  if(T.mode==='lsf'){if(T.phase==='lead')return mmss(T.cfg.lead*1000-t);if(lsfSlot()&&(T.phase==='work'||T.phase==='wait'))return mmss(T.slot*1000-(t-T.ph0));if(T.phase==='rest')return isFinite(T.restMs)?mmss(T.restMs-(t-T.ph0)):mmssUp(t-T.ph0);return mmssUp(t-T.ph0)}
   if(T.mode==='ft')return T.st<0?mmss(T.lead-t):mmssUp(t-T.lead);
   if(T.mode==='rt'){if(T.phase==='lead')return mmss(T.cfg.lead*1000-t);if(T.phase==='work')return mmssUp(t-T.ph0);if(T.phase==='rest')return T.cfg.rest>0?mmss(T.cfg.rest*1000-(t-T.ph0)):mmssUp(t-T.ph0);return mmssUp(t)}
   if(T.mode==='tst')return t<T.lead?mmss(T.lead-t):mmss(T.total-(t-T.lead));
@@ -3129,7 +3130,7 @@ function emomPaint(){
   if(!T||T.done)return null;
   const c=T.cfg,t=clk();let bg,rem=null;
   if(T.mode==='amrap'){if(t<T.leadMs)return null;if(T.final){bg=c.restCol||'#E2E8F0'}else{bg=(c.col&&c.col[T.cur])||AMCOL[T.cur%6];if(T.totalMs-(t-T.leadMs)<=c.warnSec*1000)bg=c.warnCol}return {bg,fg:fgFor(bg)}}
-  if(T.mode==='lsf'){if(T.phase==='lead')return null;if(T.phase==='rest'){bg=c.colRest;if(isFinite(T.restMs)&&T.restMs-(t-T.ph0)<=c.warnSec*1000)bg=c.warnCol}else bg=T.L.np>1?TCOL[T.pi%10]:c.colWork;return {bg,fg:fgFor(bg)}}
+  if(T.mode==='lsf'){if(T.phase==='lead')return null;if(T.phase==='wait'){bg=c.colRest;return {bg,fg:fgFor(bg)}}if(T.phase==='work'&&lsfSlot()&&T.slot*1000-(t-T.ph0)<=c.warnSec*1000){bg=c.warnCol;return {bg,fg:fgFor(bg)}}if(T.phase==='rest'){bg=c.colRest;if(isFinite(T.restMs)&&T.restMs-(t-T.ph0)<=c.warnSec*1000)bg=c.warnCol}else bg=T.L.np>1?TCOL[T.pi%10]:c.colWork;return {bg,fg:fgFor(bg)}}
   if(T.mode==='ft'){if(T.st<0)return null;bg=EXCOL[exKind(c.items[T.st].n)]||'#334155';return {bg,fg:fgFor(bg)}}
   if(T.mode==='rt'){if(T.phase==='lead')return null;if(T.phase==='work')bg=c.colWork;else{bg=c.colRest;if(T.phase==='rest'&&c.rest>0&&c.rest*1000-(t-T.ph0)<=c.warnSec*1000)bg=c.warnCol}return {bg,fg:fgFor(bg)}}
   if(T.mode==='tst'){if(t<T.lead)return null;const u=t-T.lead,i=Math.min(2,Math.floor(u/T.bms));bg=c.col[i]||'#0284C7';if(T.bms*(i+1)-u<=c.warnSec*1000)bg=c.warnCol;return {bg,fg:fgFor(bg)}}
@@ -3169,8 +3170,9 @@ function vRun(){
     const L=T.L,p=T.P[T.pi],g=L.np>1,pa=L.uni?' <span style="font-size:.6em">per arto</span>':'';
     if(T.phase==='lead'){ph='Si parte tra';ex=`${esc(L.n)} × ${L.da}${pa}`;sub=g?`Inizia ${esc(T.P[0].name)}`:''}
     else if(T.phase==='work'){giro=`<p class="giro" aria-label="${p.cur} ripetizioni">${p.cur}</p>`;ph=g?`Tocca a ${esc(p.name)}`:(p.ph==='down'?'In discesa':'In salita');ex=`${esc(L.n)} × ${p.cur}${pa}`;
-      sub=`${g?(p.ph==='down'?'In discesa · ':'In salita · '):''}serie completate: ${p.done.length}`;
+      sub=`${g?(p.ph==='down'?'In discesa · ':'In salita · '):''}serie completate: ${p.done.length}${g?(lsfSlot()?` · turno di ${T.slot}″`:' · recupero: il tempo degli altri'):''}`;
       main=`<div class="ctl ctl2"><button class="btn primary big" data-a="lsfOk">Fatta ✓</button><button class="btn big" data-a="lsfKo">Fallita ✗</button></div>`}
+    else if(T.phase==='wait'){const q=T.P[T.nx]||p;ph=`Fine turno di ${esc(p.name)}`;ex=`Poi: ${esc(q.name)} · ${esc(L.n)} × ${q.cur}${pa}`;sub=`Serie completate: ${p.done.length} · il turno di ${esc(q.name)} parte allo scadere`;main=`<button class="btn primary" data-a="lsfGoNow">Inizia subito</button>`}
     else{ph=isFinite(T.restMs)?'Recupero':'Recupero libero';ex=`Poi: ${esc(L.n)} × ${p.cur}${pa}`;sub=`Serie completate: ${p.done.length}${p.ph==='down'?' · in discesa':''}`;
       main=`<button class="btn primary" data-a="lsfGoNow">${isFinite(T.restMs)?'Salta':'Inizia serie'}</button>`}
     extra=g?`<div class="tot" style="grid-template-columns:repeat(${Math.min(4,L.np)},minmax(0,1fr))">${T.P.map((q,i)=>`<div style="${i===T.pi&&T.phase!=='lead'?'outline:3px solid currentColor;outline-offset:-3px':q.ph==='out'?'opacity:.55':''}">${esc(q.name)}<b>${q.done.length}</b>${q.ph==='out'?(q.fail!=null?`fuori a ${q.fail}`:'arrivato'):`prossima ${q.cur}`}</div>`).join('')}</div>`
@@ -3502,7 +3504,7 @@ const A={
     sheet(`<h3>Test salvato</h3><p class="muted">${esc(c.test.nome)}: ${mmssUp(tot*1000)}${full?'':' (non finito)'}.${prev&&full?(tot<prev.tot?' Nuovo record!':` Record: ${mmssUp(prev.tot*1000)}.`):''}${extra}</p><div class="row" style="margin-top:14px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
   lsfOk(){if(T&&T.mode==='lsf'&&T.phase==='work')lsfDone(true)},
   lsfKo(){if(T&&T.mode==='lsf'&&T.phase==='work')lsfDone(false)},
-  lsfGoNow(){if(T&&T.mode==='lsf'&&T.phase==='rest')lsfGo(clk(),T.pi)},
+  lsfGoNow(){if(T&&T.mode==='lsf'&&T.phase==='rest')lsfGo(clk(),T.pi);else if(T&&T.mode==='lsf'&&T.phase==='wait'&&T.nx!=null){lsfGo(clk(),T.nx);updateRun()}},
   lsfSave(){const d=ensureDraft(),L=T.L,q=T.P[0],ex=exFromHistory(L.n,d.d,d.id);delete ex._why;ex.b=null;ex.k=0;ex.lad=q.done.slice();ex.s=q.done.map(r=>[r,'ok']);if(q.fail!=null)ex.s.push(['','ko']);if(L.uni)ex.uni=L.uni;
     ex.p=`Ladder sfida ${L.su?'su e giù':'in salita'} ${L.da}→${L.a??'MAX'}${L.np>1?`, ${L.np} partecipanti`:''}`;ex.t=Math.max(1,Math.round(((T.workEnd??T.endClock)-T.cfg.lead*1000)/60000));
     if(L.np>1)ex.note=[...T.P].sort((a,b)=>b.done.length-a.done.length).map(x=>`${x.name} ${x.done.length}`).join(', ');d.ex.push(ex);scheduleSave();tReset();S.tab='diario';render()},
@@ -4774,7 +4776,7 @@ function vStrCard(d){const L=d.ex.map((e,i)=>[e,i]).filter(([e])=>isStrEx(e)&&!(
       <p class="muted small" style="margin:0">Cambio posizione ${num(s.posTr)||0}″ · durata ${mmss(1000*posDur(pos,s.posTr))}${s.coolAuto?' · parte da solo':''}</p>`
     :`<p class="small" style="margin:0">${s.coolMode==='open'?'Defaticamento libero: finisce quando lo dici tu':`Defaticamento di ${fmtN(num(s.coolMin)||0,1).replace(/,0$/,'')} minuti`}${s.coolAuto?', parte da solo':''}.</p>`;
   return `<section class="card" id="strCard"><div class="card-h">${exIcon('Stretching',38)}<h3 style="margin:0">Defaticamento</h3></div>
-    ${L.length?`<p class="small" style="margin:8px 0 6px">${L.map(([e,i])=>`${esc(e.n)} <button class="btn ghost danger" data-a="delEx" data-i="${i}" style="min-height:36px;min-width:36px;padding:4px 10px" aria-label="Togli ${esc(e.n)}">✕</button>`).join(' · ')}</p>`:''}
+    ${L.length?`<div class="small" style="margin:8px 0 6px"><span class="muted">Nella seduta:</span> ${L.map(([e,i])=>`<span style="white-space:nowrap">${esc(e.n)}${(e.s||[]).some(x=>x[1])||e.t?' ✓':''} <button class="btn ghost" data-a="delEx" data-i="${i}" style="min-height:36px;padding:4px 8px;text-decoration:underline" aria-label="Togli ${esc(e.n)} dalla seduta">togli</button></span>`).join(' · ')}<div class="muted" style="margin-top:2px">${s.coolOn&&s.coolKind==='pos'?'Alla fine del defaticamento lo stretching si scrive da solo nella seduta, con le posizioni e il tempo.':''}</div></div>`:''}
     ${det}<p class="muted small" style="margin:8px 0 0">Si fa per ultimo, dopo i blocchi e il finisher. Si modifica nello svolgimento della seduta.</p>
     <div class="row" style="margin-top:8px"><button class="btn" data-a="tsEdit">Modifica lo svolgimento</button></div></section>`}
 
@@ -5751,7 +5753,7 @@ function sessionObj(dr){const o=sessionObjQ(dr);try{if(dr.durMan)o.durMan=dr.dur
 document.addEventListener('change',ev=>{const el=ev.target;if(el&&el.dataset&&/^dur:/.test(el.dataset.f||''))onField(el,true)});
 document.addEventListener('toggle',ev=>{const t=ev.target;if(t&&t.classList&&t.classList.contains('estbox'))S.estOpen=t.open},true);
 /* il tempo dell'ultima volta non è il tempo di oggi: per i protocolli a serie e recuperi il campo parte vuoto (stima in grigio) */
-function estClrT(e){if(!e||e.aV||(e.s||[]).some(x=>x[1]))return;const P=e.pid&&S.protos.get(e.pid);if(P&&!P.deleted){if(!EST_REC.has(P.tipo))return}else{const q=parseProto(e.p);if(q&&q.type!=='rest')return}delete e.t;delete e.tEst}
+function estClrT(e){if(!e||e.aV||(e.s||[]).some(x=>x[1]))return;const P=e.pid&&S.protos.get(e.pid);if(P&&!P.deleted&&['ft','btc','aer'].includes(P.tipo))return;delete e.t;delete e.tEst}
 setTimeout(()=>{const f=A.fromTpl;A.fromTpl=function(el,ev){const r=f.call(this,el,ev);try{const d=S.draft;if(d&&!isExec(d)){d.ex.forEach(estClrT);persistDraft();render()}}catch(x){}return r}},0);
 
 
@@ -5764,6 +5766,22 @@ function posDur(pos,posTr){return posSegs({pos:pos||[],posTr}).reduce((a,x)=>a+x
 
 /* ---------- v1.6c: stretching monolaterale in un gruppo: ogni lato è un’esecuzione con il tempo pieno ---------- */
 function strTwo(e){return !!(e&&e.n&&['stretch','mob'].includes(exCat(e.n))&&(uniOf(e)==='fila'||uniOf(e)==='alt'))}
+
+
+/* ---------- v1.6f: i programmi si uniscono nell’importazione (vince il più recente), uno solo resta attivo ---------- */
+function prgMerge(a,b){const R={...(a||{})};Object.entries(b&&typeof b==='object'?b:{}).forEach(([k,v])=>{if(v&&typeof v==='object'&&(!R[k]||(v.updated||0)>(R[k].updated||0)))R[k]=v});
+  const act=Object.values(R).filter(p=>p&&!p.deleted&&p.attivo&&!p.chiuso).sort((x,y)=>(y.updated||0)-(x.updated||0));act.slice(1).forEach(p=>{R[p.id]={...p,attivo:false}});return R}
+
+
+/* ---------- v1.6g: Ladder sfida in gruppo: recupero «tempo degli altri» o turni a tempo fisso ---------- */
+const lsfOn=c=>!!(c&&c.sfida&&(c.verso==='su'||c.verso==='sugiu'));
+const lsfMulti=c=>!!(c&&c.sfida&&(c.verso==='su'||c.verso==='sugiu')&&Math.max(1,num(c.np)||1)>1);
+const lsfSlot=()=>!!(T&&T.mode==='lsf'&&T.L&&T.L.np>1&&T.grp==='slot');
+function lsfGrpRest(c){const v=c.grpRest==='slot'?'slot':'altri',n=Math.max(2,Math.min(8,num(c.np)||2)),sl=Math.max(5,num(c.slotSec)||30);
+  return `<div><div class="muted small" style="margin-bottom:4px">Recupero in gruppo</div><div class="seg sm" role="group" aria-label="Recupero in gruppo" style="max-width:520px">${[['altri','Il tempo degli altri'],['slot','Turni a tempo fisso']].map(([k,l])=>`<button data-a="tset" data-f="lad.grpRest" data-v="${k}" aria-pressed="${v===k}">${l}</button>`).join('')}</div></div>
+  ${v==='slot'?`<label class="f" style="max-width:220px">Secondi per ogni turno<input type="number" inputmode="numeric" min="5" value="${esc(c.slotSec??30)}" data-f="tc:lad.slotSec"></label>
+  <p class="muted small" style="margin:0">Ogni partecipante ha ${sl}″ per fare la serie e toccare «Fatta» (se non la tocca in tempo, la serie conta come fallita). Il turno del successivo parte allo scadere dei ${sl}″, anche se chi era di turno ha finito prima (con «Inizia subito» si parte prima). Così il recupero è fisso: con ${n} partecipanti, ${(n-1)*sl}″ più quello che ti avanza del tuo turno.</p>`
+  :`<p class="muted small" style="margin:0">Il tuo recupero è il tempo che impiegano gli altri a fare la loro serie: appena uno tocca «Fatta» o «Fallita» tocca al successivo. Più si sale, più si recupera; quando qualcuno esce, il recupero degli altri si accorcia.</p>`}`}
 
 const canSave=()=>!!S.downloads||STANDALONE;
 async function saveFile(filename,data){
@@ -5796,7 +5814,7 @@ async function importBackupOld(obj,mode){
       Object.values(TN).forEach(t=>{if(t&&t.std&&stdM.has(t.mode)&&!CT[t.id])t.deleted=true});Object.entries(CT).forEach(([k,v])=>{if(v)TN[k]=v});
       const W={...(S.cfg.woTpl||{})};Object.entries(c.woTpl||{}).forEach(([k,v])=>{if(v&&(!W[k]||(v.updated||0)>=(W[k].updated||0)))W[k]=v});
       const L=ftTests().slice();(Array.isArray(c.ftTests)?c.ftTests:[]).forEach(P=>{if(!P||!P.id)return;const i=L.findIndex(x=>x.id===P.id);if(i<0)L.push(P);else L[i]=P});
-      S.cfg={...S.cfg,...c,esercizi:ex,timers:TN,woTpl:W,ftTests:L,routines:{...(S.cfg.routines||{}),...((c.routines&&typeof c.routines==='object')?c.routines:{})}};if(team)S.cfg.team=team;else delete S.cfg.team;
+      S.cfg={...S.cfg,...c,esercizi:ex,timers:TN,woTpl:W,ftTests:L,routines:{...(S.cfg.routines||{}),...((c.routines&&typeof c.routines==='object')?c.routines:{})},programmi:prgMerge(S.cfg.programmi,c.programmi)};if(team)S.cfg.team=team;else delete S.cfg.team;
       S.prefsLoaded=false;loadPrefs();CD.rem=null;cfg=true}
     else{
       if(c.esercizi)for(const k in c.esercizi){const x=S.cfg.esercizi[k],y=c.esercizi[k];if(!y||typeof y!=='object')continue;if(!x){S.cfg.esercizi[k]=y;cfg=true}else for(const f in y)if(x[f]==null){x[f]=y[f];cfg=true}}
@@ -5811,6 +5829,7 @@ async function importBackupOld(obj,mode){
         if(t.std&&Object.values(M).some(y=>y&&y.std&&!y.deleted&&y.mode===t.mode))return;
         const n=clone(t);if(Object.values(M).some(y=>y&&y.code===n.code))n.code=nextCode(tPrefix(n.mode),Object.values(M).map(y=>y&&y.code));M[n.id]=n;cfg=true})}
       if(c.routines&&typeof c.routines==='object'){const M=rtMap();Object.values(c.routines).forEach(r=>{if(!r||!r.id)return;const x=M[r.id];if(x){if((r.updated||0)>(x.updated||0)){M[r.id]=r;cfg=true}return}const n=clone(r);if(Object.values(M).some(y=>y&&y.code===n.code))n.code=nextCode(RTPRE[n.kind]||'MIX',Object.values(M).map(y=>y&&y.code));M[n.id]=n;cfg=true})}
+      if(c.programmi&&typeof c.programmi==='object'){const M=prgMerge(S.cfg.programmi,c.programmi);if(JSON.stringify(M)!==JSON.stringify(S.cfg.programmi||{})){S.cfg.programmi=M;cfg=true}}
       ['cd','bioRem'].forEach(k=>{if(c[k]&&!S.cfg[k]){S.cfg[k]=c[k];cfg=true}});
     }
     if(cfg)saveCfg();
