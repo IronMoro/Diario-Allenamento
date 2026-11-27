@@ -1,5 +1,5 @@
 // GYMER: funzionamento offline
-const CACHE='diarioprova-1.4zz25';
+const CACHE='diarioprova-1.4zz27';
 const PRE='diarioprova-';
 const SHELL=['./','index.html','manifest.webmanifest','icon-192-v2.png','icon-512-v2.png','icon-maskable-512-v2.png'];
 // all'installazione scarica i file aggirando la cache del browser

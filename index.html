@@ -634,7 +634,6 @@ async function applyTest(t){
   return n;
 }
 
-
 /* ---------- versione di prova: dati di esempio ---------- */
 function demoDataOld(){
   let sd=7;const R=()=>{sd=(sd*1103515245+12345)%2147483648;return sd/2147483648};
@@ -1044,11 +1043,9 @@ function acShowOld(el){
   const q=acNorm(el.value.trim()),all=allNames(),list=(q?all.filter(n=>acNorm(n).includes(q)&&acNorm(n)!==q):all).sort((a,b)=>(acNorm(a).startsWith(q)?0:1)-(acNorm(b).startsWith(q)?0:1)||a.localeCompare(b,'it')).slice(0,30);
   if(!list.length){box.hidden=true;return}
   box.innerHTML=list.map(n=>`<button type="button" tabindex="-1" data-acv="${esc(n)}">${exIcon(n,24)} ${esc(n)}</button>`).join('');box.hidden=false;box.style.visibility='';acPos()}
-function acPosOld(){const box=$('#acBox');if(!box||box.hidden||!AC_EL)return;const vv=window.visualViewport,vh=vv?vv.height+vv.offsetTop:innerHeight,r=AC_EL.getBoundingClientRect();
-  if(r.bottom<0||r.top>vh){box.hidden=true;return}
-  const below=vh-r.bottom-8;box.style.left=Math.max(8,r.left)+'px';box.style.width=Math.min(innerWidth-16,Math.max(r.width,220))+'px';box.style.top=(r.bottom+4)+'px';box.style.maxHeight=Math.max(96,below)+'px'}
+
 function acHideOld(){const box=$('#acBox');if(box)box.hidden=true;AC_EL=null}
-function acLiftOld(el){const vv=window.visualViewport,vh=vv?vv.height:innerHeight,r=el.getBoundingClientRect();if(r.top>vh*.35||r.bottom>vh-200)window.scrollBy(0,r.top-Math.max(70,vh*.18));acPos()}
+
 document.addEventListener('focusin',ev=>{const el=ev.target;if(el&&el.dataset&&el.dataset.ac){clearTimeout(AC_T);acShow(el);setTimeout(()=>acLift(el),60);setTimeout(()=>acLift(el),400)}});
 let AC_SKIP=false;
 document.addEventListener('input',ev=>{const el=ev.target;if(!AC_SKIP&&el&&el.dataset&&el.dataset.ac)acShow(el)},true);
@@ -1175,20 +1172,7 @@ function vSaveAsk(){const d=S.draft,done=isExec(d),wo=String(d.wo||'').trim(),f=
     <p class="down small" id="svErr" style="margin:6px 0 0"></p><p class="muted small" style="margin:4px 0 8px">WO già usati: ${[...woUsed()].sort().join(', ')||'nessuno'}.</p>
     <button class="btn" data-a="svNew">Salva come nuovo WO</button></div>
   <div class="row"><button class="btn" data-a="closeSheet">Annulla</button></div>`}
-function vProgAsk(){const d=S.draft,done=d.ex.some(e=>(e.s||[]).some(x=>x[1])),f=S.progNew||{nome:'',wo:woFree(),d:d.d};
-  return `<h3>Salva per un prossimo allenamento</h3>
-    <p class="muted">La ritrovi in Sedute → Nuova seduta, tra le «Sedute programmate», pronta così come l’hai preparata. Non conta nello storico finché non segni la prima serie.</p>
-    <div class="card" style="margin:10px 0"><b>Aggiorna questa seduta</b><p class="muted small" style="margin:4px 0 8px">WO ${esc(d.wo||'–')}${d.nome?`, «${esc(d.nome)}»`:''}, ${fmtD(d.d)}.${done?' Ha già serie segnate: la salvo nello storico come seduta fatta.':''}</p>
-      <button class="btn primary" data-a="progUpd">Aggiorna questa seduta</button></div>
-    <div class="card" style="margin:10px 0"><b>Oppure salvala come nuova seduta</b>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:8px">
-        <label class="f">Nome<input type="text" id="pnNome" value="${esc(f.nome)}" maxlength="50" placeholder="es. Spinta pesante"></label>
-        <label class="f">WO (deve essere nuovo)<input type="text" id="pnWo" value="${esc(f.wo)}" maxlength="6" autocapitalize="characters" style="text-transform:uppercase"></label>
-        <label class="f">Data<input type="date" id="pnData" value="${esc(f.d)}"></label></div>
-      <p class="down small" id="pnErr" style="margin:6px 0 0"></p>
-      <p class="muted small" style="margin:4px 0 8px">WO già usati: ${[...woUsed()].sort().join(', ')||'nessuno'}.</p>
-      <button class="btn" data-a="progNew">Salva come nuova seduta</button></div>
-    <div class="row"><button class="btn" data-a="closeSheet">Annulla</button></div>`}
+
 async function progNewDo(){const d=S.draft;if(!d)return;const nome=($('#pnNome')||{}).value.trim(),wo=String(($('#pnWo')||{}).value||'').trim().toUpperCase(),dt=($('#pnData')||{}).value||d.d,err=$('#pnErr');
     S.progNew={nome,wo,d:dt};
     if(!wo){if(err){err.textContent='Indica un WO.';err.scrollIntoView({block:'center'})}return}
@@ -1764,6 +1748,7 @@ function vGuida(){
     <li><b>EMOM MAX</b>: al posto del numero di giri scegli «MAX»: vai avanti finché tocchi «Basta» e alla fine vedi quanti giri completi hai fatto. Scegli se, quando non fai le ripetizioni previste («Serie fallita»), ti fermi o continui.</li>
     <li><b>Ripetizioni e fatica che si ripetono</b>: se durante la seduta cambi le ripetizioni di una serie, la segni «a fatica» oppure «fallita» (che toglie una ripetizione), le serie successive dello stesso esercizio partono già con quel numero e quell’esito, finché non cambi di nuovo (nelle ladder si ripete solo «a fatica»). Vale anche in AMRAP ed EDT: ogni esercizio riparte dalle ripetizioni dell’ultima volta.</li>
     <li><b>Ladder sfida</b> (in salita o su e giù): da soli o in gruppo (fino a 8, a turno). Dopo ogni serie «Fatta» o «Fallita»; le ripetizioni possono salire fino a MAX, senza cima. In su e giù chi fallisce in salita comincia a scendere. Vince chi completa più serie. In su e giù il passo in discesa può essere diverso da quello in salita. In gruppo scegli il <b>recupero</b>: «Il tempo degli altri» (appena uno finisce tocca al successivo) oppure «Turni a tempo fisso» (es. 30″ a testa: chi non chiude la serie in tempo la fallisce, e il turno dopo parte allo scadere, così il recupero è sempre uguale).</li>
+    <li><b>Salta serie</b>: mentre fai una serie (o prima di iniziarla) sotto «Fine serie» trovi <b>«Salta serie»</b>: la serie viene segnata <b>Non eseguita</b> e passi subito alla serie dopo, senza recupero. In un superset o gruppo passi all’esercizio dopo del giro (se gli altri del giro li hai fatti, parte il recupero normale); nel Circuito è «Salta stazione»; in EMOM / E2MOM / 1 rep al minuto la serie del minuto viene segnata Non eseguita e l’orologio va avanti. Con più esercizi c’è anche <b>«Salta esercizio»</b>: tutte le serie rimaste di quell’esercizio diventano Non eseguite (in EMOM quei minuti spariscono). Per qualche secondo compare «Annulla» in alto, se hai toccato per sbaglio. Nel recupero «Salta recupero» fa partire subito la serie dopo; tra gli esiti della serie appena fatta c’è anche «Non eseguita». Le serie non eseguite non contano né come fatte né come fallite: medie, record e progressioni le ignorano, e in A step lo step non è completato, quindi lo ripeti (senza scendere). Non c’è in EDT, AMRAP, RT, Per tempo e Ladder sfida.</li>
     <li><b>Esercizi per arto</b> (monolaterali, vedi «Esercizi monolaterali e Lati»): in ogni esercizio e in Set&amp;Pause, Ladder, EMOM, EDT, Circuito e Per tempo scegli «Lati»: entrambi insieme, per arto prima DX poi SX, oppure per arto alternati. Le ripetizioni sono per arto. Con «prima DX poi SX» in Set&amp;Pause e Circuito tocchi «Fine lato destro» e poi «Fine serie»; nelle stazioni a tempo il cambio lato suona a metà.</li></ul>
     <p><b>Timer libero</b>: in alto nella scheda Timer scegli «Timer libero» per usare un timer da solo, senza seduta, senza fasi e senza scrivere nel diario; alla fine puoi ripeterlo o sceglierne un altro. «Con la seduta» torna al funzionamento collegato al diario.</p>
     <p>Per tutti: preparazione, colori, avviso prima della fine, avviso a metà, suoni (anche a voce), schermo intero, riposo alla fine. «Torna alla seduta» lascia il timer acceso. I timer avviati dalla seduta scrivono serie e tempo nel diario; gli altri a fine timer chiedono se inserirli.</p>`)}
@@ -2063,14 +2048,7 @@ function vProgDetailOld(n){
 /* ----- esercizi ----- */
 function allNames(){const x=new Set(S.names||[]);for(const t of S.tests.values())if(!t.deleted&&t.n)x.add(t.n);return [...x]}
 function exInfo(){const m=new Map();for(const s of S.hist)for(const e of s.ex){if(!e.n)continue;const o=m.get(e.n)||{n:0,last:null};o.n++;if(!o.last)o.last=s.d;m.set(e.n,o)}return m}
-function vExListOld(){
-  const info=exInfo(),q=S.exQ.trim().toLowerCase(),today=todayIso();
-  const list=allNames().filter(n=>!q||n.toLowerCase().includes(q)).sort((a,b)=>{const x=(info.get(a)||{}).last||'',y=(info.get(b)||{}).last||'';return x<y?1:x>y?-1:a.localeCompare(b,'it')});
-  if(!list.length)return `<p class="empty">Nessun esercizio trovato.</p>`;
-  return list.map(n=>{const o=info.get(n)||{n:0},t=maxFor(n,today);
-    return `<button class="exrow-b" data-a="exOpen" data-n="${esc(n)}">${exIcon(n,44)}<b>${esc(n)}</b><span class="rm">${t?`${fmtN(t.rm,1)}<small>kg 1RM</small>`:''}</span>
-      <span class="when">${o.last?`Ultima volta ${fmtD(o.last)}, ${o.n} ${o.n===1?'seduta':'sedute'}`:((S.cfg.esercizi[n]||{}).creato?'Nuovo, ancora nessuna seduta':'Solo test')}</span></button>`}).join('');
-}
+
 function autoKind(n){exKindCache.delete(String(n||''));const r=EXRULES.find(([,re])=>re.test(String(n||'')));return r?r[0]:'generico'}
 function vExNew(){const f=S.exNew,auto=autoKind(f.n);
   return `<section class="card" style="border-width:2px;border-color:var(--ink)"><h3 style="margin-bottom:8px">Nuovo esercizio</h3>
@@ -2288,23 +2266,7 @@ function vSess(s){
     <div class="row" style="margin-top:8px"><button class="btn" data-a="editSess" data-id="${esc(s.id)}">Modifica</button><span class="spacer"></span><button class="btn ghost danger" data-a="askDelSess" data-id="${esc(s.id)}">Elimina</button></div>
   </div>`:''}</article>`;
 }
-function vExHistoryOld(name,noCharts){
-  const occ=[];
-  for(const s of S.hist)for(const e of s.ex)if(e.n===name)occ.push({s,e,m:metrics(e,!!s.updated)});
-  const pts=occ.filter(o=>o.e.st!=='Non eseguito'&&o.m.tot!=null).slice(0,60).reverse();
-  let h='';
-  if(pts.length>1&&!noCharts){
-    h+=chart('Carico (kg)',pts.map(o=>({v:Number(o.e.kg)||null,f:o.m.fails>0,d:o.s.d})),1);
-    h+=chart('Volume',pts.map(o=>({v:o.m.vol,f:o.m.fails>0,d:o.s.d})),2);
-  }
-  h+=occ.slice(0,40).map(({s,e,m})=>`<article class="sess"><div style="padding:10px 12px">
-    <div class="sess-t">${s.wo?`<span class="wo">${esc(s.wo)}</span>`:''}<b>${fmtD(s.d)}</b><span class="muted small">${e.kg?`${fmtN(e.kg,e.kg%1?1:0)} kg`:''}${e.pct?`, ${pctTxt(e.pct)}%`:''}</span></div>
-    <div class="row"><span class="mini">${(e.s||[]).map(x=>`<i class="e-${e.st==='Non eseguito'?'skip':x[1]}"></i>`).join('')}</span>
-    <span class="small">${e.st==='Non eseguito'?'non eseguito':(e.s||[]).map(x=>x[0]).join(' ')}</span></div>
-    <p class="small muted" style="margin:4px 0 0">${latiTxt(e)?`Lati: ${latiTxt(e)}. `:''}${e.b!=null?`Piano ${e.b}${e.k?`, prime ${e.k} a ${e.b+1}`:''}. `:''}Volume ${fmtN(m.vol,2)}${m.fails?`, ${m.fails} serie fallite`:''}${e.f?`, ${esc(e.f.toLowerCase())}`:''}</p>
-  </div></article>`).join('');
-  return h;
-}
+
 function chart(title,data,dec){
   const W=600,H=200,P=30;const vals=data.map(d=>d.v).filter(v=>v!=null);
   if(!vals.length)return '';
@@ -2690,12 +2652,7 @@ const SNDVOL={normale:1,alto:3,massimo:6};
 function sndOut(){const v=SNDVOL[S.tc.snd.vol||'alto']||3;if(SNDO&&SNDV===v)return SNDO;
   try{const g=AC.createGain();g.gain.value=v;const c=AC.createDynamicsCompressor();c.threshold.value=-10;c.knee.value=0;c.ratio.value=20;c.attack.value=.002;c.release.value=.12;
     const o=AC.createGain();o.gain.value=.95;g.connect(c);c.connect(o);o.connect(AC.destination);SNDO=g;SNDV=v;return g}catch(e){return AC.destination}}
-function beep(f=880,d=.12,v=.3){
-  if(!AC)return;try{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;
-  g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
-  o.connect(g);g.connect(sndOut());o.start();o.stop(AC.currentTime+d+.03)}catch(e){}
-  if(d>.3&&navigator.vibrate)try{navigator.vibrate(300)}catch(e){}
-}
+
 function tone(f,d,v,type='sine',when=0,f2=null){
   if(!AC)return;try{const t0=AC.currentTime+when,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);
   if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.01);
@@ -2838,7 +2795,7 @@ function ftTick(t){if(T.st<0){countdownBeeps(T.lead-t);if(t>=T.lead)ftStation(0,
     if(sec!==T.capS){if(sec<=3&&sec>=1&&T.capS!=null)sound('tick',sec);T.capS=sec}
     if(rem<=0){T.capHit=true;if(T.splits.length<T.cfg.items.length)T.splits.push(Math.max(0,Math.round((end-T.st0)/1000)*1000));T.workEnd=end;tStop();sound('end');render();return true}}
   return false}
-function spGo(t,immediate){
+function spGoOld(t,immediate){
   const st=spStep();if(!st)return;T.side=(uniOf(T.exs[st.i])==='fila'||strTwo(T.exs[st.i]))?'dx':null;
   if(T.restKind!=='tr')T.blk=t;
   T.lastSec=null;T.warned=false;T.halfDone=false;
@@ -2911,7 +2868,7 @@ function endSession(){
   SES.tempi={risc:Math.round(w/1000),allen:Math.round(al/1000),defat:Math.round(cl/1000),tot:Math.round((n-SES.start)/1000)};
   if(S.draft){S.draft.tempi=SES.tempi;autoNotes(S.draft);
     if(SES.cfg.coolKind==='pos'&&SES.coolStart&&cl>=10000){const names=(SES.cfg.pos||[]).map((x,i)=>String(x.n||'').trim()||`Posizione ${i+1}`);
-      let ex=S.draft.ex.find(e=>/stretch|mobilit/i.test(e.n||'')&&!(e.s||[]).length);
+      let ex=S.draft.ex.find(e=>/stretch|mobilit/i.test(e.n||'')&&!e.fin&&!(S.draft.gV&&e.g)&&!(e.s||[]).some(x=>x[1]));if(ex)ex.s=[];
       if(!ex){ex={n:'Stretching',p:'',t:null,kg:null,z:null,pct:null,b:null,k:0,s:[],st:'Eseguito',f:'',note:''};S.draft.ex.push(ex)}
       ex.p=`${names.length} posizioni: ${names.join(', ')}`;ex.t=Math.max(1,Math.round(cl/60000))}
     scheduleSave();SES.saved=true}
@@ -2924,7 +2881,7 @@ function sesAfterTimer(){
   if(SES.cfg.coolOn&&SES.cfg.coolAuto&&!finPend){startCool(true);return}
   SES.phase='between';sesSave();
 }
-function posSegsOld(c){const out=[];(c.pos||[]).forEach((p,i)=>{if(i>0&&num(c.posTr)>0)out.push({tr:true,i,sec:num(c.posTr)});out.push({i,sec:Math.max(5,num(p.sec)||60),n:String(p.n||'').trim()||`Posizione ${i+1}`})});return out}
+
 const isPos=()=>SES&&SES.phase==='cool'&&SES.cfg.coolKind==='pos'&&(SES.cfg.pos||[]).length>0;
 function posClock(n){const segs=SES._segs||(SES._segs=posSegs(SES.cfg)),el=n-SES.coolStart,total=segs.reduce((a,x)=>a+x.sec*1000,0);let acc=0,k=segs.length-1;
   for(let i=0;i<segs.length;i++){if(el<acc+segs[i].sec*1000){k=i;break}acc+=segs[i].sec*1000}if(el>=total)acc=total-segs[k].sec*1000;
@@ -3174,7 +3131,7 @@ function vRun(){
       main=`<div class="ctl ctl2"><button class="btn primary big" data-a="lsfOk">Fatta ✓</button><button class="btn big" data-a="lsfKo">Fallita ✗</button></div>`}
     else if(T.phase==='wait'){const q=T.P[T.nx]||p;ph=`Fine turno di ${esc(p.name)}`;ex=`Poi: ${esc(q.name)} · ${esc(L.n)} × ${q.cur}${pa}`;sub=`Serie completate: ${p.done.length} · il turno di ${esc(q.name)} parte allo scadere`;main=`<button class="btn primary" data-a="lsfGoNow">Inizia subito</button>`}
     else{ph=isFinite(T.restMs)?'Recupero':'Recupero libero';ex=`Poi: ${esc(L.n)} × ${p.cur}${pa}`;sub=`Serie completate: ${p.done.length}${p.ph==='down'?' · in discesa':''}`;
-      main=`<button class="btn primary" data-a="lsfGoNow">${isFinite(T.restMs)?'Salta':'Inizia serie'}</button>`}
+      main=`<button class="btn primary" data-a="lsfGoNow">${isFinite(T.restMs)?'Salta recupero':'Inizia serie'}</button>`}
     extra=g?`<div class="tot" style="grid-template-columns:repeat(${Math.min(4,L.np)},minmax(0,1fr))">${T.P.map((q,i)=>`<div style="${i===T.pi&&T.phase!=='lead'?'outline:3px solid currentColor;outline-offset:-3px':q.ph==='out'?'opacity:.55':''}">${esc(q.name)}<b>${q.done.length}</b>${q.ph==='out'?(q.fail!=null?`fuori a ${q.fail}`:'arrivato'):`prossima ${q.cur}`}</div>`).join('')}</div>`
       :(p.done.length?`<p class="sub">${p.done.join(' · ')}</p>`:'')}
   else if(T.mode==='ft'){
@@ -3220,7 +3177,7 @@ function vRun(){
     if(circ&&st)giro=T.phase==='lead'?'':(S.tc.emom.giroFmt==='down'?`<p class="giro" aria-label="Mancano ${T.cfg.giri-st.j} giri compreso questo">${T.cfg.giri-st.j}</p>`:`<p class="giro" aria-label="Giro ${st.j+1} di ${T.cfg.giri}">${st.j+1}/${T.cfg.giri}</p>`);
     const nx=T.steps[T.k+1],nxTxt=nx?`Poi: ${lbl(T.exs[nx.i],nx)}${!circ&&T.exs.length>1?`, serie ${nx.j+1}`:''}`:'Ultima serie';
     if(T.phase==='lead'){ph='Si parte tra';ex=e?lbl(e,st):'';if(e&&uniOf(e))sub=uniTxt(uniOf(e))}
-    else if(T.phase==='ready'){ph=T.cfg.maxMode?`Esercizio ${st.i+1} di ${T.exs.length}`:serie;ex=e&&e.n?lbl(e,st):(p!=null?`${p} ripetizioni`:'');sub=T.k?'Recupero finito':'Quando sei pronto';main=`<button class="btn primary big" data-a="tGo">Inizia</button>`}
+    else if(T.phase==='ready'){ph=T.cfg.maxMode?`Esercizio ${st.i+1} di ${T.exs.length}`:serie;ex=e&&e.n?lbl(e,st):(p!=null?`${p} ripetizioni`:'');sub=T.k&&T.skipK===T.k?'Serie precedente saltata: niente recupero':T.k?'Recupero finito':'Quando sei pronto';main=`<button class="btn primary big" data-a="tGo">Inizia</button>`}
     else if(T.phase==='work'){ph=T.cfg.maxMode?`Esercizio ${st.i+1} di ${T.exs.length}`:serie;ex=e?(e.n?lbl(e,st):(p!=null?`${p} ripetizioni`:'')):'';sub=T.cfg.maxMode?`Massime ripetizioni${e.s[st.j][1]===''&&e.s[st.j][0]!==''?`, l’ultima volta ${e.s[st.j][0]}`:''}`:(st&&st.rest==='tr'?nxTxt:'');
       if((circ||T.cfg.mark==='during')&&T.cfg.mark!=='none'&&st&&!st.w){const x=e.s[st.j];main=`<div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div><button class="btn primary big" data-a="tEndSet">${circ?'Fatto':'Fine serie'}</button>`}
       else main=`<button class="btn primary big" data-a="tEndSet">${circ?'Fine stazione':'Fine serie'}</button>`;
@@ -3229,7 +3186,7 @@ function vRun(){
         else if(u==='alt')sub=`Alternati DX / SX${sub?` · ${sub}`:''}`}}
     else{ph=T.final?(T.cfg.maxMode?'Riposo: segna le ripetizioni':'Riposo finale'):T.cfg.maxMode?'Riposo: segna le ripetizioni':{tr:circ?'Pausa':'Cambio',between:'Cambio esercizio',main:circ?'Riposo tra i giri':'Recupero'}[T.restKind]||'Recupero';
       if(!T.final&&!isFinite(T.restMs))ph='Recupero libero';
-      sub=T.final?'Tutto fatto':nxTxt;main=`<button class="btn primary" data-a="tSkipRest">${T.final?'Termina il riposo':!isFinite(T.restMs)?'Inizia serie':'Salta'}</button>`;
+      sub=T.final?'Tutto fatto':nxTxt;main=`<button class="btn primary" data-a="tSkipRest">${T.final?'Termina il riposo':!isFinite(T.restMs)?'Inizia serie':'Salta recupero'}</button>`;
       const mt=markTarget();if(mt)extra=vMark(mt)}
   }else if(T.mode==='emom'){
     const lead=clk()<T.cfg.lead*1000;
@@ -3262,7 +3219,7 @@ function vRun(){
     ${sesTop(title)}
     <div class="r-main">${giro}${ph||T.paused?`<p class="ph">${ph}${T.paused?' (in pausa)':''}</p>`:''}${ex?`<p class="ex-now">${ex}</p>`:''}
     <div class="clock" id="tClock" role="timer">${clockText()}</div>${sub?`<p class="sub">${sub}</p>`:''}</div>
-    <div class="r-side">${main?`<div class="ctl">${main}</div>`:''}${extra}
+    <div class="r-side">${(()=>{const k=skRow();return main||k?`<div class="ctl${k&&main?' hs':''}">${main||''}${k}</div>`:''})()}${extra}
     <div class="ctl ctl2">${pauseBtn}${stopBtn}<button class="btn" data-a="toSession">Sedute</button></div></div></div>`;
 }
 function vDone(){
@@ -3336,10 +3293,10 @@ function vMark(mt){
   const multi=T.mode==='emom'?T.cfg.ex.length>1:T.exs.length>1,txt=mt.now?`Serie ${mt.j+1} in corso`:multi?`${esc(mt.e.n)}: serie ${mt.j+1} appena fatta`:`Serie ${mt.j+1} appena fatta`;
   if(T.mode==='rec'&&mt.now)return '';
   if(T.mode==='emom'&&mt.now&&!mt.nav)return `<div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div>
-  <div class="esito">${(()=>{const cur=x[1]&&x[1]!=='skip'?x[1]:esDef(mt.e,mt.j);return ['ok','fat','ko'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
+  <div class="esito e4">${(()=>{const cur=x[1]||esDef(mt.e,mt.j);return ['ok','fat','ko','skip'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
   return `<p class="sub msub">${mt.nav?`<button class="btn" data-a="mkMove" data-d="-1" ${mt.nav.prev?'':'disabled'} aria-label="Serie precedente" style="min-height:0;padding:6px 18px;font-size:1.2em">‹</button> `:''}${txt}${mt.nav?` <button class="btn" data-a="mkMove" data-d="1" ${mt.nav.next?'':'disabled'} aria-label="Serie successiva" style="min-height:0;padding:6px 18px;font-size:1.2em">›</button>`:''}</p>
   <div class="repadj"><button data-a="lRep" data-d="-1" aria-label="Una ripetizione in meno">−</button><output>${x[0]===''?(p??0):x[0]}</output><button data-a="lRep" data-d="1" aria-label="Una ripetizione in più">+</button></div>
-  <div class="esito">${(()=>{const cur=x[1]&&x[1]!=='skip'?x[1]:esDef(mt.e,mt.j);return ['ok','fat','ko'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
+  <div class="esito e4">${(()=>{const cur=x[1]||esDef(mt.e,mt.j);return ['ok','fat','ko','skip'].map(k=>`<button class="o-${k}" data-a="lEsito" data-k="${k}" aria-pressed="${cur===k}" aria-label="${ESITO[k]}"><span class="lb">${ESITO[k]}</span><span class="ck" aria-hidden="true">${cur===k?'✓':''}</span></button>`).join('')})()}</div>`;
 }
 
 function updateMini(){
@@ -3901,37 +3858,13 @@ function newTid(){return 't'+Date.now().toString(36)+Math.random().toString(36).
 function stdTimer(mode){const M=timersMap();let t=Object.values(M).find(x=>x&&!x.deleted&&x.std&&x.mode===mode);if(t)return t;
   t={id:newTid(),code:nextCode(tPrefix(mode),Object.values(M).map(x=>x&&x.code)),mode,cfg:{},std:true,desc:STDNAME[mode]||'Generale',updated:Date.now()};M[t.id]=t;saveCfg();return t}
 function blockTimerOld(d,idx,mode){const M=timersMap();for(const j of idx){const x=d.ex[j],t=x&&M[x.tid];if(t&&!t.deleted&&t.mode===mode)return t}return stdTimer(mode)}
-function timerRegisterOld(b){const d=S.draft;if(!d||!b||b.kind!=='ex')return null;
-  const M=timersMap(),cur=M[b.tid],sub=tSub(b.mode,b.cfg),kind=tKindOf(b.mode,b.cfg,b.label);
-  const ch=TKEYS.some(k=>JSON.stringify(b.cfg[k]??null)!==JSON.stringify((b.cfg0||{})[k]??null));
-  const nm=String(b.tname??'').trim(),ren=!!nm&&nm!==tmName(cur);if(!ch&&!ren)return null;
-  let t;
-  if(cur&&!cur.std&&!cur.deleted&&cur.mode===b.mode&&timerUseOther(cur.id,d.id)===0){if(ch){cur.cfg=sub}if(nm){cur.desc=nm;cur.custom=true}cur.kind=kind;cur.updated=Date.now();t=cur;t._upd=true}
-  else if(cur&&!cur.std&&!ch&&ren){cur.desc=nm;cur.custom=true;cur.updated=Date.now();t=cur;t._upd=true}
-  else{t={id:newTid(),code:nextCode(tPrefix(b.mode,b.cfg),Object.values(M).map(x=>x&&x.code)),mode:b.mode,kind,cfg:sub,desc:nm||tProposal(d,kind,b.idx),custom:!!nm,base:cur?cur.code:'',updated:Date.now()};M[t.id]=t}
-  b.tid=t.id;b.cfg0=clone(b.cfg);b.tname=null;b.idx.forEach(j=>{if(d.ex[j])d.ex[j].tid=t.id});saveCfg();scheduleSave();return t}
+
 function vPlanEditTxtOld(b){const t=b&&timersMap()[b.tid],d=S.draft,kind=tKindOf(b.mode,b.cfg,b.label);
   const val=b.tname??(t&&!t.std?tmName(t):tProposal(d,kind,b.idx));
   return `Timer ${t?`<b>${esc(t.code)}</b> (${esc(tmName(t))})`:''}: preparazione, avvisi, colori e come segni le ripetizioni si salvano nel timer di questo blocco${t&&t.std?', con il nome che scegli qui sotto':''} (se è usato anche in altre sedute ne crei una variante con un nuovo codice). I tempi di lavoro e di recupero vengono dal protocollo: se li cambi qui valgono solo per questa volta.</p><label class="f" style="margin:0 0 12px">Nome del timer (proposto, puoi cambiarlo)<input type="text" value="${esc(val)}" data-f="pe:name" maxlength="80"></label><p style="display:none">`}
 /* vTimerReg: vedi il blocco «timer della seduta» */
 
 /* struttura della seduta: blocchi con protocollo e timer */
-function vStructOld(d){
-  if(!d.ex.some(e=>!e.fin&&e.n))return '';
-  let warn=0;
-  const rows=sessBlocks(d).map((b,k)=>{const i=b.idx[0],e=d.ex[i],P=e.pid&&S.protos.get(e.pid),okP=!!(P&&!P.deleted),n=b.idx.length;
-    const mixed=n>1&&b.idx.some(j=>(d.ex[j].pid||'')!==(e.pid||'')),fit=!okP||protoFits(P,n);if(!okP||!fit||mixed)warn++;
-    const hasT=b.idx.some(j=>(d.ex[j].s||[]).length||isFt(d.ex[j])||isEdtE(d.ex[j]));let tp=null,tm=null;
-    if(hasT){try{tp=timerPlan(i);tm=blockTimer(d,b.idx,tp.mode)}catch(err){tp=null}}
-    const edit=!!(S.pf&&S.pf.sess&&b.idx.includes(S.pf.sess.i));
-    return `<div class="blk${edit?' on':''}"><div class="blk-h"><span class="blk-k">${b.g?esc(b.g):k+1}</span><div style="min-width:0"><b>${b.g?`Gruppo ${esc(b.g)}`:'Da solo'}</b>: ${b.idx.map(j=>`${exIcon(d.ex[j].n,20)} ${esc(d.ex[j].n||'–')}`).join(' + ')}</div></div>
-      <div class="blk-r"><span class="muted small">Protocollo</span> ${okP?`<b>${esc(P.code||'')}</b> ${esc(pName(P))}`:`<span class="warnx">nessun protocollo${e.p?` (testo: «${esc(e.p)}»)`:''}</span>`}
-        ${okP&&!fit?`<div class="warnx small">Non adatto a ${n===1?'un esercizio da solo':`un gruppo di ${n} esercizi`}: ${esc(fitHint(P,n))}.</div>`:''}${mixed?'<div class="warnx small">Gli esercizi del gruppo hanno protocolli diversi: scegline uno per tutto il gruppo.</div>':''}</div>
-      ${tm?`<label class="f blk-r">Timer<select data-f="bt:${i}">${timerList().filter(t=>t.mode===tm.mode).map(t=>`<option value="${esc(t.id)}" ${t.id===tm.id?'selected':''}>${esc(tmName(t))} (${esc(t.code)})</option>`).join('')}</select></label><div class="muted small">${esc(tp.label)}${tm.std?', con le impostazioni generali della scheda Timer':': '+esc(tDesc(tm.mode,tm.cfg,tm.kind).replace(/^[^,]*(, )?/,'')||'come le impostazioni generali')}</div>`:''}
-      <div class="row" style="margin-top:8px"><button class="btn" data-a="blkProto" data-i="${i}">${okP?'Modifica protocollo':'Scegli o crea il protocollo'}</button>${tm?`<button class="btn" data-a="blkTimer" data-i="${i}">Modifica timer</button>`:''}${tm&&!tm.std?`<button class="btn" data-a="tmRename" data-id="${esc(tm.id)}">Rinomina timer</button>`:''}</div>
-      ${edit?vPfForm(true):''}</div>`}).join('');
-  return `<section class="card" id="struct"><h3>Struttura della seduta</h3><p class="muted small" style="margin:2px 0 8px">Ogni blocco ha il suo protocollo e il suo timer, ognuno con un codice. Per fare più esercizi insieme mettili nello stesso <b>Gruppo</b> (nella scheda dell’esercizio): condividono protocollo e timer.</p>${warn?`<p class="warnx small" style="margin:0 0 8px">${warn===1?'Un blocco da sistemare':`${warn} blocchi da sistemare`}: ogni blocco deve avere un protocollo adatto.</p>`:''}${vTsStruct(d)}${rows}</section>`;
-}
 
 /* modulo del protocollo (nuovo, variante o modifica nella seduta) */
 function pfLoad(P){const b=newPf();S.pf={...b,...clone(P),editId:P.id};if(P.giriMax)S.pf.giri='MAX';if(P.tipo==='emom'&&!P.slots){S.pf.k=emK(P);S.pf.slots=[0,1,2].map(()=>({sec:P.sec,rep:P.rep||''}))}if(P.tipo==='circ'&&!P.stations)S.pf.stations=[{work:P.work||'time',val:P.val||40}];delete S.pf.updated;return S.pf}
@@ -4092,7 +4025,6 @@ Object.assign(A,{
   bioSnooze(){const r=S.cfg.bioRem;if(!r)return closeSheet();const t=todayIso();let s=bioDue()||t,k=0;do{s=addPer(s,r.per||'1m')}while(s<=t&&++k<200);r.snooze=s;saveCfg();closeSheet()},
 });
 
-
 /* ---------- v1.4: timer della seduta (svolgimento), copia e modifica dei timer registrati ---------- */
 const SESKEYS=['warmOn','warmAuto','warmMode','warmMin','coolOn','coolAuto','coolMode','coolMin','colWarm','colCool','coolKind','pos','posTr','rid'];
 const gTc=m=>(S.tcBak&&S.tcBak[m])||S.tc[m];
@@ -4161,11 +4093,6 @@ function vTmEditOld(){const E=S.tmEdit,t=timersMap()[E.id];if(!t){S.tmEdit=null;
     ${m==='rec'||m==='ft'?'':`<div style="margin-top:10px"><div class="muted small" style="margin-bottom:4px">Segna le ripetizioni</div><div class="seg sm" role="group" aria-label="Segna le ripetizioni" style="max-width:520px">${[['during','Durante'],['after','Dopo'],['next','Nell’intervallo dopo'],['none','Non segnare']].filter(([k])=>m==='emom'||k!=='next').map(([k,l])=>`<button data-a="tmMark" data-v="${k}" aria-pressed="${(c.mark||'')===k}">${l}</button>`).join('')}</div></div>`}
     ${m==='ft'?'':`<label class="row" style="flex-wrap:nowrap;margin-top:10px"><input type="checkbox" ${c.restEnd?'checked':''} data-f="tm2:c:restEnd" style="width:22px;height:22px"> Riposo alla fine del timer</label>${c.restEnd?`<div style="margin-top:6px">${inp('Riposo finale (s)','restEndSec')}</div>`:''}`}
     <p class="muted small" style="margin:10px 0 0">Colori e suoni restano quelli del timer da cui sei partito. I tempi di lavoro e di recupero si cambiano dentro la seduta, con «Modifica timer» nel blocco.</p></section>`+btn}
-function vTsStructOld(d){const ts=sesTimer(d),L=timerList().filter(t=>t.mode==='ses');
-  return `<div class="blk"><div class="blk-h"><span class="blk-k">⏱</span><div style="min-width:0"><b>Svolgimento della seduta</b>: riscaldamento, blocchi nell’ordine, finisher e defaticamento, tutto di fila con «Avvia la seduta».</div></div>
-    <label class="f blk-r">Timer della seduta<select data-f="ts:x">${L.map(t=>`<option value="${esc(t.id)}" ${t.id===ts.id?'selected':''}>${esc(tmName(t))} (${esc(t.code)})</option>`).join('')}</select></label>
-    <div class="muted small">${esc(tsDesc(tsEff(ts)))}</div>
-    <div class="row" style="margin-top:8px"><button class="btn" data-a="tmView" data-id="${esc(ts.id)}">Vedi</button><button class="btn" data-a="tsEdit">Modifica</button>${ts.std?'':`<button class="btn" data-a="tmRename" data-id="${esc(ts.id)}">Rinomina</button>`}</div></div>`}
 
 Object.assign(A,{
   tmAskDel(el){const t=timersMap()[el.dataset.id];if(!t)return;confirmSheet(`Eliminare il timer ${esc(t.code)}?`,'Nessuna seduta lo usa.','Elimina','tmDel',`data-id="${esc(t.id)}"`)},
@@ -4197,7 +4124,6 @@ Object.assign(A,{
     if(!sesActive())sesNew();SES.cfg=clone(S.tc.sess);SES.mode=S.tmode;tcRestore('sess');const c=SES.cfg;
     if(c.warmOn&&c.warmAuto)return startWarm();if(c.warmOn){SES.phase='pre';sesSave();render();return}startTrain();render()},
 });
-
 
 /* ---------- backup: scelta all'esportazione, controllo del file, copia di sicurezza automatica ---------- */
 function bakObj(){const all=new Map(S.stor);for(const [id,x] of S.sed)all.set(id,x);
@@ -4242,7 +4168,6 @@ Object.assign(A,{
     S.draft=null;SES=null;location.reload()},
 });
 
-
 /* ---------- esportazione diretta in Download/GYMER ---------- */
 Object.assign(A,{
   async exportGo(el){const clear=el.dataset.c==='1';S.expClear=clear;const data=JSON.stringify(bakObj()),name=`gymer-backup-${todayIso()}.json`,kbOf=n=>Math.max(1,Math.round(n/1024));
@@ -4260,7 +4185,6 @@ Object.assign(A,{
     else impDone('Backup esportato',`Il file ${esc(name)} è stato scaricato. I dati restano anche su questo dispositivo.`)},
   bakShare(){closeSheet();try{AndroidBridge.shareLast()}catch(e){}},
 });
-
 
 /* ---------- v1.4: dal diario al timer (Salva / Torna), protocollo per altri blocchi, stretching e mobilità ---------- */
 /* 1) timer aperto dal diario: Avvia, Salva, Torna alla seduta */
@@ -4284,13 +4208,6 @@ async function protoSaveFromSess(old,Q,idx){const d=S.draft;let P=Q,how;
   pUniq(P);S.protos.set(P.id,P);await saveProtoDoc(P);idx.forEach(j=>{const x=d.ex[j];if(x){x.pid=P.id;x.p=pName(P)}});return {P,how}}
 
 /* 2) protocollo per altri gruppi o esercizi */
-function vPidAllOld(i){const d=S.draft,e=d.ex[i],P=S.protos.get(e.pid),own=grpOf(d,i);
-  const B=sessBlocks(d).filter(b=>!b.idx.some(j=>own.includes(j)));
-  return `<h3>Usa «${esc(pLabel(P))}» anche per…</h3><p class="muted small" style="margin:0 0 8px">Ogni gruppo ha un solo protocollo, come ogni esercizio da solo. Gruppi diversi possono usare lo stesso protocollo e restano distinti nella seduta, ognuno con il suo timer.</p>
-   ${B.map(b=>{const n=b.idx.length,fit=protoFits(P,n),c0=d.ex[b.idx[0]],cur=c0.pid&&S.protos.get(c0.pid);
-     return `<label class="row" style="flex-wrap:nowrap;align-items:flex-start;margin:6px 0;${fit?'':'opacity:.5'}"><input type="checkbox" class="paChk" value="${b.idx[0]}" ${fit?'':'disabled'} style="width:22px;height:22px;flex:none"> <span><b>${b.g?`Gruppo ${esc(b.g)}`:'Da solo'}</b>: ${esc(b.idx.map(j=>d.ex[j].n||'–').join(' + '))}<br><span class="muted small">${cur&&!cur.deleted?`ora ${esc(pLabel(cur))}`:'ora nessun protocollo'}${fit?'':` · non adatto: ${esc(fitHint(P,n))}`}</span></span></label>`}).join('')}
-   <div class="row" style="margin-top:10px"><button class="btn" data-a="pidAllSel">Seleziona tutti</button></div>
-   <div class="row" style="margin-top:12px"><button class="btn primary" data-a="pidAllGo" data-i="${i}">Applica</button><button class="btn" data-a="closeSheet">Annulla</button></div>`}
 
 /* 4) stretching e mobilità: esercizi e routine con codice */
 const CATLBL={'':'Allenamento',stretch:'Stretching',mob:'Mobilità'};
@@ -4366,7 +4283,6 @@ Object.assign(A,{
     const r=rtNew(v,pos,c.posTr);c.rid=r.id;savePrefs();closeSheet();render();sheet(`<h3>Routine ${esc(r.code)} salvata</h3><p class="muted">${esc(r.desc)}. La trovi in Esercizi → Stretching e la scegli nel defaticamento di altri WO.</p><div class="row" style="margin-top:12px"><button class="btn primary" data-a="closeSheet">Ok</button></div>`)},
 });
 
-
 /* ---------- claude.ai: copia locale per aprire subito ---------- */
 const dbCacheKey=()=>`diario-dbcache:${S.uid}:${PID}`;
 function dbCacheLoad(){try{const c=JSON.parse(localStorage.getItem(dbCacheKey())||'null');if(!c||!Array.isArray(c.stor))return;
@@ -4376,7 +4292,6 @@ function dbCacheLoad(){try{const c=JSON.parse(localStorage.getItem(dbCacheKey())
 let dbCacheT=null;
 function dbCacheSave(now){if(S.mode!=='db'||!S.uid)return;clearTimeout(dbCacheT);dbCacheT=setTimeout(()=>{try{
   localStorage.setItem(dbCacheKey(),JSON.stringify({v:1,t:Date.now(),stor:[...S.stor.values()],sed:Object.fromEntries(S.sed),cfg:S.cfg,protos:Object.fromEntries(S.protos),tests:Object.fromEntries(S.tests),mis:Object.fromEntries(S.misure)}))}catch(e){}},now?50:2500)}
-
 
 /* ---------- v1.4j: svolgimento legato alla seduta, timer come modelli incorporati, tempi salvati nel timer ---------- */
 /* svolgimento della seduta: sta dentro la seduta (d.ts), si copia con il WO */
@@ -4535,7 +4450,6 @@ Object.assign(A,{
     await _pfSave();if(idx.length&&sig()!==b0){idx.forEach(j=>{const x=d.ex[j];if(x&&x.tm&&x.tm.tt){delete x.tm.tt;delete x.tm.pid}});scheduleSave()}},
 });}
 
-
 /* ---------- v1.4k: secondi, corpo libero ---------- */
 const ckS=t=>{if(!S.tc.snd||!S.tc.snd.secs)return t;const m=/^(\d+):(\d\d)$/.exec(String(t));if(!m||+m[1]>=10)return t;return String(+m[1]*60+ +m[2])};
 const isCl=n=>{const c=S.cfg.esercizi&&S.cfg.esercizi[n];return !!(c&&c.cl)};
@@ -4555,7 +4469,6 @@ Object.assign(A,{
   exCl(el){const n=S.exSel;if(!n)return;const c=S.cfg.esercizi[n]=S.cfg.esercizi[n]||{};c.cl=el.dataset.v==='1';saveCfg();
     if(S.draft){let ch=false;S.draft.ex.forEach(e=>{if(e.n===n&&!e.fin){if(c.cl)ch=blSync(e,S.draft.d,true)||ch;else if(e.bw!=null){delete e.bw;ch=true}}});if(ch)scheduleSave()}render()},
 });
-
 
 function exCat(n){const k=exCatOld(n);if(k)return k;const c=S.cfg.esercizi&&S.cfg.esercizi[n];if(c&&c.cat!=null)return k;const x=String(n||'');return /gatto|cat.?camel|circonduz/i.test(x)?'mob':/piccion|pigeon|bambino|child.?s? ?pose|pinza/i.test(x)?'stretch':''}
 /* ---------- v1.4l: elenco degli esercizi a colonne, con filtri ---------- */
@@ -4578,7 +4491,6 @@ function vExList(){
   </tbody></table></div>`}
 Object.assign(A,{exSort(el){const k=el.dataset.k;S.exSo=k;const l=$('#exList');if(l)l.innerHTML=vExList();else render()}});
 
-
 /* ---------- v1.4n: chiudere la seduta ferma anche il cronometro ---------- */
 const runOn=()=>!!(T&&!T.done);
 function sesStopAll(){if(runOn())tStop();if(sesActive())endSession();const t=SES&&SES.tempi;SES=null;sesSave();if(loopId&&!runOn()){clearInterval(loopId);loopId=null}wake(false);return t}
@@ -4596,7 +4508,6 @@ Object.assign(A,{
       <div class="row" style="margin-top:14px"><button class="btn primary" data-a="tStopNow">Termina solo il timer</button><button class="btn" data-a="tStopAll">Termina tutta la seduta</button><button class="btn" data-a="closeSheet">Annulla</button></div>`)},
   tStopAll(){closeSheet();if(runOn())tStop();if(sesActive())endSession();else render()},
 });}
-
 
 /* ---------- v1.4o: dall'esercizio alle sue sedute: dettaglio, seduta intera, modifica ---------- */
 function vExHistory(name,noCharts){
@@ -4625,7 +4536,6 @@ Object.assign(A,{
   exHEdit(el){const id=el.dataset.id,k=+el.dataset.k;A.editSess({dataset:{id}});if(S.draft&&S.draft.id===id)goCard(k)},
 });
 
-
 /* ---------- v1.4q: importazione su claude.ai più robusta ---------- */
 const stab=o=>Array.isArray(o)?`[${o.map(stab).join(',')}]`:o&&typeof o==='object'?`{${Object.keys(o).filter(k=>k!=='updated'&&o[k]!==undefined).sort().map(k=>JSON.stringify(k)+':'+stab(o[k])).join(',')}}`:JSON.stringify(o??null);
 const sameSess=(a,b)=>stab(a)===stab(b);
@@ -4652,7 +4562,6 @@ Object.assign(A,{
     scheduleSave();render();goCard(i)},
 });
 
-
 /* ---------- v1.4v: pausa tra i blocchi libera ---------- */
 function vPausaUI(k,o){const fr=!!o.free;
   return `<div class="seg sm" role="group" aria-label="Pausa tra i blocchi" style="max-width:420px;margin-bottom:8px"><button data-a="pzMode" data-k="${k}" data-v="t" aria-pressed="${!fr}">A tempo</button><button data-a="pzMode" data-k="${k}" data-v="l" aria-pressed="${fr}">Libera</button></div>
@@ -4660,7 +4569,6 @@ function vPausaUI(k,o){const fr=!!o.free;
   :`<div class="row" style="align-items:flex-end"><label class="f" style="width:180px">Pausa (secondi)<input type="number" inputmode="numeric" min="0" value="${esc(o.pausa)}" data-f="${k}:pausa"></label>
     <label class="row" style="flex-wrap:nowrap"><input type="checkbox" ${o.auto?'checked':''} data-f="${k}:auto" style="width:22px;height:22px"> Il blocco successivo parte da solo alla fine della pausa</label></div>`}`}
 Object.assign(A,{pzMode(el){const o=el.dataset.k==='tm2'?S.tmEdit:S.plan;if(!o)return;o.free=el.dataset.v==='l';render()}});
-
 
 /* ---------- v1.4z: procedura guidata «Componi la seduta» ---------- */
 const WZT=['Da dove parti','Esercizi','Gruppi','Protocollo','Timer','Finisher','Svolgimento','Riepilogo'];
@@ -4686,7 +4594,7 @@ function vWzStep1(){const W=S.wz,last=woLast(),corso=[...last.values()].filter(x
 function vWzStep2(d){const W=S.wz,L=d.ex.map((e,i)=>[e,i]).filter(([e])=>!e.fin);
   return (L.length?L.map(([e,i])=>`<div class="wz-ex"><div class="wz-exr">${exIcon(e.n,34)}<div style="min-width:0"><b>${esc(e.n||'–')}</b><div class="muted small">${esc(wzExLine(e))}</div>${e._why?`<div class="muted small">${esc(e._why)}</div>`:''}
      ${e._alt&&!(e.s||[]).some(x=>x[1])?`<button class="btn${e._altOn?'':' primary'}" data-a="altGo" data-i="${i}" style="margin-top:6px;min-height:0;padding:4px 10px">${e._altOn?'Torna allo stesso piano':'Incrementa: '+esc(e._alt.inc.why.replace(/^tutte completate: /,''))}</button>`:''}</div>
-     <span class="ordmv">${(()=>{const L=d.ex.map((x,j)=>x.fin?-1:j).filter(j=>j>=0),q=L.indexOf(i);return `<button class="btn" data-a="exMove" data-i="${i}" data-d="-1" ${q>0?'':'disabled'} aria-label="Sposta ${esc(e.n)} prima">↑</button><button class="btn" data-a="exMove" data-i="${i}" data-d="1" ${q<L.length-1?'':'disabled'} aria-label="Sposta ${esc(e.n)} dopo">↓</button>`})()}<button class="btn" data-a="wzOpen" data-i="${i}" aria-label="Apri la scheda di ${esc(e.n)}">${W.open===i?'▴':'✎'}</button></span></div>${W.open===i?vCard(e,i):''}</div>`).join(''):'<p class="empty">Ancora nessun esercizio: aggiungine uno qui sotto.</p>')
+     <span class="ordmv">${(()=>{const L=d.ex.map((x,j)=>x.fin?-1:j).filter(j=>j>=0),q=L.indexOf(i);return `<button class="btn" data-a="exMove" data-i="${i}" data-d="-1" ${q>0?'':'disabled'} aria-label="Sposta ${esc(e.n)} prima">↑</button><button class="btn" data-a="exMove" data-i="${i}" data-d="1" ${q<L.length-1?'':'disabled'} aria-label="Sposta ${esc(e.n)} dopo">↓</button>`})()}<button class="btn" data-a="wzOpen" data-i="${i}" aria-label="Apri la scheda di ${esc(e.n)}">${W.open===i?'▴':'✎'}</button><button class="btn" data-a="delEx" data-i="${i}" aria-label="Togli ${esc(e.n)} dalla seduta" title="Togli dalla seduta">✕</button></span></div>${W.open===i?vCard(e,i):''}</div>`).join(''):'<p class="empty">Ancora nessun esercizio: aggiungine uno qui sotto.</p>')
    +`<div class="add" style="margin-top:12px"><input type="text" id="addName" list="names" placeholder="Aggiungi un esercizio" aria-label="Nome esercizio da aggiungere"><button class="btn primary" data-a="addEx">Aggiungi</button></div>`}
 function vWzStep3(d){const L=d.ex.map((e,i)=>[e,i]).filter(([e])=>!e.fin),B=sessBlocks(d);
   return L.map(([e,i])=>`<div class="wz-exr wz-g" style="padding:8px 0;border-bottom:1px dashed var(--line)">${exIcon(e.n,34)}<b style="min-width:0">${esc(e.n)}</b><div class="gsel">${['',...'ABCDE'].map(g=>`<button data-a="wzGrp" data-i="${i}" data-g="${g}" aria-pressed="${(e.g||'')===g}" aria-label="${g?'Gruppo '+g:'Da solo'}">${g||'–'}</button>`).join('')}</div></div>`).join('')
@@ -4744,7 +4652,6 @@ Object.assign(A,{
     render();window.scrollTo(0,0)},
 });
 
-
 /* ---------- v1.5a: ordine dei blocchi, stretching con la sua routine ---------- */
 const isStrEx=e=>!!(e&&!e.fin&&e.n&&(['stretch','mob'].includes(exCat(e.n))||/^stretching$/i.test(String(e.n).trim())));
 const strB=(d,b)=>b.idx.every(j=>isStrEx(d.ex[j]));
@@ -4766,7 +4673,6 @@ Object.assign(A,{
     scheduleSave();render();setTimeout(()=>{const x=document.querySelectorAll('#struct .blk:not(.blk-ts):not(.blk-fin):not(.blk-str)')[t];if(x)x.scrollIntoView({block:'center'})},60)},
 });
 
-
 /* ---------- v1.5b: lo stretching nella seduta si vede come nello svolgimento ---------- */
 function vStrCard(d){const L=d.ex.map((e,i)=>[e,i]).filter(([e])=>isStrEx(e)&&!(d.gV&&e.g)),c=sesTs(d),s=c.sess||{};if(!L.length&&!s.coolOn)return '';
   const r=s.rid&&rtMap()[s.rid],pos=s.pos||[];
@@ -4779,7 +4685,6 @@ function vStrCard(d){const L=d.ex.map((e,i)=>[e,i]).filter(([e])=>isStrEx(e)&&!(
     ${L.length?`<div class="small" style="margin:8px 0 6px"><span class="muted">Nella seduta:</span> ${L.map(([e,i])=>`<span style="white-space:nowrap">${esc(e.n)}${(e.s||[]).some(x=>x[1])||e.t?' ✓':''} <button class="btn ghost" data-a="delEx" data-i="${i}" style="min-height:36px;padding:4px 8px;text-decoration:underline" aria-label="Togli ${esc(e.n)} dalla seduta">togli</button></span>`).join(' · ')}<div class="muted" style="margin-top:2px">${s.coolOn&&s.coolKind==='pos'?'Alla fine del defaticamento lo stretching si scrive da solo nella seduta, con le posizioni e il tempo.':''}</div></div>`:''}
     ${det}<p class="muted small" style="margin:8px 0 0">Si fa per ultimo, dopo i blocchi e il finisher. Si modifica nello svolgimento della seduta.</p>
     <div class="row" style="margin-top:8px"><button class="btn" data-a="tsEdit">Modifica lo svolgimento</button></div></section>`}
-
 
 /* ---------- v1.5c: esercizi aerobici (corsa, bici, scale…) ---------- */
 EXI.scale='<path d="M4 44h9v-7h9v-7h9v-7h9v-7h4"/><path d="M27 12l-3 10M24 22l6 5-1 8M24 22l-6 4-2 7M26 14l7 4M26 14l-6 5"/><circle cx="29" cy="7" r="4" fill="currentColor" stroke="none"/>';
@@ -5024,7 +4929,7 @@ function ftItemsOf(idx){const d=S.draft;return ftItemsOfOld(idx).map((it,n)=>{co
 function ftWrite(x,it,sets,ms){if(x&&x.aV){x.aT=Math.round(ms/1000);x.t=Math.round(ms/600)/100;x.b=null;x.k=0;delete x.lad;if(!x.s||!x.s.length)x.s=[['','']];if(!x.s[0][1])x.s[0][1]='ok';return}return ftWriteOld(x,it,sets,ms)}
 function autoApply(){const was=!!(T&&T.mode==='ft'&&!T.applied);autoApplyOld();
   try{if(was&&T.applied&&S.draft&&T.cfg.link&&T.cfg.link.every(j=>S.draft.ex[j]&&S.draft.ex[j].aV)){delete S.draft.ft;scheduleSave()}}catch(x){}}
-function spEndSet(t){let st=null,dur=null,e=null,was=null;
+function spEndSetI(t){let st=null,dur=null,e=null,was=null;
   try{if(T&&(T.mode==='rec'||T.mode==='circ')){st=spStep();if(st){e=T.exs[st.i];dur=t-T.ph0;was=e&&e.s&&e.s[st.j]?e.s[st.j][1]:null}}}catch(x){}
   const r=spEndSetOld(t);
   try{if(e&&e.aV&&r!=='side'&&dur>0){const sec=Math.round(dur/1000);
@@ -5038,7 +4943,7 @@ function vProgList(){const k=S.progK==='aer'?'aer':'all';
 function vProgDetailA(n){return exCat(n)==='aer'?`${pSeg()}${vAerStats(n)}`:vProgDetailOld(n)}
 function vCatSec(n){return vCatSecOld(n)+(exCat(n)==='aer'?vAerSec(n):'')}
 function stretchNames(){return stretchNamesOld().filter(n=>exCat(n)!=='aer')}
-function wzExLine(e){if(S.draft&&edtNorm(e,S.draft))scheduleSave();if(isEdtE(e)&&!e.fin&&!(e.s||[]).some(x=>x[1]))return [e.kg!=null&&e.kg!==''?fmtKg(e.kg):'',e.b?`EDT: ${e.b} rip. per serie`:'EDT: ripetizioni da scrivere',num(e.t)?`PR Zone ${num(e.t)}′`:'',e.pid&&S.protos.get(e.pid)?pLabel(S.protos.get(e.pid)):''].filter(Boolean).join(' · ');return aerCard(e)?aerLine(e):wzExLineOld(e)}
+function wzExLineS(e){if(S.draft&&edtNorm(e,S.draft))scheduleSave();if(isEdtE(e)&&!e.fin&&!(e.s||[]).some(x=>x[1]))return [e.kg!=null&&e.kg!==''?fmtKg(e.kg):'',e.b?`EDT: ${e.b} rip. per serie`:'EDT: ripetizioni da scrivere',num(e.t)?`PR Zone ${num(e.t)}′`:'',e.pid&&S.protos.get(e.pid)?pLabel(S.protos.get(e.pid)):''].filter(Boolean).join(' · ');return aerCard(e)?aerLine(e):wzExLineOld(e)}
 function demoDataC(){const o=demoDataOld();try{
   const now=Date.now(),iso=d=>isoMinus(todayIso(),d);let sd=11;const R=()=>{sd=(sd*1103515245+12345)%2147483648;return sd/2147483648};
   o.cfg.esercizi['Corsa']={cat:'aer',au:'km'};
@@ -5061,7 +4966,6 @@ Object.assign(A,{
   aerCfgU(el){const n=S.exSel;if(!n)return;const c=S.cfg.esercizi[n]=S.cfg.esercizi[n]||{};c.au=el.dataset.v;saveCfg();render()},
   progK(el){S.progK=el.dataset.v;render()},
 });
-
 
 /* ---------- v1.5e: conto alla rovescia a schermo intero ---------- */
 try{document.head.insertAdjacentHTML('beforeend',`<style>
@@ -5106,7 +5010,6 @@ Object.assign(A,{
   cdFsClose(){S.cdFs=false;try{if(document.fullscreenElement&&!(T&&!T.done))document.exitFullscreen()}catch(x){}if(!CD.run&&!(T&&!T.done)&&!sesActive())wake(false);render()},
 });
 
-
 /* ---------- v1.5f: suggerimenti degli esercizi sopra la tastiera, scorrevoli ---------- */
 let AC_P=null;
 document.addEventListener('pointerup',ev=>{const P=AC_P;AC_P=null;if(!P)return;const b=ev.target.closest&&ev.target.closest('#acBox [data-acv]'),bx=$('#acBox');
@@ -5150,7 +5053,6 @@ async function emFix(tries){tries=tries||0;if(EMFIX_RUN)return;
 setTimeout(()=>emFix(0),2500);
 async function importBackup(obj,mode){const r=await importBackupOld(obj,mode);setTimeout(()=>emFix(0),1500);return r}
 
-
 /* ---------- v1.5j: conferma prima di modificare un esercizio già usato in sedute eseguite ---------- */
 function exDoneN(n){let k=0;for(const s of S.hist)if((s.ex||[]).some(e=>e.n===n&&(e.s||[]).some(x=>x[1])))k++;return k}
 const EXCX={tetto:'Progressione · tetto rep',rip:'Progressione · riparti da',inc:'Progressione · kg in più'};
@@ -5180,7 +5082,6 @@ Object.assign(A,{
       else{const f=A[q.act]&&A[q.act]._orig;if(f)f({dataset:q.ds})}}finally{S.exConfOk=false}render()},
   exConfNo(){S.exConf=null;closeSheet();render()},
 });
-
 
 /* ---------- v1.5k: EDT, terza PR Zone, record da battere, ritmo, regola del 20%, andamento ---------- */
 EK.push('e','f');
@@ -5259,7 +5160,6 @@ function vEdtStats(n){const H=edtHist(n,'9999-12-31','');if(!H.length)return '';
     ${rows.slice().reverse().slice(0,10).map(r=>`<tr><td>${fmtD(r.d)}</td><td>${r.kg?fmtN(r.kg,1).replace(/,0$/,''):'–'}${r.up?' ▲':''}</td><td>${r.t}</td><td>${r.min??'–'}</td><td>${r.dens?fmtN(r.dens,2):'–'}</td><td>${esc(r.pt||'–')}</td></tr>`).join('')}</tbody></table></div></section>`}
 function vProgDetail(n){return vProgDetailA(n)+vEdtStats(n)+vStepStats(n)}
 
-
 /* ---------- v1.5l: esercizi in EDT: una sola ripetizione target, nessuna serie prefissata, tempo della PR Zone ---------- */
 function edtNorm(e,d){if(!e||e.fin||!isEdtE(e)||(e.s||[]).some(x=>x[1]))return false;const before=JSON.stringify([e.s,e.b,e.k,e.t,e.lad,e._why]);
   if((e.s||[]).length)e.s=[];e.k=0;delete e.lad;delete e.maxR;
@@ -5270,7 +5170,6 @@ function edtNorm(e,d){if(!e||e.fin||!isEdtE(e)||(e.s||[]).some(x=>x[1]))return f
   return JSON.stringify([e.s,e.b,e.k,e.t,e.lad,e._why])!==before}
 function edtNormAll(d){let ch=false;(d.ex||[]).forEach(e=>{if(edtNorm(e,d))ch=true});if(ch)scheduleSave();return ch}
 function vCardE(e,i){if(S.draft&&edtNorm(e,S.draft))scheduleSave();return vCardA(e,i)}
-
 
 /* ---------- v1.5o: ordine degli esercizi e dei gruppi; WO già eseguito: modificarlo o farne uno nuovo ---------- */
 try{document.head.insertAdjacentHTML('beforeend',`<style>.ordmv{display:inline-flex;gap:4px;margin-left:auto;align-self:center;flex-wrap:nowrap}.ordmv .btn,.blk-ord .btn{min-height:0;min-width:40px;padding:6px 8px}
@@ -5317,12 +5216,10 @@ function vStWoHead(L){const D=L.filter(stDone);if(!D.length)return `<p class="mu
   const tot=D.reduce((a,s)=>a+(sessSum(s,!!s.updated).tot||0),0),first=D[D.length-1],last=D[0];
   return `<section class="card" style="margin-bottom:12px"><h3>WO ${esc(S.storWo)}${last.nome?` · ${esc(last.nome)}`:''}</h3><p class="small" style="margin:4px 0 0">${D.length} ${D.length===1?'seduta eseguita':'sedute eseguite'}, dal ${fmtD(first.d)} al ${fmtD(last.d)} · ${fmtN(tot)} ripetizioni in tutto. Tocca una seduta per vederne il dettaglio.</p></section>`}
 
-
 /* ---------- v1.5r: storico, P/A accanto al WO e conteggi ---------- */
 function stWoTag(w){const t=[];try{if((S.progs||[]).some(x=>x&&x.prog&&stWoOf(x)===w)||S.hist.some(x=>x&&x.prog&&stWoOf(x)===w))t.push('P');const L=woLast().get(w);if(woState(w,L)==='arch')t.push('A')}catch(e){}return t.join(' ')}
 function stExCount(){const m=new Map();for(const x of S.hist){if(!stDone(x)||(S.storWo&&stWoOf(x)!==S.storWo))continue;const seen=new Set();
   for(const e of x.ex||[])if(e.n&&!seen.has(e.n)&&e.st!=='Non eseguito'&&(e.s||[]).some(y=>y[1]&&y[1]!=='skip')){seen.add(e.n);m.set(e.n,(m.get(e.n)||0)+1)}}return m}
-
 
 /* ---------- v1.5s: storico, elenchi filtrabili scrivendo ---------- */
 function stWoLbl(w,nm,k){const t=stWoTag(w);return `${w}${t?` · ${t}`:''} (${k})${nm?` · ${nm}`:''}`}
@@ -5339,7 +5236,6 @@ function acPick(b){const el=AC_EL;if(el&&el.dataset&&el.dataset.acsrc){const v=b
     if(el.dataset.acsrc==='stwo'){S.storWo=v;if(S.storEx&&!stExList().includes(S.storEx))S.storEx=''}else S.storEx=v;render();return}
   return acPickOld(b)}
 Object.assign(A,{stClr(el){if(el.dataset.v==='wo')S.storWo='';else S.storEx='';render()}});
-
 
 /* ---------- v1.5t: WO archiviato in sola visualizzazione ---------- */
 function vWoView(x){const wo=stWoOf(x),L=S.hist.filter(s=>stWoOf(s)===wo&&stDone(s)),last=L[0]||x,first=L[L.length-1];
@@ -5365,12 +5261,10 @@ Object.assign(A,{
   woViewSt(el){S.storWo=el.dataset.wo;S.storEx='';closeSheet();S.tab='storico';render();window.scrollTo(0,0)},
 });
 
-
 /* ---------- v1.5u: gruppi direttamente nella struttura della seduta ---------- */
 function grpSelS(d,j){const e=d.ex[j];return `<select data-f="e:${j}:g" aria-label="Gruppo di ${esc(e.n)}" style="width:auto;min-width:96px;max-width:130px"><option value="">Da solo</option>${[...GRP].map(L=>`<option value="${L}" ${e.g===L?'selected':''}>Gruppo ${L}</option>`).join('')}</select>`}
 function vGrpOne(d,b){const j=b.idx[0],e=d.ex[j];if(!e||e.fin||isStrEx(e))return '';
   return `<div class="blk-ord"><div><span class="muted small">${b.g?`Unico esercizio del gruppo ${esc(b.g)}: scegli lo stesso gruppo per un altro esercizio per farli insieme.`:'Per farlo insieme ad altri esercizi mettili nello stesso gruppo:'}</span>${grpSelS(d,j)}</div></div>`}
-
 
 /* ---------- v1.5v: protocollo «A step» (tabella di step, uno in più a ogni seduta riuscita) ---------- */
 {const i=PTIPI.findIndex(x=>x[0]==='ladder');PTIPI.splice(i>=0?i+1:PTIPI.length,0,['step','A step'])}
@@ -5432,7 +5326,7 @@ function stepPlan(e,name,iso,skipId){const H=stepHist(name,iso,skipId);if(!H.len
     why=`${pre} completato: tabella finita! Oggi +${fmtN(inc,1).replace(/,0$/,'')} kg${isCl(name)||!(kg0>0)?' di zavorra':''} e riparti dallo step ${ns}.`;
     e._sAlt={a:{step:ns,kg:e.kg,z:e.z,why,lbl:`+${fmtN(inc,1).replace(/,0$/,'')} kg dallo step ${ns}`},b:{step:n,kg:L.e.kg??null,z:L.e.z??null,why:`${pre}: ripeti lo step ${n} con lo stesso carico.`,lbl:`Ripeti lo step ${n}`}}}
   else if(ok){ns=st+1;why=`${pre} completato: oggi step ${ns}.`}
-  else{const P2=H[1];if(P2&&num(P2.e.step)===st&&!stepOk(P2.e)){ns=Math.max(1,st-1);why=`${pre} non riuscito due volte di fila: oggi step ${ns}.`}else why=`${pre} non riuscito: oggi ripeti lo step ${st}.`}
+  else if(stepSk(L.e)){why=`${pre} non completato (serie non eseguite): oggi ripeti lo step ${st}.`}else{const P2=H[1];if(P2&&num(P2.e.step)===st&&!stepOk(P2.e)&&!stepSk(P2.e)){ns=Math.max(1,st-1);why=`${pre} non riuscito due volte di fila: oggi step ${ns}.`}else why=`${pre} non riuscito: oggi ripeti lo step ${st}.`}
   stepSet(e,P,ns);e._why=why;blSync(e,iso);autoPct(e,iso)}
 function stepNorm(e,d){if(!e||e.fin||!isStepE(e)||(e.s||[]).some(x=>x[1]))return false;const P=S.protos.get(e.pid),T=stepTab(P);const before=JSON.stringify([e.step,e.lad,(e.s||[]).length]);
   if(e.step==null){const r=stepStart(e.n,d?d.d:todayIso(),d&&d.id,T,e);stepSet(e,P,r.st);e._why=r.why}
@@ -5474,14 +5368,12 @@ Object.assign(A,{
 
 document.addEventListener('change',ev=>{const el=ev.target;if(el&&el.dataset&&/^(pfst|stp):/.test(el.dataset.f||''))onField(el,true)});
 
-
 /* ---------- v1.5w: A step nel timer (ripetizioni per serie, esito senza effetto sulle serie dopo) ---------- */
 function carryFrom(e,j,noRep){if(!isStepE(e))return carryFromOld(e,j,noRep);delete e._carry;
   for(let k=j+1;k<(e.s||[]).length;k++){const y=e.s[k];if(!y[1])y[0]=planned(e,k)??y[0]}}
 function setupTimer(i){const d=S.draft;if(d)d.ex.forEach(e=>{try{stepNorm(e,d)}catch(x){}});const tp=setupTimerW(i);
   try{const c=S.tc.rec;if(d&&c&&Array.isArray(c.links))(c.items||[]).forEach((it,n)=>{const x=d.ex[c.links[n]];if(x&&x.n===it.n&&isStepE(x)&&Array.isArray(x.lad)){it.rep=x.lad.join('-');it.sets=x.lad.length}})}catch(x){}
   return tp}
-
 
 /* ---------- v1.5x: nuovo protocollo da zero anche per un blocco che ne ha già uno ---------- */
 setTimeout(()=>{const f=A.blkProto;A.blkProto=function(el,ev){const i=+el.dataset.i;if(S.pf&&S.pf.sess&&S.pf.sess.nw){const same=S.pf.sess.i===i;S.pf=null;if(same){}}return f.call(this,el,ev)}},0);
@@ -5491,7 +5383,6 @@ Object.assign(A,{
     S.pf=newPf();if(d.gV&&!d.ex[i].fin&&grpOf(d,i).length>1)S.pf.group='super';S.pf.sess={i,nw:true};render();
     setTimeout(()=>{const x=document.querySelector('#struct .blk.on');if(x)x.scrollIntoView({block:'start'})},60)},
 });
-
 
 /* ---------- v1.5y: andamento A step + esempio nella versione di prova ---------- */
 function stepRows(n){const out=[];for(const s of S.hist){if(!s)continue;for(const x of s.ex||[])if(x.n===n&&!x.fin&&x.step!=null&&x.st!=='Non eseguito'&&(x.s||[]).some(y=>y[1]&&y[1]!=='skip'))out.push({s,e:x})}
@@ -5528,7 +5419,6 @@ async function demoStepTop(){try{if(!window.DIARIO_DEMO||!load('diario-demo-seed
   const o=demoData(),es={};['Trazioni presa neutra','Dip alle parallele'].forEach(n=>es[n]=o.cfg.esercizi[n]);
   await importBackup({app:'diario-allenamento',v:1,exported:new Date().toISOString(),cfg:{esercizi:es},sedute:o.sedute.filter(x=>String(x.id).startsWith('demo_st')),test:[],misure:[],protocolli:o.protocolli.filter(x=>x.id==='demo_p_step')},'all');
   store('diario-demo-step',1);merge()}catch(x){}}
-
 
 /* ---------- v1.5z: Programmi (sequenza di giorni, ogni giorno è un WO) ---------- */
 try{document.head.insertAdjacentHTML('beforeend',`<style>
@@ -5625,7 +5515,6 @@ Object.assign(A,{
     A.fromTpl({dataset:{wo,id:''}});if(S.draft&&S.draft.wo===wo){S.draft.prg={id:P.id,g};persistDraft();render()}},
 });
 
-
 /* ---------- v1.5za: inserire il WO della guida in un programma ---------- */
 function wzPrgSheet(){const Q=S.wzPrgQ,d=S.draft;if(!Q||!d)return;const L=prgAll().filter(p=>!p.chiuso),P=Q.pid&&Q.pid!=='new'?(S.cfg.programmi||{})[Q.pid]:null,pos=P?(P.giorni||[]).indexOf(d.wo):-1;
   sheet(`<h3>Inserisci il WO ${esc(d.wo)} in un programma</h3>
@@ -5652,7 +5541,6 @@ Object.assign(A,{
   wzPrgGo(){closeSheet();S.wz=null;S.pf=null;S.dList=true;S.dSez='prg';S.tab='diario';render();window.scrollTo(0,0)},
 });
 
-
 /* ---------- v1.5zb: riesame: plurali, programmi più robusti ---------- */
 const PLS={sedute:'seduta',esercizi:'esercizio',volte:'volta',settimane:'settimana',misurazioni:'misurazione',protocolli:'protocollo',riuscite:'riuscita'},PLA={eseguite:'eseguita',programmate:'programmata',riuscite:'riuscita',fallite:'fallita',registrati:'registrato',eseguiti:'eseguito',usati:'usato'};
 const PLRX=/(^|[^\d,.\wÀ-ÿ])1 (serie fallite|sedute|esercizi|volte|settimane|misurazioni|protocolli|riuscite)( (eseguite|programmate|riuscite|fallite|registrati|eseguiti|usati))?(?![\wÀ-ÿ])/g;
@@ -5664,7 +5552,6 @@ function prgRemap(map){const M=S.cfg.programmi;if(!M||!map)return;Object.values(
 /* una seduta aperta dall'elenco dei WO conta nel programma attivo, se quel WO ne fa parte */
 setTimeout(()=>{const f=A.fromTpl;A.fromTpl=function(el,ev){const r=f.call(this,el,ev);try{const d=S.draft,P=prgAct();if(d&&!d.prg&&P&&d.wo){const ix=(P.giorni||[]).map((w,i)=>w===d.wo?i:-1).filter(i=>i>=0);
   if(ix.length){const q=prgToday(P,d.d);const g=ix.includes(q.prim)?q.prim:(ix.find(i=>q.fx.includes(i))??ix[0]);d.prg={id:P.id,g};persistDraft();render()}}}catch(x){}return r}},0);
-
 
 /* ---------- v1.6a: tempi stimati per le sedute registrate senza timer ---------- */
 try{document.head.insertAdjacentHTML('beforeend',`<style>
@@ -5756,22 +5643,18 @@ document.addEventListener('toggle',ev=>{const t=ev.target;if(t&&t.classList&&t.c
 function estClrT(e){if(!e||e.aV||(e.s||[]).some(x=>x[1]))return;const P=e.pid&&S.protos.get(e.pid);if(P&&!P.deleted&&['ft','btc','aer'].includes(P.tipo))return;delete e.t;delete e.tEst}
 setTimeout(()=>{const f=A.fromTpl;A.fromTpl=function(el,ev){const r=f.call(this,el,ev);try{const d=S.draft;if(d&&!isExec(d)){d.ex.forEach(estClrT);persistDraft();render()}}catch(x){}return r}},0);
 
-
 /* ---------- v1.6b: stretching monolaterale = due esecuzioni, destro e sinistro ---------- */
 const posSw=c=>num(c&&c.posTr)>0?num(c.posTr):5;
 function posSegs(c){const out=[];(c.pos||[]).forEach((p,i)=>{if(i>0&&num(c.posTr)>0)out.push({tr:true,i,sec:num(c.posTr)});const sec=Math.max(5,num(p.sec)||60),n=String(p.n||'').trim()||`Posizione ${i+1}`;
   if(p.n&&isMono(p.n)){out.push({i,sec,n:`${n} · lato destro`});out.push({tr:true,side:true,i,sec:posSw(c)});out.push({i,sec,n:`${n} · lato sinistro`})}else out.push({i,sec,n})});return out}
 function posDur(pos,posTr){return posSegs({pos:pos||[],posTr}).reduce((a,x)=>a+x.sec,0)}
 
-
 /* ---------- v1.6c: stretching monolaterale in un gruppo: ogni lato è un’esecuzione con il tempo pieno ---------- */
 function strTwo(e){return !!(e&&e.n&&['stretch','mob'].includes(exCat(e.n))&&(uniOf(e)==='fila'||uniOf(e)==='alt'))}
-
 
 /* ---------- v1.6f: i programmi si uniscono nell’importazione (vince il più recente), uno solo resta attivo ---------- */
 function prgMerge(a,b){const R={...(a||{})};Object.entries(b&&typeof b==='object'?b:{}).forEach(([k,v])=>{if(v&&typeof v==='object'&&(!R[k]||(v.updated||0)>(R[k].updated||0)))R[k]=v});
   const act=Object.values(R).filter(p=>p&&!p.deleted&&p.attivo&&!p.chiuso).sort((x,y)=>(y.updated||0)-(x.updated||0));act.slice(1).forEach(p=>{R[p.id]={...p,attivo:false}});return R}
-
 
 /* ---------- v1.6g: Ladder sfida in gruppo: recupero «tempo degli altri» o turni a tempo fisso ---------- */
 const lsfOn=c=>!!(c&&c.sfida&&(c.verso==='su'||c.verso==='sugiu'));
@@ -5782,6 +5665,84 @@ function lsfGrpRest(c){const v=c.grpRest==='slot'?'slot':'altri',n=Math.max(2,Ma
   ${v==='slot'?`<label class="f" style="max-width:220px">Secondi per ogni turno<input type="number" inputmode="numeric" min="5" value="${esc(c.slotSec??30)}" data-f="tc:lad.slotSec"></label>
   <p class="muted small" style="margin:0">Ogni partecipante ha ${sl}″ per fare la serie e toccare «Fatta» (se non la tocca in tempo, la serie conta come fallita). Il turno del successivo parte allo scadere dei ${sl}″, anche se chi era di turno ha finito prima (con «Inizia subito» si parte prima). Così il recupero è fisso: con ${n} partecipanti, ${(n-1)*sl}″ più quello che ti avanza del tuo turno.</p>`
   :`<p class="muted small" style="margin:0">Il tuo recupero è il tempo che impiegano gli altri a fare la loro serie: appena uno tocca «Fatta» o «Fallita» tocca al successivo. Più si sale, più si recupera; quando qualcuno esce, il recupero degli altri si accorcia.</p>`}`}
+
+/* ---------- v1.6h: lo stretching registrato dal defaticamento non si moltiplica nelle sedute ---------- */
+const strRec=(d,e)=>!!(e&&isStrEx(e)&&!(d&&d.gV&&e.g)&&!(e.s||[]).some(x=>x[1])&&/^\d+ posizion/i.test(String(e.p||'')));
+function wzExLine(e){if(S.draft&&isStrEx(e)&&!(S.draft.gV&&e.g))return 'Nel defaticamento, alla fine della seduta (con la routine dello svolgimento)';return wzExLineS(e)}
+setTimeout(()=>{const f=A.fromTpl;A.fromTpl=function(el,ev){const r=f.call(this,el,ev);try{const d=S.draft;if(d&&!isExec(d)){const n0=d.ex.length;d.ex=d.ex.filter(e=>!strRec(d,e));if(d.ex.length!==n0){persistDraft();render()}}}catch(x){}return r}},0);
+
+/* ---------- v1.6i: Salta serie / Salta esercizio ---------- */
+let SKU=null,skuT=null;
+function stepSk(e){const s=(e&&e.s)||[];return s.some(x=>x[1]==='skip')&&!s.some(x=>x[1]==='ko')}
+const skIs=x=>!!(x&&x[1]==='skip');
+function skCan(){if(!T||T.done)return null;
+  if(T.mode==='rec'){if(T.final||!(T.phase==='work'||T.phase==='ready'))return null;const st=spStep();if(!st||!T.exs[st.i])return null;
+    const circ=T.kind==='circ';
+    const more=T.steps.some((q,k)=>k>T.k&&q.i===st.i&&!skIs(T.exs[q.i].s[q.j]));
+    const oth=T.exs.length>1&&T.steps.some((q,k)=>k>T.k&&q.i!==st.i&&!skIs(T.exs[q.i].s[q.j]));
+    return {one:circ?'Salta stazione':'Salta serie',all:more&&oth?(circ?'Salta stazione in tutti i giri':'Salta esercizio'):''}}
+  if(T.mode==='emom'){if(clk()<T.cfg.lead*1000||T.slot<0)return null;const q=T.slots[T.slot];if(!q||q.rest)return null;const e=emomEx(q.i);if(!e||!e.s[q.g]||skIs(e.s[q.g]))return null;
+    const more=!T.cfg.giriMax&&T.cfg.ex.length>1&&T.slots.some((z,k)=>k>T.slot&&z.i===q.i)&&T.slots.some((z,k)=>k>T.slot&&!z.rest&&z.i!==q.i);
+    return {one:'Salta serie',all:more?'Salta esercizio':''}}
+  return null}
+function spGo(t,immediate){if(T&&T.mode==='rec'&&T.steps){while(T.k<T.steps.length&&skIs((T.exs[T.steps[T.k].i]||{s:[]}).s[T.steps[T.k].j]))T.k++;
+  if(T.k>=T.steps.length){T.k=T.steps.length-1;T.workEnd=t;tStop();sound('end');render();return}}return spGoOld(t,immediate)}
+function spEndSet(t){const st=T&&T.mode==='rec'&&T.steps?spStep():null;
+  if(st&&st.rest!=='end'&&T.steps.slice(T.k+1).length&&T.steps.slice(T.k+1).every(q=>skIs((T.exs[q.i]||{s:[]}).s[q.j]))&&!(!st.w&&T.side==='dx'))st.rest='end';
+  return spEndSetI(t)}
+function skRow(){const c=skCan();if(!c)return '';
+  return `<div class="skr"><button class="btn sk" data-a="spSkip" aria-label="${c.one}: segnala come non eseguita">${c.one}</button>${c.all?`<button class="btn sk" data-a="spSkip" data-all="1" aria-label="${c.all}: tutte le serie rimaste non eseguite">${c.all}</button>`:''}</div>`}
+function skMark(sn,e,j){const x=e&&e.s&&e.s[j];if(!x||skIs(x))return;sn.marks.push([e,j,x.slice()]);if(x[1]!==''&&x[1]!=null)return;x[1]='skip'}
+function skDo(all){if(!skCan())return;const t=clk(),sn={T,k:T.k,mk:T.mk,dk:T.done_k,phase:T.phase,side:T.side,restKind:T.restKind,slots:T.mode==='emom'?T.slots.slice():null,total:T.total,marks:[]};let lbl='',ended=false;
+  if(T.mode==='rec'){const st=spStep(),e=T.exs[st.i],circ=T.kind==='circ',nm=e.n?` di ${e.n}`:'';
+    if(all){T.steps.forEach((q,k)=>{if(k>=T.k&&q.i===st.i)skMark(sn,T.exs[q.i],q.j)});lbl=`${e.n||(circ?'Stazione':'Esercizio')}: serie rimaste non eseguite`}
+    else{skMark(sn,e,st.j);lbl=circ?`${e.n||'Stazione'}, giro ${st.j+1}: non eseguita`:`Serie ${st.j+1}${T.exs.length>1?nm:''} non eseguita`}
+    let nk=T.k+1;while(nk<T.steps.length&&skIs(T.exs[T.steps[nk].i].s[T.steps[nk].j]))nk++;
+    const b=spBlockStart(T.k),grpDone=st.rest==='main'&&T.k>b&&T.steps.slice(b,T.k).some(q=>!skIs(T.exs[q.i].s[q.j]));
+    T.side=null;T.lastSec=null;T.warned=false;T.halfDone=false;
+    if(nk>=T.steps.length){T.workEnd=t;ended=true;
+      if(T.cfg.restEnd&&T.durs.length){T.final=true;T.phase='rest';T.restKind='end';T.restMs=T.cfg.restEndSec*1000;T.ph0=t;sound('change','riposo')}
+      else{tStop();sound('end')}}
+    else if(grpDone&&(T.cfg.rest==='free'||(T.cfg.rest==='mult'?Math.round((t-T.blk)*T.cfg.mult):T.cfg.sec*1000)>0)){
+      const ms=T.cfg.rest==='free'?Infinity:T.cfg.rest==='mult'?Math.round((t-T.blk)*T.cfg.mult):T.cfg.sec*1000;
+      T.k=nk-1;T.restKind='main';T.phase='rest';T.restMs=ms;T.ph0=t;sound('change','recupero')}
+    else{T.k=nk;T.skipK=nk;T.restKind='main';spGo(t,false)}
+    sn.kAfter=T.k;sn.phAfter=T.phase}
+  else{const q=T.slots[T.slot],e=emomEx(q.i),nm=T.cfg.ex[q.i]&&T.cfg.ex[q.i].n,multi=T.cfg.ex.length>1;
+    if(all){T.slots.forEach((z,k)=>{if(k>=T.slot&&z.i===q.i){const ee=emomEx(z.i);skMark(sn,ee,z.g)}});
+      const out=[];T.slots.slice(T.slot+1).filter(z=>z.i!==q.i||z.rest).forEach(z=>{if(z.rest&&out.length&&out[out.length-1].rest&&!z.end)return;out.push(z)});
+      while(out.length&&out[out.length-1].rest&&!out[out.length-1].end)out.pop();
+      if(!out.some(z=>!z.rest))out.length=0;
+      for(let k=out.length-1;k>=0;k--){if(out[k].rest&&!out[k].end&&!out.slice(k+1).some(z=>!z.rest))out.splice(k,1)}
+      T.slots=T.slots.slice(0,T.slot+1).concat(out);T.total=T.slots.reduce((a,z)=>a+z.sec,0)*1000;
+      lbl=`${nm||'Esercizio'}: serie rimaste non eseguite`}
+    else{skMark(sn,e,q.g);lbl=`Serie ${q.g+1}${multi&&nm?` di ${nm}`:''} non eseguita`}
+    T.marked='';sn.slot=T.slot}
+  scheduleSave();skToast(lbl+(ended&&T.done?' · timer finito':''),ended&&T.done?null:sn);render()}
+function skUndo(){const sn=SKU;skHide();if(!sn||sn.T!==T||!T||T.done)return;
+  if(T.mode==='rec'&&(T.k!==sn.kAfter||T.phase!==sn.phAfter))return;
+  if(T.mode==='emom'&&T.slot!==sn.slot)return;
+  sn.marks.forEach(([e,j,x])=>{if(e&&e.s&&e.s[j])e.s[j]=x});
+  if(T.mode==='rec'){const t=clk();T.k=sn.k;T.mk=sn.mk;T.done_k=sn.dk;T.final=false;T.restKind=sn.restKind;T.side=sn.side;T.skipK=null;T.phase=sn.phase;T.ph0=t;T.lastSec=null;T.warned=false;T.halfDone=false;if(T.workEnd!=null&&sn.phAfter==='rest'&&T.restKind!=='end')T.workEnd=null}
+  else{T.slots=sn.slots;T.total=sn.total}
+  scheduleSave();render()}
+function skToast(txt,sn){SKU=sn||null;clearTimeout(skuT);let b=document.getElementById('skBar');
+  if(!b){b=document.createElement('div');b.id='skBar';b.setAttribute('role','status');b.setAttribute('aria-live','polite');document.body.appendChild(b)}
+  b.innerHTML=`<span>${esc(txt)}</span>${sn?'<button class="btn" data-a="skUndo">Annulla</button>':''}`;b.hidden=false;skuT=setTimeout(skHide,sn?6000:3500)}
+function skHide(){SKU=null;clearTimeout(skuT);const b=document.getElementById('skBar');if(b)b.hidden=true}
+(()=>{const st=document.createElement('style');st.textContent=`.ctl.hs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:stretch}
+.ctl.hs>:not(.big):not(.skr){grid-column:1/-1}
+.ctl.hs>.big{margin:0;width:100%}
+.skr{display:flex;flex-direction:column;gap:calc(var(--u,16px)*.4);max-width:calc(var(--u,16px)*7.5)}
+.ctl:not(.hs)>.skr{flex-direction:row;max-width:none;justify-content:center;width:100%}
+.ctl:not(.hs)>.skr .btn.sk{flex:none;padding:calc(var(--u,16px)*.45) calc(var(--u,16px)*.8)}
+.skr .btn.sk{flex:1;min-height:0;height:auto;font-size:calc(var(--u,16px)*.8);line-height:1.1;padding:calc(var(--u,16px)*.2) calc(var(--u,16px)*.5);font-weight:600;background:transparent;color:inherit;border:1.5px solid currentColor;opacity:.9;box-shadow:none;white-space:normal}
+#skBar{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:9999;display:flex;align-items:center;gap:12px;justify-content:space-between;background:#1f1f1f;color:#fff;padding:10px 12px 10px 16px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.4);max-width:520px;margin:0 auto;font-weight:600}
+#skBar[hidden]{display:none}
+#skBar .btn{min-height:0;padding:8px 14px;background:#fff;color:#111;border:0;font-weight:800;flex:none}
+.esito.e4{grid-template-columns:repeat(4,minmax(0,1fr));max-width:520px}
+.esito.e4 button .lb{font-size:.85em}`;document.head.appendChild(st)})();
+setTimeout(()=>Object.assign(A,{spSkip(el){skDo(!!el.dataset.all)},skUndo(){skUndo()}}),0);
 
 const canSave=()=>!!S.downloads||STANDALONE;
 async function saveFile(filename,data){
